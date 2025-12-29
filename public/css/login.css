@@ -1,7 +1,15 @@
 body {
+    margin: 0;
+    height: 100vh;
     background: #1e1e2f;
     font-family: Arial, sans-serif;
+
+    /* 👇 CENTRAR TODO */
+    display: flex;
+    justify-content: center; /* horizontal */
+    align-items: center;     /* vertical */
 }
+
 
 .admin-login {
     height: 100vh;

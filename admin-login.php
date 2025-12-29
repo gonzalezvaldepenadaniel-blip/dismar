@@ -12,11 +12,11 @@ if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Administrador | Dismar</title>
+    <title>Dismar</title>
 
   
 
-    <!-- Diseño exclusivo admin -->
+    
     <link rel="stylesheet" href="public/css/login.css">
 </head>
 <body>
@@ -24,7 +24,7 @@ if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
 <div class="admin-login">
     <div class="card">
 
-        <h3 class="text-center">Administrador</h3>
+        <h3 class="text-center">ADMINISTRADOR</h3>
 
         <?php if (isset($_GET["m"]) && $_GET["m"] == 1): ?>
             <div class="alert alert-danger text-center">
