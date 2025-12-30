@@ -1,6 +1,5 @@
 <?php
 
-
 class Usuario extends Conectar {
 
     public function login($tipo){
@@ -19,21 +18,29 @@ class Usuario extends Conectar {
                 exit();
             }
 
+            // 🔹 BUSCAR USUARIO (SIN CONTRASEÑA EN SQL)
             $sql = "SELECT * FROM tm_usuario
                     WHERE usu_correo = ?
-                    AND usu_pass = ?
                     AND rol = ?
-                    AND estado = 1";
+                    AND estado = 1
+                    LIMIT 1";
 
             $stmt = $conectar->prepare($sql);
             $stmt->bindValue(1, $correo);
-            $stmt->bindValue(2, $pass);
-            $stmt->bindValue(3, $tipo);
+            $stmt->bindValue(2, $tipo);
             $stmt->execute();
 
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if($resultado){
+            // ❌ Usuario no existe
+            if (!$resultado) {
+                $url = ($tipo === "admin") ? "admin-login.php?m=1" : "index.php?m=1";
+                header("Location:".Conectar::ruta().$url);
+                exit();
+            }
+
+            // ✅ VERIFICAR CONTRASEÑA ENCRIPTADA
+            if (password_verify($pass, $resultado["usu_pass"])) {
 
                 $_SESSION["usu_id"]         = $resultado["usu_id"];
                 $_SESSION["usu_nombre"]     = $resultado["usu_nombre"];
@@ -49,6 +56,7 @@ class Usuario extends Conectar {
                 exit();
 
             } else {
+                // ❌ Contraseña incorrecta
                 $url = ($tipo === "admin") ? "admin-login.php?m=1" : "index.php?m=1";
                 header("Location:".Conectar::ruta().$url);
                 exit();
