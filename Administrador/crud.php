@@ -14,15 +14,31 @@
 
 <input type="hidden" name="usu_id" id="usu_id">
 
-<input class="form-control mb-2" name="usu_nombre" id="usu_nombre" placeholder="Nombre" required>
+<input class="form-control mb-2" name="usu_nombre" id="usu_nombre"
+placeholder="Nombre" required>
 
-<input class="form-control mb-2" name="usu_apellido" id="usu_apellido" placeholder="Apellido" required>
+<input class="form-control mb-2" name="usu_apellido" id="usu_apellido"
+placeholder="Apellido" required>
 
-<input type="email" class="form-control mb-2" name="usu_correo" id="usu_correo" placeholder="Correo" required>
+<input type="email" class="form-control mb-2" name="usu_correo"
+id="usu_correo" placeholder="Correo" required>
 
-<input type="password" class="form-control mb-2" 
-name="usu_pass" id="usu_pass" 
-placeholder="Contraseña (solo si deseas cambiarla)">
+<!-- CONTRASEÑA -->
+<input type="password" class="form-control mb-2"
+name="usu_pass" id="usu_pass"
+placeholder="Contraseña">
+
+<input type="password" class="form-control mb-2"
+id="usu_pass_confirm"
+placeholder="Confirmar contraseña">
+
+<div class="form-check mb-2">
+    <input class="form-check-input" type="checkbox" id="verPass">
+    <label class="form-check-label" for="verPass">
+        Mostrar contraseña
+    </label>
+</div>
+
 
 <small class="text-muted">
 Deja la contraseña en blanco si no deseas cambiarla.

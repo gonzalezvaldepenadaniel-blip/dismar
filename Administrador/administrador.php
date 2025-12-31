@@ -30,6 +30,7 @@ body { background:#f8f9fa; font-family:Arial }
 
 <div class="navbar-admin">
 <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
+<a href="#" data-toggle="modal" data-target="#modalUsuarios">Reportes</a>
 <a href="../index.php">Cerrar sesión</a>
 </div>
 
@@ -38,69 +39,69 @@ body { background:#f8f9fa; font-family:Arial }
 </div>
 
 <!-- MODAL USUARIOS -->
-<div class="modal fade" id="modalUsuarios">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
 
-<div class="modal-header">
-<h5 class="modal-title">Usuarios registrados</h5>
-<button class="close" data-dismiss="modal">&times;</button>
+
+<!-- MODAL USUARIOS -->
+<div class="modal fade" id="modalUsuarios" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Usuarios registrados</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <button class="btn btn-primary mb-2" onclick="nuevoUsuario()">
+          Nuevo usuario
+        </button>
+
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach ($usuarios as $u): ?>
+            <tr>
+              <td><?= htmlspecialchars($u["usu_nombre"]." ".$u["usu_apellido"]) ?></td>
+              <td><?= htmlspecialchars($u["usu_correo"]) ?></td>
+              <td><?= strtoupper($u["rol"]) ?></td>
+              <td><?= $u["estado"] == 1 ? "Activo" : "Inactivo" ?></td>
+              <td>
+                <button class="btn btn-warning btn-sm editar"
+                  data-id="<?= $u["usu_id"] ?>"
+                  data-nombre="<?= $u["usu_nombre"] ?>"
+                  data-apellido="<?= $u["usu_apellido"] ?>"
+                  data-correo="<?= $u["usu_correo"] ?>"
+                  data-rol="<?= $u["rol"] ?>">
+                  Editar
+                </button>
+
+                <button class="btn btn-danger btn-sm eliminar"
+                  data-id="<?= $u["usu_id"] ?>">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<div class="modal-body">
-
-<button class="btn btn-primary mb-2" onclick="nuevoUsuario()">
-➕ Nuevo usuario
-</button>
-
-<table class="table table-bordered table-hover">
-<thead class="thead-dark">
-<tr>
-<th>Nombre</th>
-<th>Correo</th>
-<th>Rol</th>
-<th>Estado</th>
-<th>Acciones</th>
-</tr>
-</thead>
-
-<tbody>
-<?php foreach ($usuarios as $u): ?>
-<tr>
-<td><?= htmlspecialchars($u["usu_nombre"]." ".$u["usu_apellido"]) ?></td>
-<td><?= htmlspecialchars($u["usu_correo"]) ?></td>
-<td><?= strtoupper($u["rol"]) ?></td>
-<td><?= $u["estado"] == 1 ? "Activo" : "Inactivo" ?></td>
-
-<td>
-<button class="btn btn-warning btn-sm editar"
-data-id="<?= $u["usu_id"] ?>"
-data-nombre="<?= $u["usu_nombre"] ?>"
-data-apellido="<?= $u["usu_apellido"] ?>"
-data-correo="<?= $u["usu_correo"] ?>"
-data-rol="<?= $u["rol"] ?>">
-Editar
-</button>
-
-<button class="btn btn-danger btn-sm eliminar"
-data-id="<?= $u["usu_id"] ?>">
-Eliminar
-</button>
-</td>
-</tr>
-<?php endforeach; ?>
-</tbody>
-</table>
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-</div>
-
-</div>
-</div>
-</div>
 
 <script src="../public/js/lib/jquery/jquery.min.js"></script>
 <script src="../public/js/lib/bootstrap/bootstrap.min.js"></script>

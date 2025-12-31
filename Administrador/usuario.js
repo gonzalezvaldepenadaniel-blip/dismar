@@ -1,81 +1,91 @@
-console.log("usuarios.js cargado");
+console.log("usuario.js OK");
 
 /* ==========================
-   FUNCIÓN LIMPIAR MODALES
+   MOSTRAR / OCULTAR CONTRASEÑA
 ========================== */
-function limpiarModales() {
-    $(".modal").modal("hide");
-    $(".modal-backdrop").remove();
-    $("body").removeClass("modal-open");
-}
-
-/* ==========================
-   NUEVO USUARIO
-========================== */
-function nuevoUsuario(){
-
-    limpiarModales();
-
-    setTimeout(function(){
-        $("#formUsuario")[0].reset();
-        $("#usu_id").val("");
-        $("#modalUsuario").modal({
-            backdrop: "static",
-            keyboard: false
-        });
-    }, 300);
-}
-
-/* ==========================
-   EDITAR USUARIO
-========================== */
-$(document).on("click", ".editar", function(){
-
-    limpiarModales();
-
-    setTimeout(() => {
-        $("#usu_id").val($(this).data("id"));
-        $("#usu_nombre").val($(this).data("nombre"));
-        $("#usu_apellido").val($(this).data("apellido"));
-        $("#usu_correo").val($(this).data("correo"));
-        $("#rol").val($(this).data("rol"));
-
-        $("#modalUsuario").modal({
-            backdrop: "static",
-            keyboard: false
-        });
-    }, 300);
+$(document).on("change", "#verPass", function () {
+    let tipo = this.checked ? "text" : "password";
+    $("#usu_pass, #usu_pass_confirm").attr("type", tipo);
 });
 
 /* ==========================
-   GUARDAR / EDITAR
+   GUARDAR USUARIO
 ========================== */
-$("#formUsuario").on("submit", function(e){
+$(document).on("submit", "#formUsuario", function (e) {
     e.preventDefault();
 
-    $.post("creaedit.php", $(this).serialize() + "&op=guardar", function(){
+    let pass = $("#usu_pass").val();
+    let confirm = $("#usu_pass_confirm").val();
+
+    if (pass !== "" || confirm !== "") {
+        if (pass !== confirm) {
+            alert("Las contraseñas no coinciden");
+            return;
+        }
+        if (pass.length < 6) {
+            alert("La contraseña debe tener al menos 6 caracteres");
+            return;
+        }
+    }
+
+    $.post("creaedit.php", $(this).serialize() + "&op=guardar", function () {
+        $("#modalUsuario").modal("hide");
         location.reload();
     });
 });
 
 /* ==========================
-   ELIMINAR
+   EDITAR USUARIO (CORRECTO)
 ========================== */
-$(document).on("click", ".eliminar", function(){
-    if(confirm("¿Eliminar usuario?")){
-        $.post("creaedit.php", {
-            op: "eliminar",
-            usu_id: $(this).data("id")
-        }, function(){
-            location.reload();
-        });
-    }
+$(document).on("click", ".editar", function () {
+
+    let data = $(this).data();
+
+    // 1️⃣ cerrar modal lista
+    $("#modalUsuarios").modal("hide");
+
+    // 2️⃣ cuando termine de cerrarse, abrir el otro
+    $("#modalUsuarios").one("hidden.bs.modal", function () {
+
+        $("#formUsuario")[0].reset();
+
+        $("#usu_id").val(data.id);
+        $("#usu_nombre").val(data.nombre);
+        $("#usu_apellido").val(data.apellido);
+        $("#usu_correo").val(data.correo);
+        $("#rol").val(data.rol);
+
+        $("#modalUsuario").modal("show");
+    });
 });
 
 /* ==========================
-   AL CERRAR FORMULARIO
+   NUEVO USUARIO (CORRECTO)
 ========================== */
-$("#modalUsuario").on("hidden.bs.modal", function(){
-    limpiarModales();
-    $("#modalUsuarios").modal("show");
+function nuevoUsuario() {
+
+    $("#modalUsuarios").modal("hide");
+
+    $("#modalUsuarios").one("hidden.bs.modal", function () {
+        $("#formUsuario")[0].reset();
+        $("#usu_id").val("");
+        $("#modalUsuario").modal("show");
+    });
+}
+
+/* ==========================
+   ELIMINAR
+========================== */
+$(document).on("click", ".eliminar", function () {
+
+    let id = $(this).data("id");
+
+    if (!confirm("¿Eliminar usuario?")) return;
+
+    $.post("creaedit.php", {
+        op: "eliminar",
+        usu_id: id
+    }, function () {
+        location.reload();
+    });
 });
