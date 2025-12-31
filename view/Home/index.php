@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
    LISTAR TICKETS
 ========================= */
 $sql = "SELECT ticket_id, tipo_solicitud, descripcion, prioridad, cedis,
-               fecha_solicitud, estado, evidencia
+               fecha_solicitud, estado, evidencia, comentario_admin
         FROM tm_ticket
         WHERE correo = :correo
         ORDER BY fecha_solicitud DESC";
@@ -95,12 +95,10 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <h1>SERVICIOS CORPORATIVOS</h1>
             <h2>Tickets de Atención</h2>
         </div>
-<div class="logout-box">
-       
-        <a href="../../index.php" class="btn-logout">Cerrar sesión</a>
-    </div>
 
-
+        <div class="logout-box">
+            <a href="../../index.php" class="btn-logout">Cerrar sesión</a>
+        </div>
     </div>
 
     <form method="post" enctype="multipart/form-data">
@@ -180,10 +178,10 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php if (!empty($tickets)) { ?>
 <section class="tickets-section">
 
-
     <div class="tickets-list">
         <div class="tickets-card">
-                    <h3 class="section-title">Mis Tickets</h3>
+            <h3 class="section-title">Mis Tickets</h3>
+
             <div class="table-responsive">
                 <table class="tickets-table">
                     <thead>
@@ -193,8 +191,9 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>Descripción</th>
                             <th>Prioridad</th>
                             <th>Cedis</th>
-                            <th>Fecha y Hora</th>
+                            <th>Fecha</th>
                             <th>Estatus</th>
+                            <th>Comentario Admin</th>
                             <th>Evidencia</th>
                         </tr>
                     </thead>
@@ -218,7 +217,14 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 ?>
                             </td>
                             <td>
-                                <?= $t['evidencia'] ? '<a href="../../uploads/'.$t['evidencia'].'" target="_blank">Ver</a>' : '—'; ?>
+                                <?= !empty($t['comentario_admin'])
+                                    ? htmlspecialchars($t['comentario_admin'])
+                                    : '—'; ?>
+                            </td>
+                            <td>
+                                <?= $t['evidencia']
+                                    ? '<a href="../../uploads/'.$t['evidencia'].'" target="_blank">Ver</a>'
+                                    : '—'; ?>
                             </td>
                         </tr>
                         <?php } ?>

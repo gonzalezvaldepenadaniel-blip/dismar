@@ -89,3 +89,30 @@ $(document).on("click", ".eliminar", function () {
         location.reload();
     });
 });
+
+
+/* ==========================
+   ATENDER TICKET
+========================== */
+$(document).on("click", ".atender", function () {
+
+    let id = $(this).data("id");
+    let estado = $(this).data("estado");
+
+    $("#ticket_id").val(id);
+    $("#estado").val(estado);
+
+    $("#modalTicket").modal("show");
+});
+
+/* ==========================
+   GUARDAR TICKET
+========================== */
+$(document).on("submit", "#formTicket", function (e) {
+    e.preventDefault();
+
+    $.post("ticket_update.php", $(this).serialize(), function () {
+        $("#modalTicket").modal("hide");
+        location.reload();
+    });
+});

@@ -18,7 +18,7 @@ $conexion = $conectar->conexion();
 $conectar->set_names();
 
 /* =========================
-   LISTAR REPORTES (TICKETS)
+   LISTAR REPORTES
 ========================= */
 $sql = "SELECT ticket_id, solicita, correo, tipo_solicitud,
                descripcion, prioridad, cedis, fecha_solicitud,
@@ -42,10 +42,10 @@ $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 body { background:#f8f9fa; font-family:Arial }
 .navbar-admin { background:#343a40; padding:10px }
 .navbar-admin a {
-    color:#fff;
-    margin-right:15px;
-    font-weight:600;
-    text-decoration:none
+  color:#fff;
+  margin-right:15px;
+  font-weight:600;
+  text-decoration:none
 }
 .content { padding:30px }
 </style>
@@ -55,9 +55,13 @@ body { background:#f8f9fa; font-family:Arial }
 
 <!-- ================= MENÚ ================= -->
 <div class="navbar-admin">
- 
-  <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
-  <a href="#" data-toggle="modal" data-target="#modalReportes">Reportes</a>
+  <a href="#" data-toggle="modal" data-target="#modalUsuarios"
+     onclick="document.getElementById('seccionReportes').style.display='none'">
+     Usuarios
+  </a>
+
+  <a href="#" onclick="mostrarReportes()">Reportes</a>
+
   <a href="../index.php">Cerrar sesión</a>
 </div>
 
@@ -67,15 +71,13 @@ body { background:#f8f9fa; font-family:Arial }
 </div>
 
 <!-- ================= MODAL USUARIOS ================= -->
-<div class="modal fade" id="modalUsuarios" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="modalUsuarios" tabindex="-1">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
 
       <div class="modal-header">
         <h5 class="modal-title">Usuarios registrados</h5>
-        <button type="button" class="close" data-dismiss="modal">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <div class="modal-body">
@@ -122,81 +124,119 @@ body { background:#f8f9fa; font-family:Arial }
         </table>
 
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL ACTUALIZAR TICKET ================= -->
+<div class="modal fade" id="modalTicket" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Actualizar Ticket</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <form id="formTicket">
+        <div class="modal-body">
+
+          <input type="hidden" name="ticket_id" id="ticket_id">
+
+          <div class="form-group">
+            <label>Estatus</label>
+            <select name="estado" id="estado" class="form-control">
+              <option value="1">Abierto</option>
+              <option value="2">En proceso</option>
+              <option value="3">Cerrado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Comentario del administrador</label>
+            <textarea name="comentario_admin"
+              class="form-control" rows="4"></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
 
     </div>
   </div>
 </div>
 
-<!-- ================= MODAL REPORTES ================= -->
-<div class="modal fade" id="modalReportes" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
+<!-- ================= REPORTES ================= -->
+<div class="content" id="seccionReportes" style="display:none">
 
-      <div class="modal-header">
-        <h5 class="modal-title">Reportes de Usuarios</h5>
-        <button type="button" class="close" data-dismiss="modal">
-          <span>&times;</span>
-        </button>
-      </div>
+  <h4>Reportes de Usuarios</h4>
 
-      <div class="modal-body">
-
-        <table class="table table-bordered table-hover table-sm">
-          <thead class="thead-dark">
-            <tr>
-              <th>Folio</th>
-              <th>Solicita</th>
-              <th>Correo</th>
-              <th>Tipo</th>
-              <th>Descripción</th>
-              <th>Prioridad</th>
-              <th>Cedis</th>
-              <th>Fecha</th>
-              <th>Estatus</th>
-              <th>Evidencia</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php foreach ($reportes as $r): ?>
-            <tr>
-              <td><?= $r['ticket_id'] ?></td>
-              <td><?= htmlspecialchars($r['solicita']) ?></td>
-              <td><?= htmlspecialchars($r['correo']) ?></td>
-              <td><?= $r['tipo_solicitud'] ?></td>
-              <td><?= $r['descripcion'] ?></td>
-              <td><?= $r['prioridad'] ?></td>
-              <td><?= $r['cedis'] ?></td>
-              <td>
-                <?= date('d/m/Y', strtotime($r['fecha_solicitud'])) ?><br>
-                <small><?= date('H:i', strtotime($r['fecha_solicitud'])) ?></small>
-              </td>
-              <td>
-                <?php
-                  if ($r['estado'] == 1) echo '<span class="badge badge-success">Abierto</span>';
-                  elseif ($r['estado'] == 2) echo '<span class="badge badge-warning">En proceso</span>';
-                  else echo '<span class="badge badge-secondary">Cerrado</span>';
-                ?>
-              </td>
-              <td>
-                <?= $r['evidencia']
-                    ? '<a href="../uploads/'.$r['evidencia'].'" target="_blank">Ver</a>'
-                    : '—'; ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
-
-      </div>
-
-    </div>
-  </div>
+  <table class="table table-bordered table-hover table-sm">
+    <thead class="thead-dark">
+      <tr>
+        <th>Folio</th>
+        <th>Solicita</th>
+        <th>Correo</th>
+        <th>Tipo</th>
+        <th>Descripción</th>
+        <th>Prioridad</th>
+        <th>Cedis</th>
+        <th>Fecha</th>
+        <th>Estatus</th>
+        <th>Evidencia</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($reportes as $r): ?>
+      <tr>
+        <td><?= $r['ticket_id'] ?></td>
+        <td><?= htmlspecialchars($r['solicita']) ?></td>
+        <td><?= htmlspecialchars($r['correo']) ?></td>
+        <td><?= $r['tipo_solicitud'] ?></td>
+        <td><?= $r['descripcion'] ?></td>
+        <td><?= $r['prioridad'] ?></td>
+        <td><?= $r['cedis'] ?></td>
+        <td><?= date('d/m/Y H:i', strtotime($r['fecha_solicitud'])) ?></td>
+        <td>
+          <?php
+            if ($r['estado'] == 1) echo '<span class="badge badge-success">Abierto</span>';
+            elseif ($r['estado'] == 2) echo '<span class="badge badge-warning">En proceso</span>';
+            else echo '<span class="badge badge-secondary">Cerrado</span>';
+          ?>
+        </td>
+        <td>
+          <?= $r['evidencia']
+              ? '<a href="../uploads/'.$r['evidencia'].'" target="_blank">Ver</a>'
+              : '—'; ?>
+        </td>
+        <td>
+          <button class="btn btn-primary btn-sm atender"
+            data-id="<?= $r['ticket_id'] ?>"
+            data-estado="<?= $r['estado'] ?>">
+            Atender
+          </button>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
 </div>
 
 <!-- ================= SCRIPTS ================= -->
 <script src="../public/js/lib/jquery/jquery.min.js"></script>
 <script src="../public/js/lib/bootstrap/bootstrap.min.js"></script>
 <script src="usuario.js"></script>
+
+<script>
+function mostrarReportes() {
+  $('.modal').modal('hide');
+  document.getElementById('seccionReportes').style.display = 'block';
+}
+</script>
 
 </body>
 </html>
