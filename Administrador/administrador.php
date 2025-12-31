@@ -18,11 +18,11 @@ $conexion = $conectar->conexion();
 $conectar->set_names();
 
 /* =========================
-   LISTAR REPORTES
+   LISTAR REPORTES (INCLUYE COMENTARIO)
 ========================= */
 $sql = "SELECT ticket_id, solicita, correo, tipo_solicitud,
                descripcion, prioridad, cedis, fecha_solicitud,
-               estado, evidencia
+               estado, evidencia, comentario_admin
         FROM tm_ticket
         ORDER BY fecha_solicitud DESC";
 
@@ -30,26 +30,14 @@ $stmt = $conexion->prepare($sql);
 $stmt->execute();
 $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<!DOCTYPE html>
-<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dismar - Administrador</title>
+<title>Dismarr</title>
 
 <link rel="stylesheet" href="../public/css/lib/bootstrap/bootstrap.min.css">
-
-<style>
-body { background:#f8f9fa; font-family:Arial }
-.navbar-admin { background:#343a40; padding:10px }
-.navbar-admin a {
-  color:#fff;
-  margin-right:15px;
-  font-weight:600;
-  text-decoration:none
-}
-.content { padding:30px }
-</style>
+<link rel="stylesheet" href="administrador.css">
 </head>
+
 
 <body>
 
@@ -153,7 +141,7 @@ body { background:#f8f9fa; font-family:Arial }
           </div>
 
           <div class="form-group">
-            <label>Comentario del administrador</label>
+            <label>Comentarios</label>
             <textarea name="comentario_admin"
               class="form-control" rows="4"></textarea>
           </div>
@@ -172,7 +160,7 @@ body { background:#f8f9fa; font-family:Arial }
 <!-- ================= REPORTES ================= -->
 <div class="content" id="seccionReportes" style="display:none">
 
-  <h4>Reportes de Usuarios</h4>
+  <h4>Reportes</h4>
 
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-dark">
@@ -216,7 +204,8 @@ body { background:#f8f9fa; font-family:Arial }
         <td>
           <button class="btn btn-primary btn-sm atender"
             data-id="<?= $r['ticket_id'] ?>"
-            data-estado="<?= $r['estado'] ?>">
+            data-estado="<?= $r['estado'] ?>"
+            data-comentario="<?= htmlspecialchars($r['comentario_admin'] ?? '') ?>">
             Atender
           </button>
         </td>

@@ -193,7 +193,7 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>Cedis</th>
                             <th>Fecha</th>
                             <th>Estatus</th>
-                            <th>Comentario Admin</th>
+                            <th>Comentarios</th>
                             <th>Evidencia</th>
                         </tr>
                     </thead>

@@ -1,0 +1,59 @@
+/* ===== ESTILOS GENERALES ===== */
+body {
+    background: #f8f9fa;
+    font-family: Arial;
+}
+
+/* ===== NAVBAR ADMIN ===== */
+.navbar-admin {
+    background: #343a40; /* gris oscuro Bootstrap */
+    padding: 10px 20px;
+}
+
+.navbar-admin a {
+    color: #ffffff;
+    margin-right: 15px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.navbar-admin a:hover {
+    text-decoration: underline;
+}
+
+/* ===== CONTENIDO ===== */
+.content {
+    padding: 30px;
+}
+
+/* ===== TABLAS ===== */
+.table thead th {
+    vertical-align: middle;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* ===== BOTONES ===== */
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* ===== MODALES ===== */
+.modal-header {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.modal-header .close {
+    color: #ffffff;
+    opacity: 1;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    font-size: 12px;
+    padding: 6px 8px;
+}

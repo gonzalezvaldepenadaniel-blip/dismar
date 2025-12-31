@@ -98,12 +98,15 @@ $(document).on("click", ".atender", function () {
 
     let id = $(this).data("id");
     let estado = $(this).data("estado");
+    let comentario = $(this).data("comentario");
 
     $("#ticket_id").val(id);
     $("#estado").val(estado);
+    $("textarea[name='comentario_admin']").val(comentario);
 
     $("#modalTicket").modal("show");
 });
+
 
 /* ==========================
    GUARDAR TICKET
