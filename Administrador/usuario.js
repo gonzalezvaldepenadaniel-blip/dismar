@@ -53,6 +53,8 @@ $(document).on("click", ".editar", function () {
         $("#usu_nombre").val(data.nombre);
         $("#usu_apellido").val(data.apellido);
         $("#usu_correo").val(data.correo);
+         $("#cedis").val(data.cedis);
+
         $("#rol").val(data.rol);
 
         $("#modalUsuario").modal("show");

@@ -7,7 +7,7 @@ if (!isset($_POST["op"])) {
 }
 
 /* =======================
-   GUARDAR / EDITAR
+   GUARDAR / EDITAR USUARIO
 ======================= */
 if ($_POST["op"] === "guardar") {
 
@@ -15,14 +15,15 @@ if ($_POST["op"] === "guardar") {
     if (empty($_POST["usu_id"])) {
 
         $sql = "INSERT INTO tm_usuario
-        (usu_nombre, usu_apellido, usu_correo, usu_pass, rol, estado)
-        VALUES (?,?,?,?,?,1)";
+        (usu_nombre, usu_apellido, usu_correo, cedis, usu_pass, rol, estado)
+        VALUES (?,?,?,?,?,?,1)";
 
         $stmt = $con->prepare($sql);
         $stmt->execute([
             $_POST["usu_nombre"],
             $_POST["usu_apellido"],
             $_POST["usu_correo"],
+            $_POST["cedis"],
             password_hash($_POST["usu_pass"], PASSWORD_DEFAULT),
             $_POST["rol"]
         ]);
@@ -31,43 +32,47 @@ if ($_POST["op"] === "guardar") {
     /* ===== EDITAR USUARIO ===== */
     else {
 
-        // Si escribieron contraseña, se actualiza
+        // 🔐 Si escribieron contraseña
         if (!empty($_POST["usu_pass"])) {
 
             $sql = "UPDATE tm_usuario SET
-            usu_nombre=?,
-            usu_apellido=?,
-            usu_correo=?,
-            usu_pass=?,
-            rol=?
-            WHERE usu_id=?";
+                usu_nombre = ?,
+                usu_apellido = ?,
+                usu_correo = ?,
+                cedis = ?,
+                usu_pass = ?,
+                rol = ?
+            WHERE usu_id = ?";
 
             $stmt = $con->prepare($sql);
             $stmt->execute([
                 $_POST["usu_nombre"],
                 $_POST["usu_apellido"],
                 $_POST["usu_correo"],
+                $_POST["cedis"],
                 password_hash($_POST["usu_pass"], PASSWORD_DEFAULT),
                 $_POST["rol"],
                 $_POST["usu_id"]
             ]);
 
         } 
-        // Si NO escribieron contraseña, no se toca
+        // 🔓 Sin cambiar contraseña
         else {
 
             $sql = "UPDATE tm_usuario SET
-            usu_nombre=?,
-            usu_apellido=?,
-            usu_correo=?,
-            rol=?
-            WHERE usu_id=?";
+                usu_nombre = ?,
+                usu_apellido = ?,
+                usu_correo = ?,
+                cedis = ?,
+                rol = ?
+            WHERE usu_id = ?";
 
             $stmt = $con->prepare($sql);
             $stmt->execute([
                 $_POST["usu_nombre"],
                 $_POST["usu_apellido"],
                 $_POST["usu_correo"],
+                $_POST["cedis"],
                 $_POST["rol"],
                 $_POST["usu_id"]
             ]);

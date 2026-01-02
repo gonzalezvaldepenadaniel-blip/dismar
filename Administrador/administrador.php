@@ -18,7 +18,7 @@ $conexion = $conectar->conexion();
 $conectar->set_names();
 
 /* =========================
-   LISTAR REPORTES (INCLUYE COMENTARIO)
+   LISTAR REPORTES
 ========================= */
 $sql = "SELECT ticket_id, solicita, correo, tipo_solicitud,
                descripcion, prioridad, cedis, fecha_solicitud,
@@ -30,6 +30,8 @@ $stmt = $conexion->prepare($sql);
 $stmt->execute();
 $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+<!DOCTYPE html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Dismarr</title>
@@ -37,7 +39,6 @@ $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link rel="stylesheet" href="../public/css/lib/bootstrap/bootstrap.min.css">
 <link rel="stylesheet" href="administrador.css">
 </head>
-
 
 <body>
 
@@ -81,6 +82,7 @@ $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <th>Correo</th>
               <th>Rol</th>
               <th>Estado</th>
+              <th>Cedis</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -91,13 +93,15 @@ $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <td><?= htmlspecialchars($u["usu_correo"]) ?></td>
               <td><?= strtoupper($u["rol"]) ?></td>
               <td><?= $u["estado"] == 1 ? "Activo" : "Inactivo" ?></td>
+              <td><?= htmlspecialchars($u["cedis"]) ?></td>
               <td>
                 <button class="btn btn-warning btn-sm editar"
                   data-id="<?= $u["usu_id"] ?>"
                   data-nombre="<?= $u["usu_nombre"] ?>"
                   data-apellido="<?= $u["usu_apellido"] ?>"
                   data-correo="<?= $u["usu_correo"] ?>"
-                  data-rol="<?= $u["rol"] ?>">
+                  data-rol="<?= $u["rol"] ?>"
+                  data-cedis="<?= $u["cedis"] ?>">
                   Editar
                 </button>
 
@@ -187,7 +191,7 @@ $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <td><?= $r['tipo_solicitud'] ?></td>
         <td><?= $r['descripcion'] ?></td>
         <td><?= $r['prioridad'] ?></td>
-        <td><?= $r['cedis'] ?></td>
+        <td><?= htmlspecialchars($r['cedis']) ?></td>
         <td><?= date('d/m/Y H:i', strtotime($r['fecha_solicitud'])) ?></td>
         <td>
           <?php

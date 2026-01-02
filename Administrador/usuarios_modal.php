@@ -3,7 +3,7 @@ require_once("../config/conexion.php");
 
 $conexion = (new Conectar())->conexion();
 
-$sql = "SELECT usu_id, usu_nombre, usu_apellido, usu_correo, rol, estado
+$sql = "SELECT usu_id, usu_nombre, usu_apellido, usu_correo, rol, cedis, estado
         FROM tm_usuario
         ORDER BY usu_id DESC";
 
