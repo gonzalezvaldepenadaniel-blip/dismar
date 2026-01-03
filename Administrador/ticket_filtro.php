@@ -25,8 +25,9 @@ if (!empty($_POST['inicio'])) {
 
 if (!empty($_POST['fin'])) {
     $sql .= " AND fecha_solicitud <= ?";
-    $params[] = $_POST['fin'];
+    $params[] = $_POST['fin'] . " 23:59:59";
 }
+
 
 if (!empty($_POST['estado'])) {
     $sql .= " AND estado = ?";
