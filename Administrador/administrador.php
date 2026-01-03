@@ -22,18 +22,27 @@ require_once("crud.php");
 
 <body>
 
-<!-- ===== NAVBAR ===== -->
+<!-- ================= NAVBAR ================= -->
 <div class="navbar-admin">
-  <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
+
+  <a href="#"
+     data-toggle="modal"
+     data-target="#modalUsuarios">
+     Usuarios
+  </a>
+
   <a href="#" onclick="mostrarReportes()">Reportes</a>
+
   <a href="../index.php">Cerrar sesión</a>
+
 </div>
 
+<!-- ================= BIENVENIDA ================= -->
 <div class="content">
   <h2>Bienvenido, <?= htmlspecialchars($_SESSION["usu_nombre"]) ?></h2>
 </div>
 
-<!-- ===== REPORTES ===== -->
+<!-- ================= REPORTES ================= -->
 <div class="content" id="seccionReportes" style="display:none">
 
 <h4>Reportes</h4>
@@ -86,8 +95,13 @@ require_once("crud.php");
   </div>
 
   <div class="mt-2">
-    <button type="button" id="btnBuscar" class="btn btn-primary btn-sm">Buscar</button>
-    <button type="button" id="btnLimpiar" class="btn btn-secondary btn-sm">Limpiar</button>
+    <button type="button" id="btnBuscar" class="btn btn-primary btn-sm">
+      Buscar
+    </button>
+
+    <button type="button" id="btnLimpiar" class="btn btn-secondary btn-sm">
+      Limpiar
+    </button>
   </div>
 </form>
 
@@ -108,24 +122,31 @@ require_once("crud.php");
 <th>Acciones</th>
 </tr>
 </thead>
+
 <tbody id="tablaReportes">
 <tr>
-<td colspan="11" class="text-center">Selecciona Reportes</td>
+<td colspan="11" class="text-center">
+  Selecciona Reportes
+</td>
 </tr>
 </tbody>
 </table>
 
 </div>
 
-<!-- ===== SCRIPTS ===== -->
+<!-- ================= SCRIPTS ================= -->
 <script src="../public/js/lib/jquery/jquery.min.js"></script>
+
+<!-- 🔴 IMPRESCINDIBLE PARA BOOTSTRAP 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+
 <script src="../public/js/lib/bootstrap/bootstrap.min.js"></script>
 <script src="usuario.js"></script>
 
 <script>
 function mostrarReportes(){
     $("#seccionReportes").show();
-    cargarTickets(); // carga inicial
+    cargarTickets();
 }
 
 function cargarTickets(){
@@ -143,7 +164,7 @@ function cargarTickets(){
         },
         beforeSend: function(){
             $("#tablaReportes").html(
-                `<tr><td colspan="11" class="text-center">Cargando...</td></tr>`
+                '<tr><td colspan="11" class="text-center">Cargando...</td></tr>'
             );
         },
         success: function(resp){
@@ -159,6 +180,11 @@ $("#btnBuscar").on("click", function(){
 $("#btnLimpiar").on("click", function(){
     $("#formFiltros")[0].reset();
     cargarTickets();
+});
+
+/* Al abrir Usuarios, ocultar reportes */
+$('#modalUsuarios').on('show.bs.modal', function () {
+    $("#seccionReportes").hide();
 });
 </script>
 

@@ -1,6 +1,11 @@
-console.log("usuario.js OK");
+console.log("usuario.js cargado correctamente");
 
-
+/* ==========================
+   CARGAR USUARIOS (AJAX)
+========================== */
+function cargarUsuarios() {
+    $("#tablaUsuarios").load("usuarios_tabla.php");
+}
 
 /* ==========================
    GUARDAR USUARIO
@@ -11,6 +16,7 @@ $(document).on("submit", "#formUsuario", function (e) {
     let pass = $("#usu_pass").val();
     let confirm = $("#usu_pass_confirm").val();
 
+    // Validaciones
     if (pass !== "" || confirm !== "") {
         if (pass !== confirm) {
             alert("Las contraseñas no coinciden");
@@ -22,23 +28,34 @@ $(document).on("submit", "#formUsuario", function (e) {
         }
     }
 
-    $.post("creaedit.php", $(this).serialize() + "&op=guardar", function () {
-        $("#modalUsuario").modal("hide");
-        location.reload();
-    });
+    $.post(
+        "creaedit.php",
+        $(this).serialize() + "&op=guardar",
+        function () {
+
+            // cerrar modal de formulario
+            $("#modalUsuario").modal("hide");
+
+            // cuando termine de cerrarse
+            $("#modalUsuario").one("hidden.bs.modal", function () {
+
+                // recargar tabla y volver a mostrar usuarios
+                cargarUsuarios();
+                $("#modalUsuarios").modal("show");
+            });
+        }
+    );
 });
 
 /* ==========================
-   EDITAR USUARIO (CORRECTO)
+   EDITAR USUARIO
 ========================== */
 $(document).on("click", ".editar", function () {
 
     let data = $(this).data();
 
-    // 1️⃣ cerrar modal lista
     $("#modalUsuarios").modal("hide");
 
-    // 2️⃣ cuando termine de cerrarse, abrir el otro
     $("#modalUsuarios").one("hidden.bs.modal", function () {
 
         $("#formUsuario")[0].reset();
@@ -47,8 +64,7 @@ $(document).on("click", ".editar", function () {
         $("#usu_nombre").val(data.nombre);
         $("#usu_apellido").val(data.apellido);
         $("#usu_correo").val(data.correo);
-         $("#cedis").val(data.cedis);
-
+        $("#cedis").val(data.cedis);
         $("#rol").val(data.rol);
 
         $("#modalUsuario").modal("show");
@@ -56,13 +72,14 @@ $(document).on("click", ".editar", function () {
 });
 
 /* ==========================
-   NUEVO USUARIO (CORRECTO)
+   NUEVO USUARIO
 ========================== */
 function nuevoUsuario() {
 
     $("#modalUsuarios").modal("hide");
 
     $("#modalUsuarios").one("hidden.bs.modal", function () {
+
         $("#formUsuario")[0].reset();
         $("#usu_id").val("");
         $("#modalUsuario").modal("show");
@@ -70,7 +87,7 @@ function nuevoUsuario() {
 }
 
 /* ==========================
-   ELIMINAR
+   ELIMINAR USUARIO
 ========================== */
 $(document).on("click", ".eliminar", function () {
 
@@ -78,86 +95,34 @@ $(document).on("click", ".eliminar", function () {
 
     if (!confirm("¿Eliminar usuario?")) return;
 
-    $.post("creaedit.php", {
-        op: "eliminar",
-        usu_id: id
-    }, function () {
-        location.reload();
-    });
+    $.post(
+        "creaedit.php",
+        { op: "eliminar", usu_id: id },
+        function () {
+            cargarUsuarios();
+        }
+    );
 });
-
 
 /* ==========================
-   ATENDER TICKET
+   VER / OCULTAR CONTRASEÑA
 ========================== */
-$(document).on("click", ".atender", function () {
-
-    let id = $(this).data("id");
-    let estado = $(this).data("estado");
-    let comentario = $(this).data("comentario");
-
-    $("#ticket_id").val(id);
-    $("#estado").val(estado);
-    $("textarea[name='comentario_admin']").val(comentario);
-
-    $("#modalTicket").modal("show");
-});
-
-
-/* ==========================
-   GUARDAR TICKET
-========================== */
-$(document).on("submit", "#formTicket", function (e) {
-    e.preventDefault();
-
-    $.post("ticket_update.php", $(this).serialize(), function () {
-        $("#modalTicket").modal("hide");
-        location.reload();
-    });
-});
-
 $(document).on("click", ".toggle-pass", function () {
 
-    let wrapper = $(this).closest(".password-wrapper");
-    let input = wrapper.find("input");
+    let input = $(this)
+        .closest(".password-wrapper")
+        .find("input");
 
-    let tipo = input.attr("type") === "password" ? "text" : "password";
-    input.attr("type", tipo);
-
+    input.attr(
+        "type",
+        input.attr("type") === "password" ? "text" : "password"
+    );
 });
 
-
-
-
-
-
-
-
-
-
-function cargarReportes() {
-    $.post("ticket_filtro.php", {
-        folio: $("#f_folio").val(),
-        cedis: $("#f_cedis").val(),
-        inicio: $("#f_inicio").val(),
-        fin: $("#f_fin").val(),
-        estado: $("#f_estado").val(),
-        prioridad: $("#f_prioridad").val()
-    }, function (html) {
-        $("#tablaReportes").html(html);
-    });
-}
-
-$("#btnBuscar").on("click", function () {
-    cargarReportes();
-});
-
-$("#btnLimpiar").on("click", function () {
-    $("#f_folio, #f_cedis, #f_inicio, #f_fin, #f_estado, #f_prioridad").val("");
-    cargarReportes();
-});
-
-// cargar al entrar
-$(document).ready(function () {
-    cargarReportes();
+/* ==========================
+   AL ABRIR USUARIOS
+========================== */
+$('#modalUsuarios').on('show.bs.modal', function () {
+    $("#seccionReportes").hide();
+    cargarUsuarios(); // siempre refresca
 });
