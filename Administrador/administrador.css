@@ -57,3 +57,58 @@ body {
     font-size: 12px;
     padding: 6px 8px;
 }
+
+.password-wrapper {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.password-wrapper input {
+    padding-right: 42px;
+}
+
+.password-wrapper .toggle-pass {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    user-select: none;
+    z-index: 5; /* 🔥 importante */
+    color: #6c757d;
+}
+
+.password-wrapper .toggle-pass:hover {
+    color: #000;
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== FILTROS AVANZADOS ===== */
+/* ===== FILTROS PLANOS ===== */
+.filtro-bar {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.filtro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+.filtro-bar button {
+    margin-top: 10px;
+}

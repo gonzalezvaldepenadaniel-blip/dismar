@@ -36,24 +36,29 @@ id="usu_correo" placeholder="Correo" required>
 
 
 <!-- CONTRASEÑA -->
-<input type="password" class="form-control mb-2"
-name="usu_pass" id="usu_pass"
-placeholder="Contraseña">
 
-<input type="password" class="form-control mb-2"
-id="usu_pass_confirm"
-placeholder="Confirmar contraseña">
+<!-- CONTRASEÑA -->
+<!-- CONTRASEÑA -->
+<div class="form-group password-wrapper">
+    <input type="password" class="form-control"
+           name="usu_pass" id="usu_pass"
+           placeholder="Contraseña">
 
-<div class="form-check mb-2">
-  <input class="form-check-input" type="checkbox" id="verPass">
-  <label class="form-check-label" for="verPass">
-    Mostrar contraseña
-  </label>
+    <span class="toggle-pass">👁</span>
+</div>
+
+<div class="form-group password-wrapper">
+    <input type="password" class="form-control"
+           id="usu_pass_confirm"
+           placeholder="Confirmar contraseña">
+
+    <span class="toggle-pass">👁</span>
 </div>
 
 <small class="text-muted">
-Deja la contraseña en blanco si no deseas cambiarla.
+    Deja la contraseña en blanco si no deseas cambiarla.
 </small>
+
 
 <select class="form-control mt-2" name="rol" id="rol">
   <option value="user">Usuario</option>

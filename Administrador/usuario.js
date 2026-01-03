@@ -1,12 +1,6 @@
 console.log("usuario.js OK");
 
-/* ==========================
-   MOSTRAR / OCULTAR CONTRASEÑA
-========================== */
-$(document).on("change", "#verPass", function () {
-    let tipo = this.checked ? "text" : "password";
-    $("#usu_pass, #usu_pass_confirm").attr("type", tipo);
-});
+
 
 /* ==========================
    GUARDAR USUARIO
@@ -120,4 +114,50 @@ $(document).on("submit", "#formTicket", function (e) {
         $("#modalTicket").modal("hide");
         location.reload();
     });
+});
+
+$(document).on("click", ".toggle-pass", function () {
+
+    let wrapper = $(this).closest(".password-wrapper");
+    let input = wrapper.find("input");
+
+    let tipo = input.attr("type") === "password" ? "text" : "password";
+    input.attr("type", tipo);
+
+});
+
+
+
+
+
+
+
+
+
+
+function cargarReportes() {
+    $.post("ticket_filtro.php", {
+        folio: $("#f_folio").val(),
+        cedis: $("#f_cedis").val(),
+        inicio: $("#f_inicio").val(),
+        fin: $("#f_fin").val(),
+        estado: $("#f_estado").val(),
+        prioridad: $("#f_prioridad").val()
+    }, function (html) {
+        $("#tablaReportes").html(html);
+    });
+}
+
+$("#btnBuscar").on("click", function () {
+    cargarReportes();
+});
+
+$("#btnLimpiar").on("click", function () {
+    $("#f_folio, #f_cedis, #f_inicio, #f_fin, #f_estado, #f_prioridad").val("");
+    cargarReportes();
+});
+
+// cargar al entrar
+$(document).ready(function () {
+    cargarReportes();
 });
