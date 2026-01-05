@@ -10,7 +10,7 @@ if (!isset($_SESSION['correo_usuario'])) {
     exit;
 }
 
-/* CONEXIÓN */
+/* ===== CONEXIÓN ===== */
 $conectar = new Conectar();
 $conexion = $conectar->conexion();
 $conectar->set_names();
@@ -18,11 +18,26 @@ $conectar->set_names();
 $correo_usuario = $_SESSION['correo_usuario'];
 
 /* =========================
+   OBTENER NOMBRE DEL USUARIO
+========================= */
+$stmtUsuario = $conexion->prepare("
+    SELECT CONCAT(usu_nombre, ' ', usu_apellido) AS nombre
+    FROM tm_usuario
+    WHERE usu_correo = :correo
+    LIMIT 1
+");
+$stmtUsuario->execute([
+    ":correo" => $correo_usuario
+]);
+$usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
+$nombre_usuario = $usuario ? $usuario['nombre'] : 'Usuario';
+
+/* =========================
    GUARDAR TICKET
 ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
 
-    $solicita    = $_POST['solicita'];
+    $solicita    = $nombre_usuario;
     $cedis       = $_POST['cedis'];
     $tipo        = $_POST['tipo_solicitud'];
     $descripcion = $_POST['descripcion'];
@@ -30,7 +45,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
     $matriz      = $_POST['matriz'];
     $fecha       = date('Y-m-d H:i:s');
 
-    /* SUBIR EVIDENCIA */
+    /* =========================
+       SIGLA POR TIPO
+    ========================= */
+    switch ($tipo) {
+        case 'Mantenimiento': $sigla = 'M'; break;
+        case 'Compras':       $sigla = 'C'; break;
+        case 'Sistemas':      $sigla = 'S'; break;
+        default:              $sigla = 'X';
+    }
+
+    /* =========================
+       GENERAR FOLIO
+       EJEMPLO: DIS260105-M0004
+    ========================= */
+    $stmtFecha = $conexion->query("
+        SELECT DATE_FORMAT(NOW(), '%y%m%d') AS fecha
+    ");
+    $fechaFolio = $stmtFecha->fetch(PDO::FETCH_ASSOC)['fecha'];
+
+    $stmtConsecutivo = $conexion->prepare("
+        SELECT COUNT(*) + 1
+        FROM tm_ticket
+        WHERE DATE(fecha_solicitud) = CURDATE()
+    ");
+    $stmtConsecutivo->execute();
+    $consecutivo = str_pad($stmtConsecutivo->fetchColumn(), 4, '0', STR_PAD_LEFT);
+
+    $folio = "DIS{$fechaFolio}-{$sigla}{$consecutivo}";
+
+    /* =========================
+       SUBIR EVIDENCIA
+    ========================= */
     $evidencia = null;
     if (!empty($_FILES['evidencia']['name'])) {
         $carpeta = __DIR__ . "/../../uploads/";
@@ -41,22 +87,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
         move_uploaded_file($_FILES['evidencia']['tmp_name'], $carpeta . $evidencia);
     }
 
+    /* =========================
+       INSERTAR TICKET
+    ========================= */
     $sql = "INSERT INTO tm_ticket
-        (solicita, correo, cedis, tipo_solicitud, descripcion, prioridad, matriz, evidencia, fecha_solicitud)
+        (folio, solicita, correo, cedis, tipo_solicitud, descripcion, prioridad, matriz, evidencia, fecha_solicitud)
         VALUES
-        (:solicita, :correo, :cedis, :tipo, :descripcion, :prioridad, :matriz, :evidencia, :fecha)";
+        (:folio, :solicita, :correo, :cedis, :tipo, :descripcion, :prioridad, :matriz, :evidencia, :fecha)";
 
     $stmt = $conexion->prepare($sql);
     $stmt->execute([
-        ":solicita" => $solicita,
-        ":correo" => $correo_usuario,
-        ":cedis" => $cedis,
-        ":tipo" => $tipo,
-        ":descripcion" => $descripcion,
-        ":prioridad" => $prioridad,
-        ":matriz" => $matriz,
-        ":evidencia" => $evidencia,
-        ":fecha" => $fecha
+        ":folio"      => $folio,
+        ":solicita"   => $solicita,
+        ":correo"     => $correo_usuario,
+        ":cedis"      => $cedis,
+        ":tipo"       => $tipo,
+        ":descripcion"=> $descripcion,
+        ":prioridad"  => $prioridad,
+        ":matriz"     => $matriz,
+        ":evidencia"  => $evidencia,
+        ":fecha"      => $fecha
     ]);
 
     header("Location: index.php");
@@ -66,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
 /* =========================
    LISTAR TICKETS
 ========================= */
-$sql = "SELECT ticket_id, tipo_solicitud, descripcion, prioridad, cedis,
+$sql = "SELECT folio, tipo_solicitud, descripcion, prioridad, cedis,
                fecha_solicitud, estado, evidencia, comentario_admin
         FROM tm_ticket
         WHERE correo = :correo
@@ -86,7 +136,6 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-<!-- ================= FORMULARIO ================= -->
 <div class="ticket-container">
 
     <div class="header-ticket">
@@ -95,7 +144,6 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <h1>SERVICIOS CORPORATIVOS</h1>
             <h2>Tickets de Atención</h2>
         </div>
-
         <div class="logout-box">
             <a href="../../index.php" class="btn-logout">Cerrar sesión</a>
         </div>
@@ -108,10 +156,12 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="text" value="<?= date('Y-m-d H:i') ?>" readonly>
         </div>
 
-        <div class="form-group">
-            <label>Quién solicita</label>
-            <input type="text" name="solicita" required>
-        </div>
+      <div class="form-group">
+    <label>Quién solicita</label>
+    <input type="text"
+           value="<?= htmlspecialchars($nombre_usuario) ?>"
+           readonly>
+</div>
 
         <div class="form-group">
             <label>Correo</label>
@@ -174,10 +224,12 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </form>
 </div>
 
-<!-- ================= LISTADO ================= -->
+</body>
+</html>
+
+
 <?php if (!empty($tickets)) { ?>
 <section class="tickets-section">
-
     <div class="tickets-list">
         <div class="tickets-card">
             <h3 class="section-title">Mis Tickets</h3>
@@ -200,27 +252,23 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <tbody>
                         <?php foreach ($tickets as $t) { ?>
                         <tr>
-                            <td><?= $t['ticket_id'] ?></td>
-                            <td><?= $t['tipo_solicitud'] ?></td>
-                            <td><?= $t['descripcion'] ?></td>
-                            <td><?= $t['prioridad'] ?></td>
-                            <td><?= $t['cedis'] ?></td>
+                            <td><strong><?= htmlspecialchars($t['folio']) ?></strong></td>
+                            <td><?= htmlspecialchars($t['tipo_solicitud']) ?></td>
+                            <td><?= htmlspecialchars($t['descripcion']) ?></td>
+                            <td><?= htmlspecialchars($t['prioridad']) ?></td>
+                            <td><?= htmlspecialchars($t['cedis']) ?></td>
                             <td>
                                 <?= date('d/m/Y', strtotime($t['fecha_solicitud'])) ?><br>
                                 <small><?= date('H:i', strtotime($t['fecha_solicitud'])) ?></small>
                             </td>
-                            <td class="estado">
+                            <td>
                                 <?php
                                 if ($t['estado'] == 1) echo '<strong class="abierto">Abierto</strong>';
                                 elseif ($t['estado'] == 2) echo '<strong class="proceso">En proceso</strong>';
                                 else echo '<strong class="cerrado">Cerrado</strong>';
                                 ?>
                             </td>
-                            <td>
-                                <?= !empty($t['comentario_admin'])
-                                    ? htmlspecialchars($t['comentario_admin'])
-                                    : '—'; ?>
-                            </td>
+                            <td><?= $t['comentario_admin'] ?: '—' ?></td>
                             <td>
                                 <?= $t['evidencia']
                                     ? '<a href="../../uploads/'.$t['evidencia'].'" target="_blank">Ver</a>'
@@ -231,10 +279,8 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
-
 </section>
 <?php } ?>
 

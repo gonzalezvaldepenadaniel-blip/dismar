@@ -20,7 +20,7 @@ $fin       = $_POST['fin']       ?? '';
 $estado    = $_POST['estado']    ?? '';
 $prioridad = $_POST['prioridad'] ?? '';
 
-/* ===== VALIDACIÓN FECHAS (🔥 IMPORTANTE) ===== */
+/* ===== VALIDACIÓN FECHAS ===== */
 if (!empty($inicio) && !empty($fin) && $inicio > $fin) {
     echo '
     <tr>
@@ -32,9 +32,19 @@ if (!empty($inicio) && !empty($fin) && $inicio > $fin) {
 }
 
 /* ===== QUERY BASE ===== */
-$sql = "SELECT ticket_id, solicita, correo, tipo_solicitud,
-               descripcion, prioridad, cedis, fecha_solicitud,
-               estado, evidencia, comentario_admin
+$sql = "SELECT 
+            ticket_id,
+            folio,
+            solicita,
+            correo,
+            tipo_solicitud,
+            descripcion,
+            prioridad,
+            cedis,
+            fecha_solicitud,
+            estado,
+            evidencia,
+            comentario_admin
         FROM tm_ticket
         WHERE 1=1";
 
@@ -42,8 +52,8 @@ $params = [];
 
 /* ===== APLICAR FILTROS ===== */
 if (!empty($folio)) {
-    $sql .= " AND ticket_id = ?";
-    $params[] = $folio;
+    $sql .= " AND folio LIKE ?";
+    $params[] = "%$folio%";
 }
 
 if (!empty($cedis)) {
@@ -93,14 +103,18 @@ if (!$reportes) {
 foreach ($reportes as $r):
 ?>
 <tr>
-    <td><?= $r['ticket_id'] ?></td>
+    <!-- ✅ FOLIO CORRECTO -->
+    <td><strong><?= htmlspecialchars($r['folio']) ?></strong></td>
+
     <td><?= htmlspecialchars($r['solicita']) ?></td>
     <td><?= htmlspecialchars($r['correo']) ?></td>
-    <td><?= $r['tipo_solicitud'] ?></td>
-    <td><?= $r['descripcion'] ?></td>
-    <td><?= $r['prioridad'] ?></td>
+    <td><?= htmlspecialchars($r['tipo_solicitud']) ?></td>
+    <td><?= htmlspecialchars($r['descripcion']) ?></td>
+    <td><?= htmlspecialchars($r['prioridad']) ?></td>
     <td><?= htmlspecialchars($r['cedis']) ?></td>
+
     <td><?= date('d/m/Y H:i', strtotime($r['fecha_solicitud'])) ?></td>
+
     <td>
         <?php
         if ($r['estado'] == 1) echo '<span class="badge badge-success">Abierto</span>';
@@ -108,12 +122,15 @@ foreach ($reportes as $r):
         else echo '<span class="badge badge-secondary">Cerrado</span>';
         ?>
     </td>
+
     <td>
         <?= $r['evidencia']
             ? '<a href="../uploads/'.$r['evidencia'].'" target="_blank">Ver</a>'
             : '—'; ?>
     </td>
+
     <td>
+        <!-- 🔐 ID SOLO PARA ACCIONES -->
         <button class="btn btn-primary btn-sm atender"
             data-id="<?= $r['ticket_id'] ?>"
             data-estado="<?= $r['estado'] ?>"
