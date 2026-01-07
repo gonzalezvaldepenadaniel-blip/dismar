@@ -1,24 +1,28 @@
 <?php
+session_start();
+
+if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
+    exit("no-session");
+}
+
 require_once("../config/conexion.php");
 
 $conectar = new Conectar();
 $conexion = $conectar->conexion();
-$conectar->set_names();
 
-$ticket_id = $_POST['ticket_id'];
-$estado = $_POST['estado'];
-$comentario = $_POST['comentario_admin'];
+$ticket_id = $_POST['ticket_id'] ?? null;
+$estado    = $_POST['estado'] ?? null;
+$comentario = $_POST['comentario_admin'] ?? '';
 
-$sql = "UPDATE tm_ticket
-        SET estado = :estado,
-            comentario_admin = :comentario
-        WHERE ticket_id = :id";
+if (!$ticket_id || !$estado) {
+    exit("datos-incompletos");
+}
+
+$sql = "UPDATE tm_ticket 
+        SET estado = ?, comentario_admin = ?
+        WHERE ticket_id = ?";
 
 $stmt = $conexion->prepare($sql);
-$stmt->execute([
-    ":estado" => $estado,
-    ":comentario" => $comentario,
-    ":id" => $ticket_id
-]);
+$stmt->execute([$estado, $comentario, $ticket_id]);
 
 echo "ok";

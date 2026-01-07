@@ -29,7 +29,6 @@ id="usu_correo" placeholder="Correo" required>
     <option value="Iztapalapa">Iztapalapa</option>
     <option value="Ecatepec">Ecatepec</option>
     <option value="Tultitlán">Tultitlán</option>
-    <option value="Nezahualcóyotl">Nezahualcóyotl</option>
     <option value="Corporativo">Corporativo</option>
     <option value="Querétaro">Querétaro</option>
 </select>

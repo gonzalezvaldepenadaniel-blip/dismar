@@ -1,114 +1,122 @@
-/* ===== ESTILOS GENERALES ===== */
 body {
     background: #f8f9fa;
     font-family: Arial;
 }
 
-/* ===== NAVBAR ADMIN ===== */
-.navbar-admin {
-    background: #343a40; /* gris oscuro Bootstrap */
-    padding: 10px 20px;
+/* ===== LAYOUT ===== */
+.layout {
+    display: flex;
+    min-height: 100vh;
 }
 
-.navbar-admin a {
-    color: #ffffff;
-    margin-right: 15px;
-    font-weight: 600;
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 230px;
+    background: #343a40;
+    color: #fff;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.oculto {
+    margin-left: -230px;
+}
+
+.logo {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.user {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.user span {
+    font-size: 12px;
+    color: #ced4da;
+}
+
+.sidebar nav a {
+    display: block;
+    color: #fff;
     text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
-.navbar-admin a:hover {
-    text-decoration: underline;
+.sidebar nav a:hover {
+    background: #495057;
+}
+
+/* ===== MAIN ===== */
+.main {
+    flex: 1;
+    padding: 0;
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #fff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.topbar .title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* ===== BOTÓN ===== */
+.btn-menu {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #343a40;
 }
 
 /* ===== CONTENIDO ===== */
-.content {
+.main section {
     padding: 30px;
 }
 
-/* ===== TABLAS ===== */
-.table thead th {
-    vertical-align: middle;
+/* ===== CARDS ===== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
 }
 
-.table td {
-    vertical-align: middle;
+.card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-left: 6px solid #343a40;
+    padding: 15px;
+    border-radius: 6px;
 }
 
-/* ===== BOTONES ===== */
-.btn-sm {
-    padding: 4px 8px;
-    font-size: 12px;
+.card h4 {
+    font-size: 16px;
+    font-weight: bold;
 }
 
-/* ===== MODALES ===== */
-.modal-header {
-    background-color: #343a40;
-    color: #ffffff;
-}
-
-.modal-header .close {
-    color: #ffffff;
-    opacity: 1;
-}
-
-/* ===== BADGES ===== */
-.badge {
-    font-size: 12px;
-    padding: 6px 8px;
-}
-
-.password-wrapper {
-    position: relative;
-    margin-bottom: 10px;
-}
-
-.password-wrapper input {
-    padding-right: 42px;
-}
-
-.password-wrapper .toggle-pass {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    user-select: none;
-    z-index: 5; /* 🔥 importante */
+.card p {
+    font-size: 13px;
     color: #6c757d;
 }
 
-.password-wrapper .toggle-pass:hover {
-    color: #000;
-}
-
-
-
-
-
-
-
-
-
-
-/* ===== FILTROS AVANZADOS ===== */
-/* ===== FILTROS PLANOS ===== */
-.filtro-bar {
+/* ===== REPORTES ===== */
+#seccionReportes {
     background: #fff;
-    padding: 15px;
-    border: 1px solid #dee2e6;
     border-radius: 6px;
-    margin-bottom: 15px;
-}
-
-.filtro-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-}
-
-.filtro-bar button {
-    margin-top: 10px;
+    border: 1px solid #dee2e6;
 }

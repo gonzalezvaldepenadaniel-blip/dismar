@@ -126,3 +126,48 @@ $('#modalUsuarios').on('show.bs.modal', function () {
     $("#seccionReportes").hide();
     cargarUsuarios(); // siempre refresca
 });
+
+
+/* ==========================
+   ABRIR MODAL ATENDER
+========================== */
+$(document).on("click", ".atender", function () {
+
+    let data = $(this).data();
+
+    $("#ticket_id").val(data.id);
+    $("#estadoTicket").val(data.estado);
+    $("#comentarioTicket").val(data.comentario || "");
+    $("#folioTicket").text("#" + data.folio);
+
+    $("#modalAtenderTicket").modal("show");
+});
+
+/* ==========================
+   GUARDAR CAMBIOS TICKET
+========================== */
+$("#btnGuardarTicket").on("click", function () {
+
+    $.ajax({
+        url: "ticket_update.php",
+        type: "POST",
+        data: {
+            ticket_id: $("#ticket_id").val(),
+            estado: $("#estadoTicket").val(),
+            comentario_admin: $("#comentarioTicket").val()
+        },
+        success: function (resp) {
+
+            if (resp.trim() === "ok") {
+                $("#modalAtenderTicket").modal("hide");
+                cargarTickets();
+                alert("Ticket actualizado correctamente");
+            } else {
+                alert("Error: " + resp);
+            }
+        },
+        error: function () {
+            alert("Error de conexión");
+        }
+    });
+});

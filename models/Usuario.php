@@ -1,24 +1,23 @@
 <?php
+require_once("../Dismar/config/conexion.php");
 
-class Usuario extends Conectar {
+class Usuario {
 
     public function login($tipo){
 
         session_start();
-        $conectar = parent::conexion();
-        parent::set_names();
+        $conectar = Conectar::conexion();
 
         if(isset($_POST["enviar"])){
 
-            $correo = $_POST["usu_correo"];
-            $pass   = $_POST["usu_pass"];
+            $correo = trim($_POST["usu_correo"]);
+            $pass   = trim($_POST["usu_pass"]);
 
             if(empty($correo) || empty($pass)){
                 header("Location:".Conectar::ruta()."index.php?m=2");
                 exit();
             }
 
-            // 🔹 BUSCAR USUARIO (SIN CONTRASEÑA EN SQL)
             $sql = "SELECT * FROM tm_usuario
                     WHERE usu_correo = ?
                     AND rol = ?
@@ -30,16 +29,14 @@ class Usuario extends Conectar {
             $stmt->bindValue(2, $tipo);
             $stmt->execute();
 
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $resultado = $stmt->fetch();
 
-            // ❌ Usuario no existe
             if (!$resultado) {
                 $url = ($tipo === "admin") ? "admin-login.php?m=1" : "index.php?m=1";
                 header("Location:".Conectar::ruta().$url);
                 exit();
             }
 
-            // ✅ VERIFICAR CONTRASEÑA ENCRIPTADA
             if (password_verify($pass, $resultado["usu_pass"])) {
 
                 $_SESSION["usu_id"]         = $resultado["usu_id"];
@@ -56,7 +53,6 @@ class Usuario extends Conectar {
                 exit();
 
             } else {
-                // ❌ Contraseña incorrecta
                 $url = ($tipo === "admin") ? "admin-login.php?m=1" : "index.php?m=1";
                 header("Location:".Conectar::ruta().$url);
                 exit();

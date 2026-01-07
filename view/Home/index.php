@@ -11,9 +11,7 @@ if (!isset($_SESSION['correo_usuario'])) {
 }
 
 /* ===== CONEXIÓN ===== */
-$conectar = new Conectar();
-$conexion = $conectar->conexion();
-$conectar->set_names();
+$conexion = Conectar::conexion();
 
 $correo_usuario = $_SESSION['correo_usuario'];
 

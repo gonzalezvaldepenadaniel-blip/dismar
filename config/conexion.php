@@ -1,26 +1,29 @@
 <?php
-class Conectar{
-    protected $dbh;
+class Conectar {
 
-    public function conexion(){
-        try {
-            $this->dbh = new PDO(
-                "mysql:host=localhost;dbname=dismar;charset=utf8",
-                "root",
-                ""
-            );
-            return $this->dbh;
-        } catch (PDOException $e) {
-            die("Error al conectar: " . $e->getMessage());
+    private static $dbh = null;
+
+    public static function conexion() {
+        if (self::$dbh === null) {
+            try {
+                self::$dbh = new PDO(
+                    "mysql:host=localhost;dbname=dismar;charset=utf8",
+                    "root",
+                    "",
+                    [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                    ]
+                );
+            } catch (PDOException $e) {
+                die("Error al conectar a la BD: " . $e->getMessage());
+            }
         }
+        return self::$dbh;
     }
 
-    public function set_names(){
-        return $this->dbh->query("SET NAMES 'utf8'");
-    }
-
-    public function ruta(){
-        return "http://localhost/dismar/";
+    public static function ruta() {
+        return "http://localhost/Dismar/";
     }
 }
 ?>
