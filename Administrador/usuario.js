@@ -83,6 +83,7 @@ function nuevoUsuario() {
         $("#formUsuario")[0].reset();
         $("#usu_id").val("");
         $("#modalUsuario").modal("show");
+        
     });
 }
 
@@ -103,6 +104,7 @@ $(document).on("click", ".eliminar", function () {
         }
     );
 });
+
 
 /* ==========================
    VER / OCULTAR CONTRASEÑA
@@ -158,13 +160,23 @@ $("#btnGuardarTicket").on("click", function () {
         },
         success: function (resp) {
 
-            if (resp.trim() === "ok") {
-                $("#modalAtenderTicket").modal("hide");
-                cargarTickets();
-                alert("Ticket actualizado correctamente");
-            } else {
-                alert("Error: " + resp);
-            }
+            
+if (resp.trim() === "ok") {
+    $("#modalAtenderTicket").modal("hide");
+    cargarTickets();
+    cargarDashboard(); // 👈 ESTO ES LO QUE FALTABA
+}
+
+
+
+
+
+
+
+
+
+
+
         },
         error: function () {
             alert("Error de conexión");

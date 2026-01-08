@@ -1,5 +1,5 @@
 <?php
-require_once("../config/conexion.php");
+require_once(__DIR__ . "/../config/conexion.php");
 
 $conexion = (new Conectar())->conexion();
 
@@ -16,25 +16,18 @@ $sql = "SELECT
 
 $usuarios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
+if (!$usuarios) {
+    echo '<tr><td colspan="6" class="text-center">No hay usuarios</td></tr>';
+    exit;
+}
+
 foreach ($usuarios as $u): ?>
 <tr>
-
-  <!-- Nombre -->
   <td><?= htmlspecialchars($u["usu_nombre"] . " " . $u["usu_apellido"]) ?></td>
-
-  <!-- Correo -->
   <td><?= htmlspecialchars($u["usu_correo"]) ?></td>
-
-  <!-- Rol -->
   <td><?= htmlspecialchars($u["rol"]) ?></td>
-
-  <!-- Estado -->
   <td><?= $u["estado"] ? "Activo" : "Inactivo" ?></td>
-
-  <!-- Cedis -->
   <td><?= htmlspecialchars($u["cedis"]) ?></td>
-
-  <!-- Acciones -->
   <td class="text-center">
     <button class="btn btn-warning btn-sm editar"
         data-id="<?= $u["usu_id"] ?>"
@@ -51,6 +44,5 @@ foreach ($usuarios as $u): ?>
         🗑
     </button>
   </td>
-
 </tr>
 <?php endforeach; ?>

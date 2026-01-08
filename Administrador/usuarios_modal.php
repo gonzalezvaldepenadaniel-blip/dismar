@@ -8,7 +8,7 @@ require_once("../config/conexion.php");
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Usuarios registrados</h5>
+        <h5 class="modal-title">Listado de Usuarios</h5>
         <button type="button" class="close" data-dismiss="modal">
           <span>&times;</span>
         </button>
@@ -17,12 +17,13 @@ require_once("../config/conexion.php");
       <div class="modal-body">
 
         <button class="btn btn-primary mb-3" onclick="nuevoUsuario()">
-          Nuevo usuario
+          Nuevo
         </button>
 
         <table class="table table-bordered table-hover">
           <thead class="thead-dark">
             <tr>
+              
               <th>Nombre</th>
               <th>Correo</th>
               <th>Rol</th>

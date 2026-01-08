@@ -20,7 +20,7 @@ $usuarios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-<h3 class="m-3">Usuarios registrados</h3>
+<h3 class="m-3">Lista de Usuarios</h3>
 
 <button class="btn btn-success m-3" onclick="nuevoUsuario()">
 ➕ Nuevo Usuario

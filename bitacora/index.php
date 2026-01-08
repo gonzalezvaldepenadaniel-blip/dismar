@@ -12,6 +12,7 @@ require_once("../config/conexion.php");
 
     <!-- CSS propio -->
     <link rel="stylesheet" href="/Dismar/bitacora/bitacora.css">
+    
 </head>
 
 <body>
@@ -23,6 +24,8 @@ require_once("../config/conexion.php");
         <ul>
             <li><a href="#">Teléfonos</a></li>
             <li><a href="#">Computadoras</a></li>
+             <li><a href="#">Computadoras</a></li>
+            <a href="/Dismar/Administrador/administrador.php" class="logout">volver</a>
         </ul>
     </aside>
 

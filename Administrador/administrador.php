@@ -29,6 +29,22 @@ $ticketsAbiertos = obtenerTotal($con, "SELECT COUNT(*) AS total FROM tm_ticket W
 $ticketsProceso  = obtenerTotal($con, "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado=2");
 $ticketsCerrados = obtenerTotal($con, "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado=3");
 
+/* ===== TICKETS PENDIENTES ===== */
+$ticketsPendientes = obtenerTotal(
+    $con,
+    "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 1"
+);
+
+/* ===== ESTATUS TICKETS ===== */
+$ticketsAbiertos = obtenerTotal(
+    $con,
+    "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 1"
+);
+
+$ticketsProceso = obtenerTotal(
+    $con,
+    "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 2"
+);
 
 
 ?>
@@ -88,24 +104,39 @@ $ticketsCerrados = obtenerTotal($con, "SELECT COUNT(*) AS total FROM tm_ticket W
             <div class="cards">
 
                 <div class="card">
-                    <h4>Usuarios</h4>
-                    <p>Gestión de usuarios</p>
-                </div>
+    <h4>Usuarios</h4>
+   <p>Usuarios registrados: <strong id="totalUsuarios">0</strong></p>
+
+</div>
+
 
                 <div class="card">
-                    <h4>Reportes</h4>
-                    <p>Tickets generados</p>
-                </div>
+    <h4>Tickets</h4>
+    <p>Tickets generados: <strong id="totalTickets">0</strong></p>
 
-                <div class="card">
-                    <h4>CEDIS</h4>
-                    <p>Sucursales</p>
-                </div>
 
-                <div class="card">
-                    <h4>Estatus</h4>
-                    <p>Seguimiento</p>
-                </div>
+</div>
+
+
+        
+<div class="card">
+    <h4>Estatus</h4>
+   <p>
+    Abiertos: <strong id="ticketsAbiertos">0</strong><br>
+    En proceso: <strong id="ticketsProceso">0</strong>
+</p>
+
+</div>
+
+
+            <div class="card">
+    <h4>Asignados</h4>
+    <p>Tickets generados: <strong id="totalTickets">0</strong></p>
+
+
+</div>
+
+
 
             </div>
         </section>
@@ -290,3 +321,25 @@ $(document).ready(function(){
 
 </body>
 </html>
+
+
+
+<script>
+function cargarDashboard() {
+    $.getJSON("dashboard_totales.php", function (data) {
+        $("#totalUsuarios").text(data.usuarios);
+        $("#totalTickets").text(data.tickets);
+        $("#totalCedis").text(data.cedis);
+        $("#ticketsAbiertos").text(data.abiertos);
+        $("#ticketsProceso").text(data.proceso);
+    });
+}
+
+// cargar al entrar
+$(document).ready(function () {
+    cargarDashboard();
+
+    // refrescar cada 30 segundos (opcional)
+    setInterval(cargarDashboard, 30000);
+});
+</script>
