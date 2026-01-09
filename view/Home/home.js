@@ -1,23 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* ===== ELEMENTOS MENU ===== */
     const btnMenu  = document.getElementById("btnMenu");
     const sidebar  = document.getElementById("sidebar");
     const overlay  = document.getElementById("overlay");
 
+    /* ===== SECCIONES ===== */
+    const home  = document.getElementById("seccionHome");
     const nuevo = document.getElementById("seccionNuevo");
     const mis   = document.getElementById("seccionMis");
 
-    const btnNuevo = document.getElementById("btnNuevo");
-    const btnMis   = document.getElementById("btnMis");
+    /* ===== BOTONES SIDEBAR ===== */
+    const btnInicio = document.getElementById("btnInicio");
+    const btnNuevo  = document.getElementById("btnNuevo");
+    const btnMis    = document.getElementById("btnMis");
 
-    /* ===== MENU ===== */
-    btnMenu.addEventListener("click", () => {
-        sidebar.classList.add("activo");
-        overlay.classList.add("activo");
-        document.body.classList.add("menu-abierto");
-    });
+    /* ===== BOTÓN HOME ===== */
+    const btnCrearTicket = document.getElementById("btnCrearTicket");
 
-    overlay.addEventListener("click", cerrarMenu);
+    /* =========================
+       MENU HAMBURGUESA
+    ========================= */
+    if (btnMenu) {
+        btnMenu.addEventListener("click", () => {
+            sidebar.classList.add("activo");
+            overlay.classList.add("activo");
+            document.body.classList.add("menu-abierto");
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", cerrarMenu);
+    }
 
     function cerrarMenu() {
         sidebar.classList.remove("activo");
@@ -25,25 +39,54 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("menu-abierto");
     }
 
-    /* ===== MOSTRAR SECCIONES ===== */
-    function mostrar(seccion) {
+    /* =========================
+       MOSTRAR SECCIONES
+    ========================= */
+    function ocultarTodo() {
+        if (home)  home.style.display  = "none";
         if (nuevo) nuevo.style.display = "none";
         if (mis)   mis.style.display   = "none";
+    }
 
+    function mostrar(seccion) {
+        ocultarTodo();
         seccion.style.display = "block";
         cerrarMenu();
     }
 
-    /* NUEVO TICKET */
-    btnNuevo.addEventListener("click", e => {
-        e.preventDefault();
-        mostrar(nuevo);
-    });
+    /* =========================
+       EVENTOS
+    ========================= */
+
+    /* INICIO */
+    if (btnInicio) {
+        btnInicio.addEventListener("click", e => {
+            e.preventDefault();
+            mostrar(home);
+        });
+    }
+
+    /* NUEVO TICKET (SIDEBAR) */
+    if (btnNuevo) {
+        btnNuevo.addEventListener("click", e => {
+            e.preventDefault();
+            mostrar(nuevo);
+        });
+    }
 
     /* MIS TICKETS */
-    btnMis.addEventListener("click", e => {
-        e.preventDefault();
-        mostrar(mis);
-    });
+    if (btnMis) {
+        btnMis.addEventListener("click", e => {
+            e.preventDefault();
+            mostrar(mis);
+        });
+    }
+
+    /* NUEVO TICKET (BOTÓN HOME) */
+    if (btnCrearTicket) {
+        btnCrearTicket.addEventListener("click", () => {
+            mostrar(nuevo);
+        });
+    }
 
 });

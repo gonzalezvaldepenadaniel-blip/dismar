@@ -8,37 +8,98 @@ if (!isset($_SESSION['correo_usuario'])) {
     exit;
 }
 
-/* DATOS DEL USUARIO */
-$nombre_usuario = $_SESSION['nombre_usuario'] ?? 'Usuario';
+require_once("../../config/conexion.php");
+$conexion = Conectar::conexion();
+
+/* DATOS SESIÓN */
 $correo_usuario = $_SESSION['correo_usuario'];
+
+/* OBTENER NOMBRE DESDE BD */
+$stmt = $conexion->prepare("
+    SELECT usu_nombre, usu_apellido
+    FROM tm_usuario
+    WHERE usu_correo = :correo
+    LIMIT 1
+");
+$stmt->execute([":correo" => $correo_usuario]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+/* NOMBRE FINAL */
+$nombre_usuario = $usuario
+    ? $usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']
+    : 'Usuario';
 ?>
+
+
+
+<?php
+// OBTENER TICKETS DEL USUARIO
+$stmtTickets = $conexion->prepare("
+    SELECT *
+    FROM tm_ticket
+    WHERE correo = :correo
+    ORDER BY fecha_solicitud DESC
+");
+$stmtTickets->execute([":correo" => $correo_usuario]);
+$tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="stylesheet" href="home.css">
-
 <meta charset="UTF-8">
-<title>Dismar</title>
+<title>Dismar | Servicios Corporativos</title>
 
-
+<link rel="stylesheet" href="home.css">
 </head>
 
 <body>
+
+<!-- ☰ BOTÓN HAMBURGUESA -->
+<div id="btnMenu" class="hamburger">☰</div>
+
+<!-- OVERLAY -->
+<div id="overlay" class="overlay"></div>
+
+<!-- ================= SIDEBAR ================= -->
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <img src="../../public/img/avatar-2-128.png" class="sidebar-logo">
+        <div class="user">
+            <strong><?= htmlspecialchars($nombre_usuario) ?></strong><br>
+            <span><?= htmlspecialchars($correo_usuario) ?></span>
+        </div>
+    </div>
+
+    <ul class="sidebar-menu">
+        <li><a href="#" id="btnInicio">Inicio</a></li>
+        <li><a href="#" id="btnMis">Mis Tickets</a></li>
+        <li><a href="../../index.php">Cerrar sesión</a></li>
+    </ul>
+</aside>
 
 <!-- ================= HOME ================= -->
 <section id="seccionHome" class="home-servicios">
     <h1>SERVICIOS CORPORATIVOS</h1>
 
-    <!-- CAMBIA LA RUTA SI ES NECESARIO -->
     <img src="../../public/img/dismar.png" class="logo-home" alt="Dismar">
 
-    <br>
+    <br><br>
+
     <button id="btnCrearTicket" class="btn-home">
         ➕ Crear nuevo ticket
     </button>
 </section>
 
-<!-- ================= FORMULARIO ================= -->
+<!-- ================= NUEVO TICKET ================= -->
 <section id="seccionNuevo" class="ticket-container" style="display:none;">
 
 <form method="post" enctype="multipart/form-data">
@@ -116,21 +177,73 @@ $correo_usuario = $_SESSION['correo_usuario'];
 </form>
 </section>
 
+<!-- ================= MIS TICKETS ================= -->
+
+
+<section id="seccionMis" style="display:none;">
+    <div class="tickets-card">
+        <h3 class="section-title">Mis Tickets</h3>
+
+        <?php if(!empty($tickets)): ?>
+        <div class="table-responsive">
+            <table class="tickets-table">
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Fecha</th>
+                        <th>Cedis</th>
+                        <th>Tipo Solicitud</th>
+                        <th>Descripción</th>
+                        <th>Prioridad</th>
+                        <th>Estado</th>
+                        <th>Comentarios</th>
+                        <th>Asignado a</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($tickets as $t): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($t['folio']) ?></td>
+                        <td><?= htmlspecialchars($t['fecha_solicitud']) ?></td>
+                        <td><?= htmlspecialchars($t['cedis']) ?></td>
+                        <td><?= htmlspecialchars($t['tipo_solicitud']) ?></td>
+                        <td><?= htmlspecialchars($t['descripcion']) ?></td>
+                        <td><?= htmlspecialchars($t['prioridad']) ?></td>
+                        <td>
+                            <?php
+                                switch($t['estado']) {
+                                    case 1: echo "<span class='estado abierto'>Abierto</span>"; break;
+                                    case 2: echo "<span class='estado proceso'>En Proceso</span>"; break;
+                                    case 3: echo "<span class='estado cerrado'>Cerrado</span>"; break;
+                                    default: echo "<span>-</span>";
+                                }
+                            ?>
+                        </td>
+                        <td><?= htmlspecialchars($t['comentario_admin'] ?? '-') ?></td>
+                        <td><?= htmlspecialchars($t['asignado'] ?? '-') ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php else: ?>
+            <p style="text-align:center;color:#666;">
+                No tienes tickets registrados.
+            </p>
+        <?php endif; ?>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
 <!-- ================= JS ================= -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const home  = document.getElementById("seccionHome");
-    const nuevo = document.getElementById("seccionNuevo");
-    const btn   = document.getElementById("btnCrearTicket");
-
-    btn.addEventListener("click", function () {
-        home.style.display  = "none";
-        nuevo.style.display = "block";
-    });
-
-});
-</script>
+<script src="home.js"></script>
 
 </body>
 </html>
