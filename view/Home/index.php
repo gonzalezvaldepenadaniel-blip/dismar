@@ -2,260 +2,135 @@
 session_start();
 date_default_timezone_set('America/Mexico_City');
 
-require_once("../../config/conexion.php");
-
 /* 🔐 VALIDAR LOGIN */
 if (!isset($_SESSION['correo_usuario'])) {
     header("Location: ../../index.php");
     exit;
 }
 
-/* ===== CONEXIÓN ===== */
-$conexion = Conectar::conexion();
+/* DATOS DEL USUARIO */
+$nombre_usuario = $_SESSION['nombre_usuario'] ?? 'Usuario';
 $correo_usuario = $_SESSION['correo_usuario'];
-
-/* =========================
-   OBTENER NOMBRE DEL USUARIO
-========================= */
-$stmtUsuario = $conexion->prepare("
-    SELECT CONCAT(usu_nombre, ' ', usu_apellido) AS nombre
-    FROM tm_usuario
-    WHERE usu_correo = :correo
-    LIMIT 1
-");
-$stmtUsuario->execute([":correo" => $correo_usuario]);
-$usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
-$nombre_usuario = $usuario ? $usuario['nombre'] : 'Usuario';
-
-/* =========================
-   GUARDAR TICKET
-========================= */
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
-
-    $solicita    = $nombre_usuario;
-    $cedis       = $_POST['cedis'];
-    $tipo        = $_POST['tipo_solicitud'];
-    $descripcion = $_POST['descripcion'];
-    $prioridad   = $_POST['prioridad'];
-    $matriz      = $_POST['matriz'];
-    $fecha       = date('Y-m-d H:i:s');
-
-    switch ($tipo) {
-        case 'Mantenimiento': $sigla = 'M'; break;
-        case 'Compras': $sigla = 'C'; break;
-        case 'Sistemas': $sigla = 'S'; break;
-        default: $sigla = 'X';
-    }
-
-    $fechaFolio = date('ymd');
-
-    $stmtConsecutivo = $conexion->prepare("
-        SELECT COUNT(*) + 1
-        FROM tm_ticket
-        WHERE DATE(fecha_solicitud) = CURDATE()
-    ");
-    $stmtConsecutivo->execute();
-    $consecutivo = str_pad($stmtConsecutivo->fetchColumn(), 4, '0', STR_PAD_LEFT);
-
-    $folio = "DIS{$fechaFolio}-{$sigla}{$consecutivo}";
-
-    /* SUBIR EVIDENCIA */
-    $evidencia = null;
-    if (!empty($_FILES['evidencia']['name'])) {
-        $carpeta = __DIR__ . "/../../uploads/";
-        if (!file_exists($carpeta)) {
-            mkdir($carpeta, 0777, true);
-        }
-        $evidencia = time() . "_" . $_FILES['evidencia']['name'];
-        move_uploaded_file($_FILES['evidencia']['tmp_name'], $carpeta . $evidencia);
-    }
-
-    $sql = "INSERT INTO tm_ticket
-        (folio, solicita, correo, cedis, tipo_solicitud, descripcion, prioridad, matriz, evidencia, fecha_solicitud)
-        VALUES
-        (:folio, :solicita, :correo, :cedis, :tipo, :descripcion, :prioridad, :matriz, :evidencia, :fecha)";
-
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([
-        ":folio" => $folio,
-        ":solicita" => $solicita,
-        ":correo" => $correo_usuario,
-        ":cedis" => $cedis,
-        ":tipo" => $tipo,
-        ":descripcion" => $descripcion,
-        ":prioridad" => $prioridad,
-        ":matriz" => $matriz,
-        ":evidencia" => $evidencia,
-        ":fecha" => $fecha
-    ]);
-
-    header("Location: index.php");
-    exit;
-}
-
-/* =========================
-   LISTAR TICKETS
-========================= */
-$stmt = $conexion->prepare("
-    SELECT folio, tipo_solicitud, descripcion, prioridad, cedis,
-           fecha_solicitud, estado, evidencia, comentario_admin
-    FROM tm_ticket
-    WHERE correo = :correo
-    ORDER BY fecha_solicitud DESC
-");
-$stmt->execute([":correo" => $correo_usuario]);
-$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="stylesheet" href="home.css">
+
 <meta charset="UTF-8">
-<title>Tickets</title>
-<link rel="stylesheet" href="home.css">
+<title>Dismar</title>
+
+
 </head>
 
 <body>
 
-<!-- ☰ HAMBURGUESA -->
-<div class="hamburger" id="btnMenu">☰</div>
+<!-- ================= HOME ================= -->
+<section id="seccionHome" class="home-servicios">
+    <h1>SERVICIOS CORPORATIVOS</h1>
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay"></div>
+    <!-- CAMBIA LA RUTA SI ES NECESARIO -->
+    <img src="../../public/img/dismar.png" class="logo-home" alt="Dismar">
 
-<!-- SIDEBAR -->
-<nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <img src="../../public/img/avatar-2-128.png" class="sidebar-logo">
-        <div class="user">
-            <strong><?= $_SESSION["usu_nombre"] ?></strong><br>
-            <span><?= $_SESSION["usu_apellido"] ?></span>
-        </div>
+    <br>
+    <button id="btnCrearTicket" class="btn-home">
+        ➕ Crear nuevo ticket
+    </button>
+</section>
+
+<!-- ================= FORMULARIO ================= -->
+<section id="seccionNuevo" class="ticket-container" style="display:none;">
+
+<form method="post" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label>Fecha Solicitud</label>
+        <input type="text" value="<?= date('Y-m-d H:i') ?>" readonly>
     </div>
 
-    <ul class="sidebar-menu">
-        <li><a href="#" id="btnNuevo">Nuevo Ticket</a></li>
-        <li><a href="#" id="btnMis">Mis Tickets</a></li>
-        <li><a href="../../index.php">Cerrar sesión</a></li>
-    </ul>
-</nav>
+    <div class="form-group">
+        <label>Quién solicita</label>
+        <input type="text" value="<?= htmlspecialchars($nombre_usuario) ?>" readonly>
+    </div>
 
-<!-- ================= NUEVO TICKET ================= -->
-<section id="seccionNuevo" class="ticket-container">
+    <div class="form-group">
+        <label>Correo</label>
+        <input type="email" value="<?= htmlspecialchars($correo_usuario) ?>" readonly>
+    </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Cedis</label>
+        <select name="cedis" required>
+            <option value="">Seleccione</option>
+            <option>Iztapalapa</option>
+            <option>Ecatepec</option>
+            <option>Chicoloapan</option>
+        </select>
+    </div>
 
+    <div class="form-group">
+        <label>Tipo de Solicitud</label>
+        <select name="tipo_solicitud" required>
+            <option value="">Seleccione</option>
+            <option>Mantenimiento</option>
+            <option>Compras</option>
+            <option>Sistemas</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea name="descripcion" required></textarea>
+    </div>
+
+    <div class="form-row">
         <div class="form-group">
-            <label>Fecha Solicitud</label>
-            <input type="text" value="<?= date('Y-m-d H:i') ?>" readonly>
-        </div>
-
-        <div class="form-group">
-            <label>Quién solicita</label>
-            <input type="text" value="<?= htmlspecialchars($nombre_usuario) ?>" readonly>
-        </div>
-
-        <div class="form-group">
-            <label>Correo</label>
-            <input type="email" value="<?= htmlspecialchars($correo_usuario) ?>" readonly>
-        </div>
-
-        <div class="form-group">
-            <label>Cedis</label>
-            <select name="cedis" required>
-                <option value="">Seleccione</option>
-                <option>Iztapalapa</option>
-                <option>Ecatepec</option>
-                <option>Chicoloapan</option>
+            <label>Prioridad</label>
+            <select name="prioridad">
+                <option>Alta</option>
+                <option>Media</option>
+                <option>Baja</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>Tipo de Solicitud</label>
-            <select name="tipo_solicitud" required>
-                <option value="">Seleccione</option>
-                <option>Mantenimiento</option>
-                <option>Compras</option>
-                <option>Sistemas</option>
+            <label>Matriz</label>
+            <select name="matriz">
+                <option value="1">Urgente e Importante</option>
+                <option value="2">Importante</option>
+                <option value="3">Urgente</option>
+                <option value="4">No urgente</option>
             </select>
         </div>
-
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea name="descripcion" required></textarea>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label>Prioridad</label>
-                <select name="prioridad">
-                    <option>Alta</option>
-                    <option>Media</option>
-                    <option>Baja</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Matriz</label>
-                <select name="matriz">
-                    <option value="1">Urgente e Importante</option>
-                    <option value="2">Importante</option>
-                    <option value="3">Urgente</option>
-                    <option value="4">No urgente</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Evidencia</label>
-            <input type="file" name="evidencia">
-        </div>
-
-        <button type="submit" name="guardar" class="btn">Guardar Ticket</button>
-    </form>
-
-</section>
-
-<!-- ================= MIS TICKETS ================= -->
-<section id="seccionMis" class="tickets-section" style="display:none;">
-    <div class="tickets-card">
-        <h3 class="section-title">Mis Tickets</h3>
-
-        <div class="table-responsive">
-            <table class="tickets-table">
-                <thead>
-                    <tr>
-                        <th>Folio</th>
-                        <th>Tipo</th>
-                        <th>Descripción</th>
-                        <th>Prioridad</th>
-                        <th>Cedis</th>
-                        <th>Fecha</th>
-                        <th>Estatus</th>
-                        <th>Comentarios</th>
-                        <th>Evidencia</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($tickets as $t): ?>
-                    <tr>
-                        <td><strong><?= $t['folio'] ?></strong></td>
-                        <td><?= $t['tipo_solicitud'] ?></td>
-                        <td><?= $t['descripcion'] ?></td>
-                        <td><?= $t['prioridad'] ?></td>
-                        <td><?= $t['cedis'] ?></td>
-                        <td><?= date('d/m/Y H:i', strtotime($t['fecha_solicitud'])) ?></td>
-                        <td><?= $t['estado'] ?></td>
-                        <td><?= $t['comentario_admin'] ?: '—' ?></td>
-                        <td><?= $t['evidencia'] ? '<a href="../../uploads/'.$t['evidencia'].'" target="_blank">Ver</a>' : '—' ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
     </div>
+
+    <div class="form-group">
+        <label>Evidencia</label>
+        <input type="file" name="evidencia">
+    </div>
+
+    <button type="submit" name="guardar" class="btn">
+        Guardar Ticket
+    </button>
+
+</form>
 </section>
 
-<script src="home.js"></script>
+<!-- ================= JS ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const home  = document.getElementById("seccionHome");
+    const nuevo = document.getElementById("seccionNuevo");
+    const btn   = document.getElementById("btnCrearTicket");
+
+    btn.addEventListener("click", function () {
+        home.style.display  = "none";
+        nuevo.style.display = "block";
+    });
+
+});
+</script>
+
 </body>
 </html>
