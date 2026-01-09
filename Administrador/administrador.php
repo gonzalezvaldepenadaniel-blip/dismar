@@ -46,6 +46,19 @@ $ticketsProceso = obtenerTotal(
     "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 2"
 );
 
+/* OBTENER CORREO DEL USUARIO */
+$stmtUser = $conexion->prepare("
+    SELECT correo
+    FROM tm_ticket
+    WHERE ticket_id = :id
+");
+$stmtUser->execute([':id' => $ticket_id]);
+$correoUsuario = $stmtUser->fetchColumn();
+
+
+
+
+
 
 ?>
 
@@ -62,7 +75,7 @@ $ticketsProceso = obtenerTotal(
 <link rel="stylesheet" href="/Dismar/Administrador/administrador.css">
 </head>
 
-<body>
+
 
 <div class="layout">
 

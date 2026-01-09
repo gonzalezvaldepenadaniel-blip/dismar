@@ -14,9 +14,29 @@ $conexion = Conectar::conexion();
 /* DATOS SESIÓN */
 $correo_usuario = $_SESSION['correo_usuario'];
 
-/* OBTENER NOMBRE DESDE BD */
+/* ================= NOTIFICACIONES ================= */
+$stmtNoti = $conexion->prepare("
+    SELECT COUNT(*) as total
+    FROM tm_notificacion
+    WHERE correo_usuario = :correo AND leido = 0
+");
+$stmtNoti->execute([':correo' => $correo_usuario]);
+$totalNoti = $stmtNoti->fetchColumn();
+
+/* Últimas 5 notificaciones */
+$stmtListado = $conexion->prepare("
+    SELECT *
+    FROM tm_notificacion
+    WHERE correo_usuario = :correo
+    ORDER BY fecha DESC
+    LIMIT 5
+");
+$stmtListado->execute([':correo' => $correo_usuario]);
+$notificaciones = $stmtListado->fetchAll(PDO::FETCH_ASSOC);
+
+/* OBTENER NOMBRE Y CEDIS */
 $stmt = $conexion->prepare("
-    SELECT usu_nombre, usu_apellido
+    SELECT usu_nombre, usu_apellido, cedis
     FROM tm_usuario
     WHERE usu_correo = :correo
     LIMIT 1
@@ -24,16 +44,10 @@ $stmt = $conexion->prepare("
 $stmt->execute([":correo" => $correo_usuario]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-/* NOMBRE FINAL */
-$nombre_usuario = $usuario
-    ? $usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']
-    : 'Usuario';
-?>
+$nombre_usuario = $usuario ? $usuario['usu_nombre'] . ' ' . $usuario['usu_apellido'] : 'Usuario';
+$cedis_usuario  = $usuario ? $usuario['cedis'] : '';
 
-
-
-<?php
-// OBTENER TICKETS DEL USUARIO
+/* OBTENER TICKETS */
 $stmtTickets = $conexion->prepare("
     SELECT *
     FROM tm_ticket
@@ -42,31 +56,123 @@ $stmtTickets = $conexion->prepare("
 ");
 $stmtTickets->execute([":correo" => $correo_usuario]);
 $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
+
+/* ================= GUARDAR TICKET ================= */
+if (isset($_POST['guardar'])) {
+    $descripcion = $_POST['descripcion'];
+    $prioridad   = $_POST['prioridad'];
+    $matriz      = $_POST['matriz'];
+    $cedis       = $_POST['cedis'];
+    $tipo        = $_POST['tipo_solicitud'];
+
+    $solicita = $nombre_usuario;
+    $correo   = $correo_usuario;
+    $fecha    = date('Y-m-d H:i:s');
+    $estado   = 1;
+
+    /* ===== FOLIO ===== */
+    $anio = date('y'); $mes  = date('m'); $dia  = date('d');
+    switch ($tipo) {
+        case 'Mantenimiento': $sigla = 'M'; break;
+        case 'Compras':       $sigla = 'C'; break;
+        case 'Sistemas':      $sigla = 'S'; break;
+        default:              $sigla = 'X';
+    }
+    $numero = random_int(1000, 9999);
+    $folio = "DIS{$anio}{$mes}{$dia}-{$sigla}{$numero}";
+
+    /* ===== EVIDENCIA ===== */
+    $evidencia = null;
+    if (!empty($_FILES['evidencia']['name'])) {
+        $carpeta = "../../public/evidencias/";
+        if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
+        $nombreArchivo = time() . '_' . $_FILES['evidencia']['name'];
+        $ruta = $carpeta . $nombreArchivo;
+        if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $ruta)) $evidencia = $nombreArchivo;
+    }
+
+    /* ===== INSERT ===== */
+    $sql = "
+        INSERT INTO tm_ticket
+        (folio, solicita, correo, cedis, tipo_solicitud, descripcion,
+         prioridad, matriz, evidencia, fecha_solicitud, estado)
+        VALUES
+        (:folio, :solicita, :correo, :cedis, :tipo, :descripcion,
+         :prioridad, :matriz, :evidencia, :fecha, :estado)
+    ";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([
+        ':folio'       => $folio,
+        ':solicita'    => $solicita,
+        ':correo'      => $correo,
+        ':cedis'       => $cedis,
+        ':tipo'        => $tipo,
+        ':descripcion' => $descripcion,
+        ':prioridad'   => $prioridad,
+        ':matriz'      => $matriz,
+        ':evidencia'   => $evidencia,
+        ':fecha'       => $fecha,
+        ':estado'      => $estado
+    ]);
+
+    header("Location: index.php");
+    exit;
+}
 ?>
-
-
-
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dismar | Servicios Corporativos</title>
-
+<title>Dismar</title>
 <link rel="stylesheet" href="home.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+/* Campana en esquina superior derecha */
+.campana {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 999;
+}
+.campana span {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background:red;
+    color:white;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+}
+.lista-noti {
+    display:none;
+    position: fixed;
+    top: 50px;
+    right: 15px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 999;
+}
+.lista-noti div {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+.lista-noti div:last-child {
+    border-bottom: none;
+}
+</style>
 </head>
 
 <body>
 
 <!-- ☰ BOTÓN HAMBURGUESA -->
 <div id="btnMenu" class="hamburger">☰</div>
-
-<!-- OVERLAY -->
 <div id="overlay" class="overlay"></div>
 
 <!-- ================= SIDEBAR ================= -->
@@ -89,61 +195,62 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
 <!-- ================= HOME ================= -->
 <section id="seccionHome" class="home-servicios">
     <h1>SERVICIOS CORPORATIVOS</h1>
-
     <img src="../../public/img/dismar.png" class="logo-home" alt="Dismar">
-
     <br><br>
-
-    <button id="btnCrearTicket" class="btn-home">
-        ➕ Crear nuevo ticket
-    </button>
+    <button id="btnCrearTicket" class="btn-home">Nuevo Ticket</button>
 </section>
+
+<!-- ================= CAMPANA ================= -->
+<div class="campana">
+    🔔
+    <?php if ($totalNoti > 0): ?>
+        <span><?= $totalNoti ?></span>
+    <?php endif; ?>
+</div>
+
+<div class="lista-noti">
+    <?php if(!empty($notificaciones)): ?>
+        <?php foreach($notificaciones as $n): ?>
+            <div>
+                <?= htmlspecialchars($n['mensaje']) ?><br>
+                <small style="color:#999;"><?= $n['fecha'] ?></small>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div>No hay notificaciones</div>
+    <?php endif; ?>
+</div>
 
 <!-- ================= NUEVO TICKET ================= -->
 <section id="seccionNuevo" class="ticket-container" style="display:none;">
 
 <form method="post" enctype="multipart/form-data">
-
     <div class="form-group">
         <label>Fecha Solicitud</label>
         <input type="text" value="<?= date('Y-m-d H:i') ?>" readonly>
     </div>
-
     <div class="form-group">
         <label>Quién solicita</label>
         <input type="text" value="<?= htmlspecialchars($nombre_usuario) ?>" readonly>
     </div>
-
     <div class="form-group">
         <label>Correo</label>
         <input type="email" value="<?= htmlspecialchars($correo_usuario) ?>" readonly>
     </div>
-
+    <input type="hidden" name="cedis" value="<?= htmlspecialchars($cedis_usuario) ?>">
     <div class="form-group">
-        <label>Cedis</label>
-        <select name="cedis" required>
-            <option value="">Seleccione</option>
-            <option>Iztapalapa</option>
-            <option>Ecatepec</option>
-            <option>Chicoloapan</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>Tipo de Solicitud</label>
+        <label>Tipo de solicitud</label>
         <select name="tipo_solicitud" required>
-            <option value="">Seleccione</option>
-            <option>Mantenimiento</option>
-            <option>Compras</option>
-            <option>Sistemas</option>
+            <option value="">Seleccione una opción</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Compras">Compras</option>
+            <option value="Sistemas">Sistemas</option>
         </select>
     </div>
-
     <div class="form-group">
         <label>Descripción</label>
         <textarea name="descripcion" required></textarea>
     </div>
-
     <div class="form-row">
         <div class="form-group">
             <label>Prioridad</label>
@@ -153,7 +260,6 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
                 <option>Baja</option>
             </select>
         </div>
-
         <div class="form-group">
             <label>Matriz</label>
             <select name="matriz">
@@ -164,22 +270,18 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
             </select>
         </div>
     </div>
-
     <div class="form-group">
         <label>Evidencia</label>
         <input type="file" name="evidencia">
     </div>
-
     <button type="submit" name="guardar" class="btn">
         Guardar Ticket
     </button>
-
 </form>
+
 </section>
 
 <!-- ================= MIS TICKETS ================= -->
-
-
 <section id="seccionMis" style="display:none;">
     <div class="tickets-card">
         <h3 class="section-title">Mis Tickets</h3>
@@ -197,7 +299,7 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
                         <th>Prioridad</th>
                         <th>Estado</th>
                         <th>Comentarios</th>
-                        <th>Asignado a</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -234,16 +336,24 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-
-
-
-
-
-
-
-
-<!-- ================= JS ================= -->
 <script src="home.js"></script>
+<script>
+$(document).ready(function(){
+    $(".campana").click(function(){
+        $(".lista-noti").toggle();
+    });
+
+    setInterval(function(){
+        $.get("noti_count.php", function(data){
+            if(data > 0){
+                $(".campana span").text(data).show();
+            } else {
+                $(".campana span").hide();
+            }
+        });
+    }, 15000);
+});
+</script>
 
 </body>
 </html>
