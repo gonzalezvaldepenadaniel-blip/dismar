@@ -52,8 +52,6 @@ $stmtUser = $conexion->prepare("
     FROM tm_ticket
     WHERE ticket_id = :id
 ");
-$stmtUser->execute([':id' => $ticket_id]);
-$correoUsuario = $stmtUser->fetchColumn();
 
 
 

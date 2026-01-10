@@ -127,53 +127,14 @@ if (isset($_POST['guardar'])) {
 <title>Dismar</title>
 <link rel="stylesheet" href="home.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-/* Campana en esquina superior derecha */
-.campana {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    cursor: pointer;
-    font-size: 24px;
-    z-index: 999;
-}
-.campana span {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background:red;
-    color:white;
-    border-radius:50%;
-    padding:2px 6px;
-    font-size:12px;
-}
-.lista-noti {
-    display:none;
-    position: fixed;
-    top: 50px;
-    right: 15px;
-    width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ccc;
-    z-index: 999;
-}
-.lista-noti div {
-    padding: 8px;
-    border-bottom: 1px solid #eee;
-}
-.lista-noti div:last-child {
-    border-bottom: none;
-}
-</style>
+
 </head>
 
 <body>
 
 <!-- ☰ BOTÓN HAMBURGUESA -->
-<div id="btnMenu" class="hamburger">☰</div>
-<div id="overlay" class="overlay"></div>
+
+
 
 <!-- ================= SIDEBAR ================= -->
 <aside id="sidebar" class="sidebar">
@@ -199,6 +160,28 @@ if (isset($_POST['guardar'])) {
     <br><br>
     <button id="btnCrearTicket" class="btn-home">Nuevo Ticket</button>
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- ================= CAMPANA ================= -->
 <div class="campana">
