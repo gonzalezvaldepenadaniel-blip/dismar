@@ -1,18 +1,16 @@
 <?php
-session_start();
 date_default_timezone_set('America/Mexico_City');
 
-/* 🔐 VALIDAR LOGIN */
-if (!isset($_SESSION['correo_usuario'])) {
-    header("Location: ../../index.php");
-    exit;
-}
+/* 🔐 GUARD DE AUTENTICACIÓN */
+require_once("../../config/auth_guard.php");
 
+/* 🔌 CONEXIÓN */
 require_once("../../config/conexion.php");
 $conexion = Conectar::conexion();
 
 /* DATOS SESIÓN */
 $correo_usuario = $_SESSION['correo_usuario'];
+
 
 /* ================= NOTIFICACIONES ================= */
 $stmtNoti = $conexion->prepare("
@@ -126,7 +124,7 @@ if (isset($_POST['guardar'])) {
 <meta charset="UTF-8">
 <title>Dismar</title>
 <link rel="stylesheet" href="home.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 </head>
 
@@ -206,12 +204,7 @@ if (isset($_POST['guardar'])) {
 
 
 <!-- ================= CAMPANA ================= -->
-<div class="campana">
-    🔔
-    <?php if ($totalNoti > 0): ?>
-        <span><?= $totalNoti ?></span>
-    <?php endif; ?>
-</div>
+
 
 <div class="lista-noti">
     <?php if(!empty($notificaciones)): ?>
@@ -304,7 +297,7 @@ if (isset($_POST['guardar'])) {
                         <th>Prioridad</th>
                         <th>Estado</th>
                         <th>Comentarios</th>
-                        <th>Opciones</th>
+                        <th>Asignado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -342,72 +335,7 @@ if (isset($_POST['guardar'])) {
 </section>
 
 <script src="home.js"></script>
-<script>
-$(document).ready(function(){
-    $(".campana").click(function(){
-        $(".lista-noti").toggle();
-    });
 
-    setInterval(function(){
-        $.get("noti_count.php", function(data){
-            if(data > 0){
-                $(".campana span").text(data).show();
-            } else {
-                $(".campana span").hide();
-            }
-        });
-    }, 15000);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const btnCampana = document.getElementById("btnCampana");
-    const listaNoti  = document.querySelector(".lista-noti");
-
-    const userBtn = document.getElementById("topUserBtn");
-    const userDrop = document.getElementById("topUserDropdown");
-
-    /* CAMPANA */
-    if (btnCampana && listaNoti) {
-        btnCampana.addEventListener("click", (e) => {
-            e.stopPropagation();
-            listaNoti.style.display =
-                listaNoti.style.display === "block" ? "none" : "block";
-        });
-    }
-
-    /* USUARIO */
-    if (userBtn && userDrop) {
-        userBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            userDrop.style.display =
-                userDrop.style.display === "block" ? "none" : "block";
-        });
-    }
-
-    document.addEventListener("click", () => {
-        if (listaNoti) listaNoti.style.display = "none";
-        if (userDrop) userDrop.style.display = "none";
-    });
-
-});
-
-
-
-
-</script>
 
 </body>
 </html>
