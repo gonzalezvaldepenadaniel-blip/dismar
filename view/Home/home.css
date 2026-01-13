@@ -3,7 +3,7 @@
 ========================= */
 body {
     margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "Arial";
     background: #f4f6f9;
 }
 
@@ -70,14 +70,6 @@ body {
     background: rgba(255,255,255,0.15);
 }
 
-/* =========================
-   CONTENIDO PRINCIPAL
-========================= */
-.home-servicios,
-.ticket-container,
-#seccionMis {
-    margin-left: 260px; /* espacio del sidebar */
-}
 
 /* =========================
    HOME
@@ -88,9 +80,9 @@ body {
 }
 
 .home-servicios h1 {
-    font-size: 30px;
+    font-size: 50px;
     margin-bottom: 25px;
-    color: #343a40;
+    color: #000;
 }
 
 .logo-home {
@@ -292,4 +284,247 @@ body {
 
 .lista-noti div:last-child {
     border-bottom: none;
+}
+
+
+
+/* =========================
+   OVERLAY
+========================= */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 1050;
+}
+
+.overlay.activo {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* =========================
+   SIDEBAR MEJORADO
+========================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100%;
+    background: #343a40;
+    color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,.25);
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+    z-index: 1100;
+    overflow-y: auto;
+}
+
+/* ACTIVO */
+.sidebar.activo {
+    transform: translateX(0);
+}
+
+/* PREVIENE TEXTO VISIBLE */
+body.menu-abierto {
+    overflow: hidden;
+}
+
+
+.campana {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 999;
+}
+.campana span {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background:red;
+    color:white;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+}
+.lista-noti {
+    display:none;
+    position: fixed;
+    top: 50px;
+    right: 15px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 999;
+}
+.lista-noti div {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+.lista-noti div:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================
+   BOTÓN HAMBURGUESA
+========================= */
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 32px;          /* 🔥 MÁS GRANDE */
+    background: #343a40;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1200;
+    box-shadow: 0 4px 10px rgba(0,0,0,.3);
+    transition: background .2s ease, transform .1s ease;
+}
+
+.hamburger:hover {
+    background: #000;
+    transform: scale(1.05);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* USER MENU MATERIAL - DERECHA */
+.user-menu {
+    position: fixed;
+    top: 12px;
+    right: 20px;   /* 👈 AQUÍ queda a la derecha */
+    z-index: 1300;
+}
+
+.user-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.user-btn img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 45px;
+    right: 0; /* 👈 dropdown alineado a la derecha */
+    background: #fff;
+    min-width: 180px;
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   TOP BAR DERECHA (CAMPANA + USUARIO)
+========================= */
+.top-right-bar {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    z-index: 1400;
+}
+
+/* CAMPANA */
+.top-campana {
+    position: relative;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.top-campana .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: red;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* USUARIO */
+.top-user {
+    position: relative;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* DROPDOWN */
+.top-user-dropdown {
+    position: absolute;
+    top: 28px;
+    right: 0;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    display: none;
+    min-width: 160px;
+}
+
+.top-user-dropdown a {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: #333;
+}
+
+.top-user-dropdown a:hover {
+    background: #f4f6f9;
+}
+
+/* OCULTAMOS CAMPANA VIEJA */
+.campana {
+    display: none;
 }

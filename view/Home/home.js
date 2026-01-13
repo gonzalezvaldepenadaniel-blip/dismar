@@ -1,26 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ===== ELEMENTOS MENU ===== */
+    /* ===== MENU / SIDEBAR ===== */
     const btnMenu  = document.getElementById("btnMenu");
     const sidebar  = document.getElementById("sidebar");
     const overlay  = document.getElementById("overlay");
 
-    /* ===== SECCIONES ===== */
     const home  = document.getElementById("seccionHome");
     const nuevo = document.getElementById("seccionNuevo");
     const mis   = document.getElementById("seccionMis");
 
-    /* ===== BOTONES SIDEBAR ===== */
     const btnInicio = document.getElementById("btnInicio");
-    const btnNuevo  = document.getElementById("btnNuevo");
     const btnMis    = document.getElementById("btnMis");
-
-    /* ===== BOTÓN HOME ===== */
     const btnCrearTicket = document.getElementById("btnCrearTicket");
 
-    /* =========================
-       MENU HAMBURGUESA
-    ========================= */
     if (btnMenu) {
         btnMenu.addEventListener("click", () => {
             sidebar.classList.add("activo");
@@ -39,13 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("menu-abierto");
     }
 
-    /* =========================
-       MOSTRAR SECCIONES
-    ========================= */
     function ocultarTodo() {
-        if (home)  home.style.display  = "none";
-        if (nuevo) nuevo.style.display = "none";
-        if (mis)   mis.style.display   = "none";
+        home.style.display  = "none";
+        nuevo.style.display = "none";
+        mis.style.display   = "none";
     }
 
     function mostrar(seccion) {
@@ -54,39 +43,57 @@ document.addEventListener("DOMContentLoaded", () => {
         cerrarMenu();
     }
 
-    /* =========================
-       EVENTOS
-    ========================= */
+    if (btnInicio) btnInicio.onclick = e => { e.preventDefault(); mostrar(home); };
+    if (btnMis) btnMis.onclick = e => { e.preventDefault(); mostrar(mis); };
+    if (btnCrearTicket) btnCrearTicket.onclick = () => mostrar(nuevo);
 
-    /* INICIO */
-    if (btnInicio) {
-        btnInicio.addEventListener("click", e => {
-            e.preventDefault();
-            mostrar(home);
+    /* ===== CAMPANA ===== */
+    const btnCampana = document.getElementById("btnCampana");
+    const listaNoti  = document.querySelector(".lista-noti");
+
+    if (btnCampana && listaNoti) {
+        btnCampana.addEventListener("click", e => {
+            e.stopPropagation();
+            listaNoti.style.display =
+                listaNoti.style.display === "block" ? "none" : "block";
         });
     }
 
-    /* NUEVO TICKET (SIDEBAR) */
-    if (btnNuevo) {
-        btnNuevo.addEventListener("click", e => {
-            e.preventDefault();
-            mostrar(nuevo);
+    /* ===== USUARIO ===== */
+    const userBtn  = document.getElementById("topUserBtn");
+    const userDrop = document.getElementById("topUserDropdown");
+
+    if (userBtn && userDrop) {
+        userBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            userDrop.style.display =
+                userDrop.style.display === "block" ? "none" : "block";
         });
     }
 
-    /* MIS TICKETS */
-    if (btnMis) {
-        btnMis.addEventListener("click", e => {
-            e.preventDefault();
-            mostrar(mis);
-        });
-    }
+    document.addEventListener("click", () => {
+        if (listaNoti) listaNoti.style.display = "none";
+        if (userDrop)  userDrop.style.display = "none";
+    });
 
-    /* NUEVO TICKET (BOTÓN HOME) */
-    if (btnCrearTicket) {
-        btnCrearTicket.addEventListener("click", () => {
-            mostrar(nuevo);
-        });
-    }
+});
 
+
+/* ===== MENU USUARIO ===== */
+const topUserBtn = document.getElementById("topUserBtn");
+const topUserDropdown = document.getElementById("topUserDropdown");
+
+if (topUserBtn) {
+    topUserBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        topUserDropdown.style.display =
+            topUserDropdown.style.display === "block" ? "none" : "block";
+    });
+}
+
+/* CERRAR AL HACER CLICK FUERA */
+document.addEventListener("click", function () {
+    if (topUserDropdown) {
+        topUserDropdown.style.display = "none";
+    }
 });

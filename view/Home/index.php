@@ -132,9 +132,31 @@ if (isset($_POST['guardar'])) {
 
 <body>
 
+<!-- ================= TOP RIGHT BAR ================= -->
+<div class="top-right-bar">
+
+    <!--CAMPANA -->
+    <div class="top-campana" id="btnCampana">
+        🔔
+        <?php if ($totalNoti > 0): ?>
+            <span class="badge"><?= $totalNoti ?></span>
+        <?php endif; ?>
+    </div>
+
+    <!-- 👤 USUARIO -->
+    <div class="top-user" id="topUserBtn">
+        <?= htmlspecialchars($nombre_usuario) ?>
+        <div class="top-user-dropdown" id="topUserDropdown">
+            <a href="../../index.php">Cerrar sesión</a>
+        </div>
+    </div>
+
+</div>
+
+
 <!-- ☰ BOTÓN HAMBURGUESA -->
-
-
+<div id="btnMenu" class="hamburger">☰</div>
+<div id="overlay" class="overlay"></div>
 
 <!-- ================= SIDEBAR ================= -->
 <aside id="sidebar" class="sidebar">
@@ -149,7 +171,7 @@ if (isset($_POST['guardar'])) {
     <ul class="sidebar-menu">
         <li><a href="#" id="btnInicio">Inicio</a></li>
         <li><a href="#" id="btnMis">Mis Tickets</a></li>
-        <li><a href="../../index.php">Cerrar sesión</a></li>
+        
     </ul>
 </aside>
 
@@ -336,6 +358,55 @@ $(document).ready(function(){
         });
     }, 15000);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const btnCampana = document.getElementById("btnCampana");
+    const listaNoti  = document.querySelector(".lista-noti");
+
+    const userBtn = document.getElementById("topUserBtn");
+    const userDrop = document.getElementById("topUserDropdown");
+
+    /* CAMPANA */
+    if (btnCampana && listaNoti) {
+        btnCampana.addEventListener("click", (e) => {
+            e.stopPropagation();
+            listaNoti.style.display =
+                listaNoti.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    /* USUARIO */
+    if (userBtn && userDrop) {
+        userBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            userDrop.style.display =
+                userDrop.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    document.addEventListener("click", () => {
+        if (listaNoti) listaNoti.style.display = "none";
+        if (userDrop) userDrop.style.display = "none";
+    });
+
+});
+
+
+
+
 </script>
 
 </body>
