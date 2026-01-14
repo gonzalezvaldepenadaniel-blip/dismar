@@ -145,7 +145,8 @@ if (isset($_POST['guardar'])) {
     <div class="top-user" id="topUserBtn">
         <?= htmlspecialchars($nombre_usuario) ?>
         <div class="top-user-dropdown" id="topUserDropdown">
-            <a href="../../index.php">Cerrar sesión</a>
+            <a href="../../config/logout.php">Cerrar sesión</a>
+
         </div>
     </div>
 

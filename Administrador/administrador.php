@@ -91,7 +91,8 @@ $stmtUser = $conexion->prepare("
             <a href="#" onclick="mostrarReportes()">Reportes</a>
             <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
             <a href="../bitacora/index.php">SIE</a>
-            <a href="../index.php" class="logout">Cerrar sesión</a>
+           <a href="../config/logout.php" class="logout">Cerrar sesión</a>
+
         </nav>
     </aside>
 
