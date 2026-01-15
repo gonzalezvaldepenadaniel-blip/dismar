@@ -61,12 +61,14 @@ foreach ($data as $r) {
             : "—")."</td>
         <td>
             <button
-                class='btn btn-primary btn-sm atender'
-                data-id='{$r['ticket_id']}'
-                data-estado='{$r['estado']}'
-                data-comentario='".htmlspecialchars($r['comentario_admin'] ?? '', ENT_QUOTES)."'>
-                Atender
-            </button>
+ class='btn btn-primary btn-sm atender'
+ data-id='{$r['ticket_id']}'
+ data-estado='{$r['estado']}'
+ data-comentario='".htmlspecialchars($r['comentario_admin'] ?? '', ENT_QUOTES)."'
+ data-asignado='{$r['usu_asignado']}'>
+ Atender
+</button>
+
         </td>
     </tr>";
 }

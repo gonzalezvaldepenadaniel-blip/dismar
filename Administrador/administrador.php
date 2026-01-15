@@ -47,7 +47,7 @@ $ticketsProceso = obtenerTotal(
 );
 
 /* OBTENER CORREO DEL USUARIO */
-$stmtUser = $conexion->prepare("
+$stmtUser = $con->prepare("
     SELECT correo
     FROM tm_ticket
     WHERE ticket_id = :id
@@ -236,7 +236,10 @@ $stmtUser = $conexion->prepare("
         </section>
 
     </main>
+
+    
 </div>
+
 
 <!-- ================= MODAL ATENDER TICKET ================= -->
 <div class="modal fade" id="modalAtenderTicket" tabindex="-1">
@@ -251,6 +254,7 @@ $stmtUser = $conexion->prepare("
             <div class="modal-body">
                 <input type="hidden" id="ticket_id">
 
+                <!-- ESTATUS -->
                 <div class="form-group">
                     <label>Estatus</label>
                     <select id="estadoTicket" class="form-control">
@@ -260,6 +264,31 @@ $stmtUser = $conexion->prepare("
                     </select>
                 </div>
 
+                <!-- ASIGNAR USUARIO -->
+            <!-- ASIGNAR USUARIO -->
+<div class="form-group">
+    <label>Asignar a usuario</label>
+    <select id="usuarioAsignado" class="form-control">
+        <option value="">-- Seleccionar --</option>
+        <?php
+        $stmt = $con->prepare("
+            SELECT usu_id, usu_nombre
+            FROM tm_usuario
+            WHERE rol = 'admin'
+        ");
+        $stmt->execute();
+
+        while ($u = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo "<option value='{$u['usu_id']}'>
+                    {$u['usu_nombre']}
+                  </option>";
+        }
+        ?>
+    </select>
+</div>
+
+
+                <!-- COMENTARIO -->
                 <div class="form-group">
                     <label>Comentario</label>
                     <textarea id="comentarioTicket" class="form-control" rows="4"></textarea>
@@ -267,13 +296,28 @@ $stmtUser = $conexion->prepare("
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button class="btn btn-primary" id="btnGuardarTicket">Guardar</button>
+                <button class="btn btn-secondary" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" id="btnGuardarTicket">
+                    Guardar
+                </button>
             </div>
 
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- ================= SCRIPTS ================= -->
 <script src="../public/js/lib/jquery/jquery.min.js"></script>

@@ -11,7 +11,8 @@ $conectar = new Conectar();
 $conexion = $conectar->conexion();
 
 $ticket_id = $_POST['ticket_id'] ?? null;
-$estado    = $_POST['estado'] ?? null;
+$estado = $_POST['estado'] ?? null;
+$asignado = $_POST['asignado'] ?? null;
 $comentario = $_POST['comentario_admin'] ?? '';
 
 if (!$ticket_id || !$estado) {
@@ -19,10 +20,17 @@ if (!$ticket_id || !$estado) {
 }
 
 $sql = "UPDATE tm_ticket 
-        SET estado = ?, comentario_admin = ?
+        SET estado = ?, 
+            comentario_admin = ?, 
+            usu_asignado  = ?
         WHERE ticket_id = ?";
 
 $stmt = $conexion->prepare($sql);
-$stmt->execute([$estado, $comentario, $ticket_id]);
+$stmt->execute([
+    $estado,
+    $comentario,
+    $asignado,
+    $ticket_id
+]);
 
 echo "ok";

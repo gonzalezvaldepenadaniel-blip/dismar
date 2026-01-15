@@ -140,7 +140,9 @@ $(document).on("click", ".atender", function () {
     $("#ticket_id").val(data.id);
     $("#estadoTicket").val(data.estado);
     $("#comentarioTicket").val(data.comentario || "");
-    $("#folioTicket").text("#" + data.folio);
+
+    // 🔑 ESTA LÍNEA ES LA CLAVE DE TODO
+    $("#usuarioAsignado").val(data.asignado || "");
 
     $("#modalAtenderTicket").modal("show");
 });
@@ -156,26 +158,19 @@ $("#btnGuardarTicket").on("click", function () {
         data: {
             ticket_id: $("#ticket_id").val(),
             estado: $("#estadoTicket").val(),
-            comentario_admin: $("#comentarioTicket").val()
+            comentario_admin: $("#comentarioTicket").val(),
+            asignado: $("#usuarioAsignado").val()
+            
         },
         success: function (resp) {
 
-            
-if (resp.trim() === "ok") {
-    $("#modalAtenderTicket").modal("hide");
-    cargarTickets();
-    cargarDashboard(); // 👈 ESTO ES LO QUE FALTABA
-}
-
-
-
-
-
-
-
-
-
-
+            if (resp.trim() === "ok") {
+                $("#modalAtenderTicket").modal("hide");
+                cargarTickets();
+                cargarDashboard();
+            } else {
+                alert(resp);
+            }
 
         },
         error: function () {
