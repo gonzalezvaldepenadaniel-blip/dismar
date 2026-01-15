@@ -264,7 +264,28 @@ $stmtUser = $con->prepare("
                     </select>
                 </div>
 
-                <!-- ASIGNAR USUARIO -->
+                <!-- ASIGNAR CORREO-->
+
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
             <!-- ASIGNAR USUARIO -->
 <div class="form-group">
     <label>Asignar a usuario</label>

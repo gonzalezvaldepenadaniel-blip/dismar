@@ -14,7 +14,14 @@ $fin       = $_POST['fin'] ?? '';
 $estado    = $_POST['estado'] ?? '';
 $prioridad = $_POST['prioridad'] ?? '';
 
-$sql = "SELECT * FROM tm_ticket WHERE 1=1";
+$sql = "SELECT 
+    t.*,
+    CONCAT(u.usu_nombre, ' ', u.usu_apellido) AS admin_asignado
+FROM tm_ticket t
+LEFT JOIN tm_usuario u 
+    ON u.usu_id = t.usu_asignado";
+
+
 $params = [];
 
 if ($folio)     { $sql .= " AND folio LIKE ?";        $params[] = "%$folio%"; }

@@ -47,13 +47,19 @@ $cedis_usuario  = $usuario ? $usuario['cedis'] : '';
 
 /* OBTENER TICKETS */
 $stmtTickets = $conexion->prepare("
-    SELECT *
-    FROM tm_ticket
-    WHERE correo = :correo
-    ORDER BY fecha_solicitud DESC
+    SELECT 
+        t.*,
+        CONCAT(u.usu_nombre, ' ', u.usu_apellido) AS admin_asignado
+    FROM tm_ticket t
+    LEFT JOIN tm_usuario u 
+        ON u.usu_id = t.usu_asignado
+    WHERE t.correo = :correo
+    ORDER BY t.fecha_solicitud DESC
 ");
+
 $stmtTickets->execute([":correo" => $correo_usuario]);
 $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
+
 
 /* ================= GUARDAR TICKET ================= */
 if (isset($_POST['guardar'])) {
@@ -320,8 +326,10 @@ if (isset($_POST['guardar'])) {
                                 }
                             ?>
                         </td>
-                        <td><?= htmlspecialchars($t['comentario_admin'] ?? '-') ?></td>
-                        <td><?= htmlspecialchars($t['asignado'] ?? '-') ?></td>
+                       <td><?= htmlspecialchars($t['comentario_admin'] ?? '-') ?></td>
+<td><?= htmlspecialchars($t['admin_asignado'] ?: 'Sin asignar') ?></td>
+
+
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

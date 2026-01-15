@@ -33,7 +33,7 @@ require_once("../config/conexion.php");
             </tr>
           </thead>
 
-          <!-- ESTE TBODY ES EL QUE SE RECARGA POR AJAX -->
+          <!-- RECARGA AJAX -->
           <tbody id="tablaUsuarios">
             <?php include("usuarios_tabla.php"); ?>
           </tbody>
