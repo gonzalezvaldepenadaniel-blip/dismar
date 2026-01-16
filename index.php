@@ -1,129 +1,80 @@
 <?php
 require_once("config/conexion.php");
 
-if(isset($_POST["enviar"]) && $_POST["enviar"] == "si"){
+if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
     require_once("models/Usuario.php");
     $usuario = new Usuario();
-    $usuario->login("user"); 
+    $usuario->login("user");
 }
 ?>
-
-
 
 <!DOCTYPE html>
-<html>
-<head lang="es">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title>Dismar</title>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dismar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link href="img/favicon.144x144.png" rel="apple-touch-icon" type="image/png" sizes="144x144">
-	<link href="img/favicon.114x114.png" rel="apple-touch-icon" type="image/png" sizes="114x114">
-	<link href="img/favicon.72x72.png" rel="apple-touch-icon" type="image/png" sizes="72x72">
-	<link href="img/favicon.57x57.png" rel="apple-touch-icon" type="image/png">
-	<link href="img/favicon.png" rel="icon" type="image/png">
-	<link href="img/favicon.ico" rel="shortcut icon">
-
-<link rel="stylesheet" href="public/css/separate/pages/login.min.css">
-    <link rel="stylesheet" href="public/css/lib/font-awesome/font-awesome.min.css">
+    <!-- BOOTSTRAP -->
     <link rel="stylesheet" href="public/css/lib/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="public/css/main.css">
+    <link rel="stylesheet" href="public/css/lib/font-awesome/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
 
-    <div class="page-center">
-        <div class="page-center-in">
-            <div class="container-fluid">
-                <form class="sign-box" action="" method="post" id="login_form">
-                    <div class="sign-avatar">
-                        <img src="public/img/dismar.png" alt="">
-                    </div>
-                    <header class="sign-title">Usuarios</header>
+<div class="login-wrapper">
+    <div class="login-box">
 
-               <?php
-if (isset($_GET["m"])) {
-    switch ($_GET["m"]) {
-
-        case "1":
-        ?>
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </strong> El usuario y/o contraseña son incorrectos.
-        </div>
-        <?php
-        break;
-
-        case "2":
-        ?>
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </strong> Campos vacíos.
-        </div>
-        <?php
-        break;
-    }
-}
-?>
-
-
-
-
-
-
-                    <div class="form-group">
-                        <input type="text" id="usu_correo" name="usu_correo" class="form-control" placeholder="Email"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="password"  id="usu_pass" name="usu_pass" class="form-control" placeholder="Contraseña"/>
-                    </div>
-                    <div class="form-group">
-                        <div class="checkbox float-left">
-                            
-                        </div>
-                       <!--
-                                <div class="float-right reset">
-                             <a href="reset-password.html">Restablecer contraseña</a>
-                                </div>
-                        -->
-
-                    </div>
-                    <input type="hidden" name="enviar" class="form-control" value="si">
-                    <button type="submit" class="btn btn-rounded">Iniciar Sesión</button>
-     <a href="/Dismar/admin-login.php">Administrador</a>
+   <a href="/Dismar/admin-login.php" class="logo-link">
+    <img src="public/img/dismar.png" alt="Dismar">
 </a>
 
-                </form>
+
+       
+
+        <?php if (isset($_GET["m"])): ?>
+            <div class="alert alert-danger text-center">
+                <?= $_GET["m"] == 1 ? "Usuario y/o contraseña incorrectos" : "Campos vacíos" ?>
             </div>
-        </div>
-    </div><!--.page-center-->
+        <?php endif; ?>
 
+        <form method="post">
 
+            <div class="form-group mb-3">
+                <input type="text" name="usu_correo"
+                       class="form-control"
+                       placeholder="Email"
+                       required>
+            </div>
+
+            <div class="form-group password-group mb-3">
+                <input type="password" id="usu_pass" name="usu_pass"
+                       class="form-control"
+                       placeholder="Contraseña"
+                       required>
+
+                <span class="toggle-password" onclick="verPassword()">
+                    <i id="icono" class="fa fa-eye"></i>
+                </span>
+            </div>
+
+            <input type="hidden" name="enviar" value="si">
+
+            <button class="btn btn-primary w-100">
+                Iniciar Sesión
+            </button>
+
+          
+
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
 <script src="public/js/lib/jquery/jquery.min.js"></script>
-<script src="public/js/lib/tether/tether.min.js"></script>
 <script src="public/js/lib/bootstrap/bootstrap.min.js"></script>
-<script src="public/js/plugins.js"></script>
-    <script type="text/javascript" src="public/js/lib/match-height/jquery.matchHeight.min.js"></script>
-    <script>
-        $(function() {
-            $('.page-center').matchHeight({
-                target: $('html')
-            });
+<script src="index.js"></script>
 
-            $(window).resize(function(){
-                setTimeout(function(){
-                    $('.page-center').matchHeight({ remove: true });
-                    $('.page-center').matchHeight({
-                        target: $('html')
-                    });
-                },100);
-            });
-        });
-    </script>
-<script src="public/js/app.js"></script>
 </body>
 </html>

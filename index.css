@@ -1,0 +1,90 @@
+/* FONDO */
+body {
+    min-height: 100vh;
+    background: #f5f6fa;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* CENTRADO */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* CAJA LOGIN */
+.login-box {
+    width: 100%;
+    max-width: 380px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.1);
+}
+
+/* LOGO */
+.login-box img {
+    width: 120px;
+    display: block;
+    margin: 0 auto 15px;
+}
+
+/* PASSWORD */
+.password-group {
+    position: relative;
+}
+
+.password-group input {
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.toggle-password:hover {
+    color: #000;
+}
+
+
+
+
+
+/* ===== AJUSTE LOGIN ADMIN (SIN ROMPER LAYOUT) ===== */
+
+.admin-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-login .card {
+    width: 100%;
+    max-width: 380px;
+    padding: 25px;
+}
+
+/* Asegurar que el ojito se posicione igual */
+.admin-login .password-group {
+    position: relative;
+}
+
+.admin-login .password-group input {
+    padding-right: 40px;
+}
+
+.admin-login .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
