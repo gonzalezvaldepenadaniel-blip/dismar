@@ -84,10 +84,11 @@ function obtenerTotal($con, $sql){
                     </p>
                 </div>
 
-                <div class="card">
-                    <h4>Asignados</h4>
-                    <p>Tickets generados: <strong id="totalTickets">0</strong></p>
-                </div>
+             <div class="card">
+    <h4>Asignados</h4>
+    <p>Mis tickets: <strong id="ticketsAsignados">0</strong></p>
+</div>
+
 
             </div>
         </section>

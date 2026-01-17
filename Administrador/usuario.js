@@ -178,3 +178,37 @@ $("#btnGuardarTicket").on("click", function () {
         }
     });
 });
+
+/* ==========================
+   CARGAR DASHBOARD (TOTALES)
+========================== */
+function cargarDashboard() {
+    $.ajax({
+        url: "dashboard_totales.php",
+        dataType: "json",
+        success: function (data) {
+
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            $("#totalUsuarios").text(data.usuarios);
+            $("#totalTickets").text(data.tickets);
+            $("#ticketsAbiertos").text(data.abiertos);
+            $("#ticketsProceso").text(data.proceso);
+            $("#ticketsAsignados").text(data.asignados);
+
+        },
+        error: function () {
+            console.error("Error al cargar dashboard");
+        }
+    });
+}
+
+/* ==========================
+   AL CARGAR LA PÁGINA
+========================== */
+$(document).ready(function () {
+    cargarDashboard();
+});
