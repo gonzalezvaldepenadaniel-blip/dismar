@@ -1,25 +1,42 @@
+/* =========================
+   RESET BÁSICO
+========================= */
+* {
+    box-sizing: border-box;
+}
+
 body {
+    margin: 0;
     background: #f8f9fa;
     font-family: Arial;
 }
 
-/* ===== LAYOUT ===== */
+/* =========================
+   LAYOUT GENERAL
+========================= */
 .layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* =========================
+   SIDEBAR
+========================= */
 .sidebar {
-    width: 230px;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100%;
     background: #343a40;
     color: #fff;
     padding: 20px;
-    transition: all 0.3s ease;
+    transition: left 0.3s ease;
+    z-index: 1002;
 }
 
-.sidebar.oculto {
-    margin-left: -230px;
+.sidebar.active {
+    left: 0;
 }
 
 .logo {
@@ -32,6 +49,10 @@ body {
 .user {
     text-align: center;
     margin-bottom: 30px;
+}
+
+.user strong {
+    display: block;
 }
 
 .user span {
@@ -47,53 +68,49 @@ body {
     border-radius: 4px;
     margin-bottom: 8px;
     font-weight: 600;
+    transition: background 0.2s;
 }
 
 .sidebar nav a:hover {
     background: #495057;
 }
 
-/* ===== MAIN ===== */
+.sidebar nav a.logout {
+    margin-top: 20px;
+    background: #dc3545;
+}
+
+.sidebar nav a.logout:hover {
+    background: #c82333;
+}
+
+/* =========================
+   MAIN
+========================= */
 .main {
     flex: 1;
+    width: 100%;
     padding: 0;
+    margin-left: 0;
+     padding-top: 60px; 
 }
 
-/* ===== TOPBAR ===== */
-.topbar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #fff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.topbar .title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #343a40;
-}
-
-/* ===== BOTÓN ===== */
-.btn-menu {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #343a40;
-}
-
-/* ===== CONTENIDO ===== */
+/* =========================
+   SECCIONES
+========================= */
 .main section {
-    padding: 30px;
+    padding-top: 20px;
 }
 
-/* ===== CARDS ===== */
+/* =========================
+   CARDS DASHBOARD
+========================= */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
+    margin: 0 auto;
+     max-width: 1100px;
 }
 
 .card {
@@ -107,16 +124,92 @@ body {
 .card h4 {
     font-size: 16px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .card p {
     font-size: 13px;
     color: #6c757d;
+    margin: 0;
 }
 
-/* ===== REPORTES ===== */
+/* =========================
+   REPORTES
+========================= */
 #seccionReportes {
     background: #fff;
     border-radius: 6px;
     border: 1px solid #dee2e6;
+}
+
+/* =========================
+   HAMBURGUESA
+========================= */
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 26px;
+    cursor: pointer;
+    z-index: 1003;
+    color: #343a40;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    z-index: 1001;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* =========================
+   TABLAS
+========================= */
+.table {
+    background: #fff;
+}
+
+.table thead th {
+    font-size: 13px;
+}
+
+.table td {
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+/* =========================
+   MODALES
+========================= */
+.modal-header {
+    background: #343a40;
+    color: #fff;
+}
+
+.modal-header .close {
+    color: #fff;
+    opacity: 1;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+    .main section {
+        padding: 20px 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
 }

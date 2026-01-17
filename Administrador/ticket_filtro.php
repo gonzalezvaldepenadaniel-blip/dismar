@@ -19,17 +19,18 @@ $sql = "SELECT
     CONCAT(u.usu_nombre, ' ', u.usu_apellido) AS admin_asignado
 FROM tm_ticket t
 LEFT JOIN tm_usuario u 
-    ON u.usu_id = t.usu_asignado";
+    ON u.usu_id = t.usu_asignado
+    WHERE 1=1";
 
 
 $params = [];
 
-if ($folio)     { $sql .= " AND folio LIKE ?";        $params[] = "%$folio%"; }
-if ($cedis)     { $sql .= " AND cedis = ?";           $params[] = $cedis; }
-if ($inicio)    { $sql .= " AND fecha_solicitud >= ?";$params[] = "$inicio 00:00:00"; }
-if ($fin)       { $sql .= " AND fecha_solicitud <= ?";$params[] = "$fin 23:59:59"; }
-if ($estado)    { $sql .= " AND estado = ?";          $params[] = $estado; }
-if ($prioridad) { $sql .= " AND prioridad = ?";       $params[] = $prioridad; }
+if ($folio)     { $sql .= " AND t.folio LIKE ?";        $params[] = "%$folio%"; }
+if ($cedis)     { $sql .= " AND t.cedis = ?";           $params[] = $cedis; }
+if ($inicio)    { $sql .= " AND t.fecha_solicitud >= ?";$params[] = "$inicio 00:00:00"; }
+if ($fin)       { $sql .= " AND t.fecha_solicitud <= ?";$params[] = "$fin 23:59:59"; }
+if ($estado)    { $sql .= " AND t.estado = ?";          $params[] = $estado; }
+if ($prioridad) { $sql .= " AND t.prioridad = ?";       $params[] = $prioridad; }
 
 $sql .= " ORDER BY fecha_solicitud DESC";
 
