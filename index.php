@@ -25,10 +25,12 @@ if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
 
 <div class="login-wrapper">
     <div class="login-box">
+<form action="/Dismar/admin-login.php">
+    <button class="btn-hidden">BIENVENIDO</button>
+</form>
 
-   <a href="/Dismar/admin-login.php" class="logo-link">
-    <img src="public/img/dismar.png" alt="Dismar">
-</a>
+
+    
 
 
        
