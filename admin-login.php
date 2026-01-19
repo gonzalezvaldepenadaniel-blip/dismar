@@ -30,7 +30,8 @@ if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
 <div class="admin-login">
     <div class="card">
 
-        <h3 class="text-center">ADMINISTRADOR</h3>
+       <h3 class="btn-hidden">ADMINISTRADOR</h3>
+
 
         <?php if (isset($_GET["m"]) && $_GET["m"] == 1): ?>
             <div class="alert alert-danger text-center">
@@ -54,17 +55,6 @@ if (isset($_POST["enviar"]) && $_POST["enviar"] == "si") {
         <i id="icono" class="fa fa-eye"></i>
     </span>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
             <input type="hidden" name="enviar" value="si">
 
