@@ -121,7 +121,20 @@ if (isset($_POST['guardar'])) {
 
     header("Location: index.php");
     exit;
+
 }
+
+$stmt = $conexion->prepare("
+    SELECT COUNT(*) 
+    FROM tm_notificacion
+    WHERE correo_usuario = :correo
+    AND leido = 0
+");
+$stmt->execute([
+    ":correo" => $_SESSION["correo_usuario"]
+]);
+$totalNoti = $stmt->fetchColumn();
+
 ?>
 
 <!DOCTYPE html>
@@ -150,12 +163,32 @@ if (isset($_POST['guardar'])) {
     <!-- 👤 USUARIO -->
     <div class="top-user" id="topUserBtn">
         <?= htmlspecialchars($nombre_usuario) ?>
+          <span class="arrow">▼</span>
         <div class="top-user-dropdown" id="topUserDropdown">
             <a href="../../config/logout.php">Cerrar sesión</a>
 
         </div>
     </div>
 
+</div>
+<div class="lista-noti" id="listaNoti">
+    <?php
+    $stmt = $conexion->prepare("
+        SELECT * FROM tm_notificacion
+        WHERE correo_usuario = :correo
+        ORDER BY fecha DESC
+        LIMIT 10
+    ");
+    $stmt->execute([
+        ":correo" => $_SESSION["correo_usuario"]
+    ]);
+
+    while ($n = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<div class='noti-item'>
+                {$n['mensaje']}
+              </div>";
+    }
+    ?>
 </div>
 
 

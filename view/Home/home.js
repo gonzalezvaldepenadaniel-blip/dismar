@@ -161,3 +161,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+
+const btnCampana = document.getElementById("btnCampana");
+const listaNoti = document.getElementById("listaNoti");
+
+if (btnCampana && listaNoti) {
+    btnCampana.addEventListener("click", e => {
+        e.stopPropagation();
+        listaNoti.style.display =
+            listaNoti.style.display === "block" ? "none" : "block";
+
+        // marcar como leídas
+        fetch("noti_leidas.php");
+    });
+}

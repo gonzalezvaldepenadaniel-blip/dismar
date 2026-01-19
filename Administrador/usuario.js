@@ -141,7 +141,7 @@ $(document).on("click", ".atender", function () {
     $("#estadoTicket").val(data.estado);
     $("#comentarioTicket").val(data.comentario || "");
 
-    // 🔑 ESTA LÍNEA ES LA CLAVE DE TODO
+    // ESTA LÍNEA ES LA CLAVE DE TODO
     $("#usuarioAsignado").val(data.asignado || "");
 
     $("#modalAtenderTicket").modal("show");
