@@ -121,20 +121,7 @@ if (isset($_POST['guardar'])) {
 
     header("Location: index.php");
     exit;
-
 }
-
-$stmt = $conexion->prepare("
-    SELECT COUNT(*) 
-    FROM tm_notificacion
-    WHERE correo_usuario = :correo
-    AND leido = 0
-");
-$stmt->execute([
-    ":correo" => $_SESSION["correo_usuario"]
-]);
-$totalNoti = $stmt->fetchColumn();
-
 ?>
 
 <!DOCTYPE html>
@@ -160,17 +147,6 @@ $totalNoti = $stmt->fetchColumn();
         <?php endif; ?>
     </div>
 
-    <!-- 👤 USUARIO -->
-    <div class="top-user" id="topUserBtn">
-        <?= htmlspecialchars($nombre_usuario) ?>
-          <span class="arrow">▼</span>
-        <div class="top-user-dropdown" id="topUserDropdown">
-            <a href="../../config/logout.php">Cerrar sesión</a>
-
-        </div>
-    </div>
-
-</div>
 <div class="lista-noti" id="listaNoti">
     <?php
     $stmt = $conexion->prepare("
@@ -189,6 +165,20 @@ $totalNoti = $stmt->fetchColumn();
               </div>";
     }
     ?>
+</div>
+
+
+
+    <!-- 👤 USUARIO -->
+    <div class="top-user" id="topUserBtn">
+        <?= htmlspecialchars($nombre_usuario) ?>
+          <span class="arrow">▼</span>
+        <div class="top-user-dropdown" id="topUserDropdown">
+            <a href="../../config/logout.php">Cerrar sesión</a>
+
+        </div>
+    </div>
+
 </div>
 
 

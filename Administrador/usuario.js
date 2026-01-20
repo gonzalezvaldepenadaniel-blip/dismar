@@ -160,6 +160,7 @@ $("#btnGuardarTicket").on("click", function () {
             estado: $("#estadoTicket").val(),
             comentario_admin: $("#comentarioTicket").val(),
             asignado: $("#usuarioAsignado").val()
+
             
         },
         success: function (resp) {

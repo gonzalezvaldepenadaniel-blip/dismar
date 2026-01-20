@@ -6,21 +6,26 @@ if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
 }
 
 require_once("../config/conexion.php");
-$conexion = Conectar::conexion();
 
-$ticket_id  = $_POST['ticket_id'] ?? null;
-$estado     = $_POST['estado'] ?? null;
+$conectar = new Conectar();
+$conexion = $conectar->conexion();
+
+$ticket_id = $_POST['ticket_id'] ?? null;
+$estado    = $_POST['estado'] ?? null;
+$asignado  = $_POST['asignado'] ?? null; // 🔥 FIX
 $comentario = $_POST['comentario_admin'] ?? '';
-$asignado   = $_POST['asignado'] ?? null;
 
 if (!$ticket_id || !$estado) {
     exit("datos-incompletos");
 }
 
-/* ACTUALIZAR TICKET */
-$sql = "UPDATE tm_ticket
-        SET estado = ?, comentario_admin = ?, usu_asignado = ?
+/* ===== ACTUALIZAR TICKET ===== */
+$sql = "UPDATE tm_ticket 
+        SET estado = ?, 
+            comentario_admin = ?, 
+            usu_asignado = ?
         WHERE ticket_id = ?";
+
 $stmt = $conexion->prepare($sql);
 $stmt->execute([
     $estado,
@@ -29,31 +34,29 @@ $stmt->execute([
     $ticket_id
 ]);
 
-/* OBTENER DATOS DEL TICKET */
-$stmt = $conexion->prepare("
-    SELECT correo, folio
-    FROM tm_ticket
-    WHERE ticket_id = ?
-");
-$stmt->execute([$ticket_id]);
-$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+/* ===== NOTIFICACIÓN ===== */
+if ($asignado) {
 
-/* INSERTAR NOTIFICACIÓN */
-if ($ticket) {
+    $sql = "SELECT usu_correo 
+            FROM tm_usuario 
+            WHERE usu_id = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([$asignado]);
+    $correoUsuario = $stmt->fetchColumn();
 
-    $mensaje = "Tu ticket {$ticket['folio']} fue actualizado";
+    if ($correoUsuario) {
+        $mensaje = "Ticket #{$ticket_id} fue actualizado";
 
-    $stmt = $conexion->prepare("
-        INSERT INTO tm_notificacion
-        (correo_usuario, ticket_id, mensaje)
-        VALUES (?, ?, ?)
-    ");
-    $stmt->execute([
-        $ticket['correo'],
-        $ticket_id,
-        $mensaje
-    ]);
+        $sql = "INSERT INTO tm_notificacion 
+                (correo_usuario, ticket_id, mensaje)
+                VALUES (?, ?, ?)";
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute([
+            $correoUsuario,
+            $ticket_id,
+            $mensaje
+        ]);
+    }
 }
 
 echo "ok";
-?>

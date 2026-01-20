@@ -20,19 +20,18 @@ $sql = "SELECT
 FROM tm_ticket t
 LEFT JOIN tm_usuario u 
     ON u.usu_id = t.usu_asignado
-    WHERE 1=1";
-
+WHERE 1=1";
 
 $params = [];
 
-if ($folio)     { $sql .= " AND t.folio LIKE ?";        $params[] = "%$folio%"; }
-if ($cedis)     { $sql .= " AND t.cedis = ?";           $params[] = $cedis; }
-if ($inicio)    { $sql .= " AND t.fecha_solicitud >= ?";$params[] = "$inicio 00:00:00"; }
-if ($fin)       { $sql .= " AND t.fecha_solicitud <= ?";$params[] = "$fin 23:59:59"; }
-if ($estado)    { $sql .= " AND t.estado = ?";          $params[] = $estado; }
-if ($prioridad) { $sql .= " AND t.prioridad = ?";       $params[] = $prioridad; }
+if ($folio)     { $sql .= " AND t.folio LIKE ?";         $params[] = "%$folio%"; }
+if ($cedis)     { $sql .= " AND t.cedis = ?";            $params[] = $cedis; }
+if ($inicio)    { $sql .= " AND t.fecha_solicitud >= ?"; $params[] = "$inicio 00:00:00"; }
+if ($fin)       { $sql .= " AND t.fecha_solicitud <= ?"; $params[] = "$fin 23:59:59"; }
+if ($estado)    { $sql .= " AND t.estado = ?";           $params[] = $estado; }
+if ($prioridad) { $sql .= " AND t.prioridad = ?";        $params[] = $prioridad; }
 
-$sql .= " ORDER BY fecha_solicitud DESC";
+$sql .= " ORDER BY t.fecha_solicitud DESC";
 
 $stmt = $conexion->prepare($sql);
 $stmt->execute($params);
@@ -45,13 +44,20 @@ if (!$data) {
 
 foreach ($data as $r) {
 
-    /* ===== ESTATUS TEXTO ===== */
     if ($r['estado'] == 1) {
         $estatus = "<span class='badge badge-success'>Abierto</span>";
     } elseif ($r['estado'] == 2) {
         $estatus = "<span class='badge badge-warning'>En proceso</span>";
     } else {
         $estatus = "<span class='badge badge-secondary'>Cerrado</span>";
+    }
+
+    // ===== EVIDENCIA =====
+    if (!empty($r['evidencia']) && ($_SERVER['DOCUMENT_ROOT']."/Dismar/uploads/".$r['evidencia'])) {
+
+        $evidencia = "<a href='/Dismar/public/evidencias/".htmlspecialchars($r['evidencia'])."' target='_blank' class='btn btn-link btn-sm'>Ver</a>";
+    } else {
+        $evidencia = "<span class='text-muted'>—</span>";
     }
 
     echo "<tr>
@@ -64,19 +70,16 @@ foreach ($data as $r) {
         <td>{$r['cedis']}</td>
         <td>".date('d/m/Y H:i', strtotime($r['fecha_solicitud']))."</td>
         <td>$estatus</td>
-        <td>".($r['evidencia']
-            ? "<a href='../uploads/{$r['evidencia']}' target='_blank'>Ver</a>"
-            : "—")."</td>
+        <td class='text-center'>$evidencia</td>
         <td>
             <button
- class='btn btn-primary btn-sm atender'
- data-id='{$r['ticket_id']}'
- data-estado='{$r['estado']}'
- data-comentario='".htmlspecialchars($r['comentario_admin'] ?? '', ENT_QUOTES)."'
- data-asignado='{$r['usu_asignado']}'>
- Atender
-</button>
-
+                class='btn btn-primary btn-sm atender'
+                data-id='{$r['ticket_id']}'
+                data-estado='{$r['estado']}'
+                data-comentario='".htmlspecialchars($r['comentario_admin'] ?? '', ENT_QUOTES)."'
+                data-asignado='{$r['usu_asignado']}'>
+                Atender
+            </button>
         </td>
     </tr>";
 }
