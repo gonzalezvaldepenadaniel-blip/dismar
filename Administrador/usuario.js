@@ -106,9 +106,6 @@ $(document).on("click", ".eliminar", function () {
 });
 
 
-/* ==========================
-   VER / OCULTAR CONTRASEÑA
-========================== */
 
 /* ==========================
    AL ABRIR USUARIOS

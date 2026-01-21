@@ -8,22 +8,31 @@ if (
     exit("no-session");
 }
 
-
 require_once("../config/conexion.php");
 
 $conectar = new Conectar();
 $conexion = $conectar->conexion();
 
-$ticket_id = $_POST['ticket_id'] ?? null;
-$estado    = $_POST['estado'] ?? null;
-$asignado  = $_POST['asignado'] ?? null;
+$ticket_id  = $_POST['ticket_id'] ?? null;
+$estado     = $_POST['estado'] ?? null;
+$asignado   = $_POST['asignado'] ?? null;
 $comentario = $_POST['comentario_admin'] ?? '';
 
 if (!$ticket_id || !$estado) {
     exit("datos-incompletos");
 }
 
-/* ===== ACTUALIZAR TICKET ===== */
+/* aparece ticket que solo fuiste asignado*/
+if ($asignado === "" || $asignado === "0") {
+    $asignado = null;
+}
+
+/* 🔐 SI ES ADMIN, SOLO PUEDE ASIGNARSE A SÍ MISMO */
+if ($_SESSION["rol"] === "admin") {
+    $asignado = $_SESSION["usu_id"];
+}
+
+/* ===== UPDATE ===== */
 $sql = "UPDATE tm_ticket 
         SET estado = ?, 
             comentario_admin = ?, 
@@ -38,23 +47,24 @@ $stmt->execute([
     $ticket_id
 ]);
 
-/* ===== NOTIFICACIÓN ===== */
-if ($asignado) {
+/* ===== NOTIFICACIÓN SOLO SI HAY ASIGNADO ===== */
+if ($asignado !== null) {
 
-    $sql = "SELECT usu_correo 
-            FROM tm_usuario 
-            WHERE usu_id = ?";
-    $stmt = $conexion->prepare($sql);
+    $stmt = $conexion->prepare(
+        "SELECT usu_correo FROM tm_usuario WHERE usu_id = ?"
+    );
     $stmt->execute([$asignado]);
     $correoUsuario = $stmt->fetchColumn();
 
     if ($correoUsuario) {
-        $mensaje = "Ticket #{$ticket_id} fue actualizado";
 
-        $sql = "INSERT INTO tm_notificacion 
-                (correo_usuario, ticket_id, mensaje)
-                VALUES (?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
+        $mensaje = "Ticket #{$ticket_id} fue asignado o actualizado";
+
+        $stmt = $conexion->prepare(
+            "INSERT INTO tm_notificacion 
+             (correo_usuario, ticket_id, mensaje)
+             VALUES (?, ?, ?)"
+        );
         $stmt->execute([
             $correoUsuario,
             $ticket_id,
@@ -64,3 +74,4 @@ if ($asignado) {
 }
 
 echo "ok";
+?>
