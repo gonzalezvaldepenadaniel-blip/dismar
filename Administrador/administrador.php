@@ -1,23 +1,21 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
+if (
+    !isset($_SESSION["correo_usuario"]) ||
+    !in_array($_SESSION["rol"], ["admin","superadmin"])
+) {
     header("Location: ../admin-login.php");
     exit();
 }
+
+$esSuperAdmin = ($_SESSION['rol'] === 'superadmin');
 
 require_once("../config/conexion.php");
 require_once("usuarios_modal.php");
 require_once("crud.php");
 
 $con = Conectar::conexion();
-
-function obtenerTotal($con, $sql){
-    $stmt = $con->prepare($sql);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ? $row['total'] : 0;
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,55 +23,56 @@ function obtenerTotal($con, $sql){
 <meta charset="UTF-8">
 <title>Dismar</title>
 
-<!-- BOOTSTRAP -->
 <link rel="stylesheet" href="../public/css/lib/bootstrap/bootstrap.min.css">
-
-<!-- CSS ADMIN -->
 <link rel="stylesheet" href="/Dismar/Administrador/administrador.css">
+<link rel="stylesheet" href="../public/css/lib/font-awesome/font-awesome.min.css">
 </head>
 
 <body>
 
 <div class="layout">
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
-
         <div class="logo">ADMINISTRADOR</div>
 
         <div class="user">
             <strong><?= htmlspecialchars($_SESSION["usu_nombre"]) ?></strong>
+            <span><?= $_SESSION["rol"] ?></span>
         </div>
 
         <nav>
             <a href="#" onclick="mostrarInicio()">Inicio</a>
             <a href="#" onclick="mostrarReportes()">Reportes</a>
-            <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
+
+            <?php if ($esSuperAdmin): ?>
+                <a href="#" data-toggle="modal" data-target="#modalUsuarios">Usuarios</a>
+            <?php endif; ?>
+
             <a href="../bitacora/index.php">SIE</a>
             <a href="../config/logout.php" class="logout">Cerrar sesión</a>
         </nav>
     </aside>
 
-    <!-- ================= CONTENIDO ================= -->
+    <!-- CONTENIDO -->
     <main class="main">
 
         <!-- HAMBURGUESA -->
         <div id="btnMenu" class="hamburger">☰</div>
         <div id="overlay" class="overlay"></div>
 
-        <!-- ===== INICIO ===== -->
+        <!-- INICIO -->
         <section id="seccionInicio">
-            
             <div class="cards">
 
                 <div class="card">
                     <h4>Usuarios</h4>
-                    <p>Usuarios registrados: <strong id="totalUsuarios">0</strong></p>
+                    <p>Total: <strong id="totalUsuarios">0</strong></p>
                 </div>
 
                 <div class="card">
                     <h4>Tickets</h4>
-                    <p>Tickets generados: <strong id="totalTickets">0</strong></p>
+                    <p>Total: <strong id="totalTickets">0</strong></p>
                 </div>
 
                 <div class="card">
@@ -84,16 +83,15 @@ function obtenerTotal($con, $sql){
                     </p>
                 </div>
 
-             <div class="card">
-    <h4>Asignados</h4>
-    <p>Mis tickets: <strong id="ticketsAsignados">0</strong></p>
-</div>
-
+                <div class="card">
+                    <h4>Asignados</h4>
+                    <p>Mis tickets: <strong id="ticketsAsignados">0</strong></p>
+                </div>
 
             </div>
         </section>
 
-        <!-- ===== REPORTES ===== -->
+        <!-- REPORTES -->
         <section id="seccionReportes" style="display:none">
 
             <h4>Reportes</h4>
@@ -168,9 +166,7 @@ function obtenerTotal($con, $sql){
                 </thead>
                 <tbody id="tablaReportes">
                     <tr>
-                        <td colspan="11" class="text-center">
-                            Selecciona Reportes
-                        </td>
+                        <td colspan="11" class="text-center">Selecciona filtros</td>
                     </tr>
                 </tbody>
             </table>
@@ -180,14 +176,14 @@ function obtenerTotal($con, $sql){
     </main>
 </div>
 
-<!-- ================= MODAL ATENDER ================= -->
-<div class="modal fade" id="modalAtenderTicket" tabindex="-1">
-    <div class="modal-dialog modal-md">
+<!-- MODAL ATENDER -->
+<div class="modal fade" id="modalAtenderTicket">
+    <div class="modal-dialog">
         <div class="modal-content">
 
             <div class="modal-header">
                 <h5 class="modal-title">Atender Ticket</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -202,12 +198,17 @@ function obtenerTotal($con, $sql){
                     </select>
                 </div>
 
+                <?php if ($esSuperAdmin): ?>
                 <div class="form-group">
-                    <label>Asignar a usuario</label>
+                    <label>Asignar a administrador</label>
                     <select id="usuarioAsignado" class="form-control">
                         <option value="">-- Seleccionar --</option>
                         <?php
-                        $stmt = $con->prepare("SELECT usu_id, usu_nombre FROM tm_usuario WHERE rol='admin'");
+                        $stmt = $con->prepare("
+                            SELECT usu_id, usu_nombre 
+                            FROM tm_usuario 
+                            WHERE rol='admin' AND estado=1
+                        ");
                         $stmt->execute();
                         while ($u = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             echo "<option value='{$u['usu_id']}'>{$u['usu_nombre']}</option>";
@@ -215,10 +216,11 @@ function obtenerTotal($con, $sql){
                         ?>
                     </select>
                 </div>
+                <?php endif; ?>
 
                 <div class="form-group">
                     <label>Comentario</label>
-                    <textarea id="comentarioTicket" class="form-control" rows="4"></textarea>
+                    <textarea id="comentarioTicket" class="form-control"></textarea>
                 </div>
             </div>
 
@@ -231,75 +233,25 @@ function obtenerTotal($con, $sql){
     </div>
 </div>
 
-<!-- ================= SCRIPTS ================= -->
 <script src="../public/js/lib/jquery/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
 <script src="../public/js/lib/bootstrap/bootstrap.min.js"></script>
 <script src="usuario.js"></script>
 
-<!-- HAMBURGUESA -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const btnMenu = document.getElementById("btnMenu");
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
 
-    btnMenu.addEventListener("click", () => {
+    btnMenu.onclick = () => {
         sidebar.classList.toggle("active");
         overlay.classList.toggle("active");
-    });
+    };
 
-    overlay.addEventListener("click", () => {
+    overlay.onclick = () => {
         sidebar.classList.remove("active");
         overlay.classList.remove("active");
-    });
-});
-</script>
-
-<!-- FUNCIONES -->
-<script>
-function mostrarInicio(){
-    $("#seccionReportes").hide();
-    $("#seccionInicio").show();
-}
-
-function mostrarReportes(){
-    $("#seccionInicio").hide();
-    $("#seccionReportes").show();
-    cargarTickets();
-}
-
-function cargarTickets(){
-    $.ajax({
-        url: "ticket_filtro.php",
-        type: "POST",
-        data: {
-            folio: $("#f_folio").val(),
-            cedis: $("#f_cedis").val(),
-            inicio: $("#f_inicio").val(),
-            fin: $("#f_fin").val(),
-            estado: $("#f_estado").val(),
-            prioridad: $("#f_prioridad").val()
-        },
-        beforeSend(){
-            $("#tablaReportes").html(
-                '<tr><td colspan="11" class="text-center">Cargando...</td></tr>'
-            );
-        },
-        success(resp){
-            $("#tablaReportes").html(resp);
-        }
-    });
-}
-
-$("#btnBuscar").on("click", cargarTickets);
-$("#btnLimpiar").on("click", () => {
-    $("#formFiltros")[0].reset();
-    cargarTickets();
-});
-
-$(document).ready(() => {
-    mostrarInicio();
+    };
 });
 </script>
 

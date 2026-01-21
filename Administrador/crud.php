@@ -70,40 +70,45 @@
           </div>
 
           <div class="row">
-            <div class="col-md-6">
-              <label class="form-label">Contraseña</label>
-              <div class="input-group">
-                <input type="password" class="form-control" name="usu_pass" id="usu_pass">
-                <div class="input-group-append">
-                  <button type="button"
-                          class="btn btn-outline-secondary toggle-pass"
-                          data-target="usu_pass">
-                    <i class="fa fa-eye"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+           <div class="col-md-6">
+  <label class="form-label">Contraseña</label>
 
-            <div class="col-md-6">
-              <label class="form-label">Confirmar contraseña</label>
-              <div class="input-group">
-                <input type="password" class="form-control" id="usu_pass_confirm">
-                <div class="input-group-append">
-                  <button type="button"
-                          class="btn btn-outline-secondary toggle-pass"
-                          data-target="usu_pass_confirm">
-                    <i class="fa fa-eye"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+  <div class="password-wrapper">
+    <input type="password"
+           class="form-control"
+           name="usu_pass"
+           id="usu_pass">
+
+    <span class="toggle-password"
+          onclick="verPassword('usu_pass', this)">
+      <i class="fa fa-eye"></i>
+    </span>
+  </div>
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Confirmar contraseña</label>
+
+  <div class="password-wrapper">
+    <input type="password"
+           class="form-control"
+           id="usu_pass_confirm">
+
+    <span class="toggle-password"
+          onclick="verPassword('usu_pass_confirm', this)">
+      <i class="fa fa-eye"></i>
+    </span>
+  </div>
+</div>
           </div>
 
-          <small class="text-muted d-block mt-2">
-            Deja la contraseña en blanco si no deseas cambiarla.
-          </small>
+          <div class="col-12">
+    <small class="text-muted fst-italic">
+      Déjala en blanco si no deseas cambiar la contraseña.
+    </small>
+  </div>
 
-        </div>
+</div>
 
         <!-- FOOTER -->
         <div class="modal-footer">

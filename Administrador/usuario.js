@@ -109,17 +109,6 @@ $(document).on("click", ".eliminar", function () {
 /* ==========================
    VER / OCULTAR CONTRASEÑA
 ========================== */
-$(document).on("click", ".toggle-pass", function () {
-
-    let input = $(this)
-        .closest(".password-wrapper")
-        .find("input");
-
-    input.attr(
-        "type",
-        input.attr("type") === "password" ? "text" : "password"
-    );
-});
 
 /* ==========================
    AL ABRIR USUARIOS
@@ -213,3 +202,57 @@ function cargarDashboard() {
 $(document).ready(function () {
     cargarDashboard();
 });
+
+
+
+/* ==========================
+   MOSTRAR SECCIONES
+========================== */
+function mostrarInicio() {
+    $("#seccionReportes").hide();
+    $("#seccionInicio").show();
+}
+
+function mostrarReportes() {
+    $("#seccionInicio").hide();
+    $("#seccionReportes").show();
+    cargarTickets();
+}
+
+/* ==========================
+   CARGAR TICKETS (REPORTES)
+========================== */
+function cargarTickets() {
+
+    $.ajax({
+        url: "ticket_filtro.php",
+        type: "POST",
+        data: {
+            folio: $("#f_folio").val(),
+            cedis: $("#f_cedis").val(),
+            inicio: $("#f_inicio").val(),
+            fin: $("#f_fin").val(),
+            estado: $("#f_estado").val(),
+            prioridad: $("#f_prioridad").val()
+        },
+        beforeSend: function () {
+            $("#tablaReportes").html(`
+                <tr>
+                    <td colspan="11" class="text-center">Cargando...</td>
+                </tr>
+            `);
+        },
+        success: function (html) {
+            $("#tablaReportes").html(html);
+        },
+        error: function () {
+            $("#tablaReportes").html(`
+                <tr>
+                    <td colspan="11" class="text-center text-danger">
+                        Error al cargar tickets
+                    </td>
+                </tr>
+            `);
+        }
+    });
+}

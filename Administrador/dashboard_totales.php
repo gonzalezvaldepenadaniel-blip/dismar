@@ -52,11 +52,11 @@ echo json_encode([
        TICKETS ASIGNADOS AL ADMIN
     ========================== */
     "asignados" => obtenerTotal(
-        $con,
-        "SELECT COUNT(*) AS total
-         FROM tm_ticket t
-         INNER JOIN tm_usuario u ON u.usu_id = t.usu_asignado
-         WHERE u.usu_correo = ?",
-        [$correoAdmin]
-    )
+    $con,
+    "SELECT COUNT(*) AS total
+     FROM tm_ticket
+     WHERE usu_asignado = ?",
+    [$_SESSION["usu_id"]]
+)
+
 ]);

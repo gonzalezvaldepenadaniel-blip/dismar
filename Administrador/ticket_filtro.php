@@ -1,6 +1,14 @@
 <?php
 session_start();
-if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") exit;
+
+
+if (
+    !isset($_SESSION["correo_usuario"]) ||
+    !in_array($_SESSION["rol"], ["admin","superadmin"])
+) {
+    exit;
+}
+
 
 require_once("../config/conexion.php");
 

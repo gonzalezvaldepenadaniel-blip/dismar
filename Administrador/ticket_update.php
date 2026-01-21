@@ -1,9 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
+if (
+    !isset($_SESSION["correo_usuario"]) ||
+    !in_array($_SESSION["rol"], ["admin", "superadmin"])
+) {
     exit("no-session");
 }
+
 
 require_once("../config/conexion.php");
 
@@ -12,7 +16,7 @@ $conexion = $conectar->conexion();
 
 $ticket_id = $_POST['ticket_id'] ?? null;
 $estado    = $_POST['estado'] ?? null;
-$asignado  = $_POST['asignado'] ?? null; // 🔥 FIX
+$asignado  = $_POST['asignado'] ?? null;
 $comentario = $_POST['comentario_admin'] ?? '';
 
 if (!$ticket_id || !$estado) {
