@@ -107,3 +107,55 @@ if (btnCampana && listaNoti) {
     });
 
 });
+
+
+// ================= MODAL TICKET =================
+
+// abrir modal desde FILA DE TICKET
+document.querySelectorAll(".ticket-row").forEach(row => {
+  row.addEventListener("click", function () {
+    
+  });
+});
+
+// abrir modal desde NOTIFICACIÓN
+document.querySelectorAll(".noti-ticket").forEach(noti => {
+  noti.addEventListener("click", function (e) {
+    e.stopPropagation();
+
+    let ticketId = this.dataset.ticketId; // 👈 aquí está la clave
+
+    abrirModalTicket(ticketId);
+  });
+});
+
+// función AJAX para traer datos reales del ticket
+function abrirModalTicket(ticketId) {
+  fetch("ajax_ticket.php?ticket_id=" + ticketId)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      
+      document.getElementById("modalEstado").innerText = data.estado;
+      document.getElementById("modalAsignado").innerText = data.asignado;
+      document.getElementById("modalComentario").innerText = data.comentario;
+
+      document.getElementById("modalTicket").style.display = "flex";
+    });
+}
+
+
+// cerrar modal
+document.querySelector(".close-modal").addEventListener("click", function () {
+  document.getElementById("modalTicket").style.display = "none";
+});
+
+window.addEventListener("click", function(e) {
+  if (e.target == document.getElementById("modalTicket")) {
+    document.getElementById("modalTicket").style.display = "none";
+  }
+});

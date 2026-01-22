@@ -21,7 +21,16 @@ $stmtNoti = $conexion->prepare("
 $stmtNoti->execute([':correo' => $correo_usuario]);
 $totalNoti = $stmtNoti->fetchColumn();
 
-
+/* Últimas 5 notificaciones */
+$stmtListado = $conexion->prepare("
+    SELECT *
+    FROM tm_notificacion
+    WHERE correo_usuario = :correo
+    ORDER BY fecha DESC
+    LIMIT 5
+");
+$stmtListado->execute([':correo' => $correo_usuario]);
+$notificaciones = $stmtListado->fetchAll(PDO::FETCH_ASSOC);
 
 /* OBTENER NOMBRE Y CEDIS */
 $stmt = $conexion->prepare("
@@ -150,11 +159,16 @@ if (isset($_POST['guardar'])) {
         ":correo" => $_SESSION["correo_usuario"]
     ]);
 
-    while ($n = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        echo "<div class='noti-item'>
-                {$n['mensaje']}
-              </div>";
-    }
+  while ($n = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+    echo "<div class='noti-item noti-ticket'
+            data-ticket-id='{$n['ticket_id']}'
+          >
+            ".htmlspecialchars($n['mensaje'])."
+          </div>";
+}
+
+
     ?>
 </div>
 
@@ -201,27 +215,6 @@ if (isset($_POST['guardar'])) {
     <br><br>
     <button id="btnCrearTicket" class="btn-home">Nuevo Ticket</button>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- ================= NUEVO TICKET ================= -->
@@ -306,8 +299,22 @@ if (isset($_POST['guardar'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($tickets as $t): ?>
-                    <tr>
+                   
+<?php foreach($tickets as $t): ?>
+<tr class="ticket-row"
+    data-folio="<?= htmlspecialchars($t['folio']) ?>"
+    data-estado="<?php
+        switch($t['estado']) {
+            case 1: echo 'Abierto'; break;
+            case 2: echo 'En Proceso'; break;
+            case 3: echo 'Cerrado'; break;
+            default: echo '-';
+        }
+    ?>"
+    data-comentario="<?= htmlspecialchars($t['comentario_admin'] ?? 'Sin comentarios') ?>"
+    data-asignado="<?= htmlspecialchars($t['admin_asignado'] ?: 'Sin asignar') ?>"
+>
+
                         <td><?= htmlspecialchars($t['folio']) ?></td>
                         <td><?= htmlspecialchars($t['fecha_solicitud']) ?></td>
                         <td><?= htmlspecialchars($t['cedis']) ?></td>
@@ -340,6 +347,20 @@ if (isset($_POST['guardar'])) {
         <?php endif; ?>
     </div>
 </section>
+<!-- ================= MODAL TICKET ================= -->
+<div id="modalTicket" class="modal-ticket">
+  <div class="modal-content-ticket">
+    <span class="close-modal">&times;</span>
+    <h2>Detalles del Ticket</h2>
+
+    
+    <p><strong>Estado:</strong> <span id="modalEstado"></span></p>
+    <p><strong>Asignado a:</strong> <span id="modalAsignado"></span></p>
+
+    <p><strong>Comentarios:</strong></p>
+    <div id="modalComentario" class="comentario-box"></div>
+  </div>
+</div>
 
 <script src="home.js"></script>
 
