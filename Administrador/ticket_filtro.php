@@ -32,7 +32,7 @@ LEFT JOIN tm_usuario u
     ON u.usu_id = t.usu_asignado
 WHERE 1=1";
 
-/* 🔐 ADMIN SOLO VE SUS TICKETS */
+/*  ADMIN SOLO VE SUS TICKETS */
 if ($_SESSION["rol"] === "admin") {
     $sql .= " AND t.usu_asignado = ?";
     $params[] = $_SESSION["usu_id"];

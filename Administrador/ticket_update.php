@@ -27,7 +27,7 @@ if ($asignado === "" || $asignado === "0") {
     $asignado = null;
 }
 
-/* 🔐 SI ES ADMIN, SOLO PUEDE ASIGNARSE A SÍ MISMO */
+/* SI ES ADMIN, SOLO PUEDE ASIGNARSE A SÍ MISMO */
 if ($_SESSION["rol"] === "admin") {
     $asignado = $_SESSION["usu_id"];
 }
@@ -47,31 +47,29 @@ $stmt->execute([
     $ticket_id
 ]);
 
-/* ===== NOTIFICACIÓN SOLO SI HAY ASIGNADO ===== */
-if ($asignado !== null) {
+/* ===== NOTIFICACIÓN AL USUARIO DEL TICKET ===== */
+$stmt = $conexion->prepare(
+    "SELECT correo, folio FROM tm_ticket WHERE ticket_id = ?"
+);
+$stmt->execute([$ticket_id]);
+$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($ticket) {
+
+    $mensaje = "Tu ticket {$ticket['folio']} fue actualizado";
 
     $stmt = $conexion->prepare(
-        "SELECT usu_correo FROM tm_usuario WHERE usu_id = ?"
+        "INSERT INTO tm_notificacion 
+         (correo_usuario, ticket_id, mensaje)
+         VALUES (?, ?, ?)"
     );
-    $stmt->execute([$asignado]);
-    $correoUsuario = $stmt->fetchColumn();
-
-    if ($correoUsuario) {
-
-        $mensaje = "Ticket #{$ticket_id} fue asignado o actualizado";
-
-        $stmt = $conexion->prepare(
-            "INSERT INTO tm_notificacion 
-             (correo_usuario, ticket_id, mensaje)
-             VALUES (?, ?, ?)"
-        );
-        $stmt->execute([
-            $correoUsuario,
-            $ticket_id,
-            $mensaje
-        ]);
-    }
+    $stmt->execute([
+        $ticket['correo'],
+        $ticket_id,
+        $mensaje
+    ]);
 }
 
+
+
 echo "ok";
-?>

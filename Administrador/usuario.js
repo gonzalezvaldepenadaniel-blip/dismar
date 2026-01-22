@@ -167,7 +167,7 @@ $("#btnGuardarTicket").on("click", function () {
 });
 
 /* ==========================
-   CARGAR DASHBOARD (TOTALES)
+   CARGA TOTALES
 ========================== */
 function cargarDashboard() {
     $.ajax({
@@ -180,12 +180,26 @@ function cargarDashboard() {
                 return;
             }
 
-            $("#totalUsuarios").text(data.usuarios);
-            $("#totalTickets").text(data.tickets);
-            $("#ticketsAbiertos").text(data.abiertos);
-            $("#ticketsProceso").text(data.proceso);
-            $("#ticketsAsignados").text(data.asignados);
+            // SOLO SI EXISTEN
+            if (data.usuarios !== undefined) {
+                $("#totalUsuarios").text(data.usuarios);
+            }
 
+            if (data.tickets !== undefined) {
+                $("#totalTickets").text(data.tickets);
+            }
+
+            if (data.abiertos !== undefined) {
+                $("#ticketsAbiertos").text(data.abiertos);
+            }
+
+            if (data.proceso !== undefined) {
+                $("#ticketsProceso").text(data.proceso);
+            }
+
+            if (data.asignados !== undefined) {
+                $("#ticketsAsignados").text(data.asignados);
+            }
         },
         error: function () {
             console.error("Error al cargar dashboard");
@@ -217,7 +231,7 @@ function mostrarReportes() {
 }
 
 /* ==========================
-   CARGAR TICKETS (REPORTES)
+   CARGAR TICKETS 
 ========================== */
 function cargarTickets() {
 

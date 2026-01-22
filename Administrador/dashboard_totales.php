@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
+if (!isset($_SESSION["rol"], $_SESSION["usu_id"])) {
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -9,54 +9,75 @@ if (!isset($_SESSION["correo_usuario"]) || $_SESSION["rol"] !== "admin") {
 require_once("../config/conexion.php");
 $con = (new Conectar())->conexion();
 
-$correoAdmin = $_SESSION["correo_usuario"];
+$rol    = $_SESSION["rol"];
+$usu_id = $_SESSION["usu_id"];
 
-function obtenerTotal($con, $sql, $params = []) {
+function total($con, $sql, $params = []) {
     $stmt = $con->prepare($sql);
     $stmt->execute($params);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ? $row['total'] : 0;
+    return (int)$stmt->fetchColumn();
 }
 
+/* ============================
+   ADMIN → SOLO SUS TICKETS
+============================ */
+if ($rol === "admin") {
+
+    echo json_encode([
+        "abiertos" => total(
+            $con,
+            "SELECT COUNT(*) 
+             FROM tm_ticket 
+             WHERE estado = 1 AND usu_asignado = ?",
+            [$usu_id]
+        ),
+
+        "proceso" => total(
+            $con,
+            "SELECT COUNT(*) 
+             FROM tm_ticket 
+             WHERE estado = 2 AND usu_asignado = ?",
+            [$usu_id]
+        ),
+
+        //ESTE ES EL CONTADOR QUE QUIERES
+        "asignados" => total(
+            $con,
+            "SELECT COUNT(*) 
+             FROM tm_ticket 
+             WHERE usu_asignado = ?",
+            [$usu_id]
+        )
+    ]);
+    exit;
+}
+
+
+/* ============================
+   SUPERADMIN 
+============================ */
 echo json_encode([
-    /* ==========================
-       USUARIOS ACTIVOS
-    ========================== */
-    "usuarios" => obtenerTotal(
+    "usuarios" => total(
         $con,
-        "SELECT COUNT(*) AS total FROM tm_usuario WHERE estado = 1"
+        "SELECT COUNT(*) FROM tm_usuario WHERE estado = 1"
     ),
-
-    /* ==========================
-       TOTAL TICKETS
-    ========================== */
-    "tickets" => obtenerTotal(
+    "tickets" => total(
         $con,
-        "SELECT COUNT(*) AS total FROM tm_ticket"
+        "SELECT COUNT(*) FROM tm_ticket"
     ),
-
-    /* ==========================
-       ESTATUS
-    ========================== */
-    "abiertos" => obtenerTotal(
+    "abiertos" => total(
         $con,
-        "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 1"
+        "SELECT COUNT(*) FROM tm_ticket WHERE estado = 1"
     ),
-
-    "proceso" => obtenerTotal(
+    "proceso" => total(
         $con,
-        "SELECT COUNT(*) AS total FROM tm_ticket WHERE estado = 2"
+        "SELECT COUNT(*) FROM tm_ticket WHERE estado = 2"
     ),
-
-    /* ==========================
-       TICKETS ASIGNADOS AL ADMIN
-    ========================== */
-    "asignados" => obtenerTotal(
-    $con,
-    "SELECT COUNT(*) AS total
-     FROM tm_ticket
-     WHERE usu_asignado = ?",
-    [$_SESSION["usu_id"]]
-)
-
+    "asignados" => total(
+        $con,
+        "SELECT COUNT(*) 
+         FROM tm_ticket 
+         WHERE usu_asignador = ?",
+        [$usu_id]
+    )
 ]);

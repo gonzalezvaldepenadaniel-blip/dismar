@@ -65,15 +65,17 @@ $con = Conectar::conexion();
         <section id="seccionInicio">
             <div class="cards">
 
-                <div class="card">
-                    <h4>Usuarios</h4>
-                    <p>Total: <strong id="totalUsuarios">0</strong></p>
-                </div>
+                <?php if ($_SESSION["rol"] === "superadmin") : ?>
+            <div class="card">
+                <h4>Usuarios</h4>
+                <p>Total: <strong id="totalUsuarios">0</strong></p>
+            </div>
 
-                <div class="card">
-                    <h4>Tickets</h4>
-                    <p>Total: <strong id="totalTickets">0</strong></p>
-                </div>
+            <div class="card">
+                <h4>Tickets</h4>
+                <p>Total: <strong id="totalTickets">0</strong></p>
+            </div>
+        <?php endif; ?>
 
                 <div class="card">
                     <h4>Estatus</h4>

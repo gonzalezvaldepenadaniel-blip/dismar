@@ -21,16 +21,7 @@ $stmtNoti = $conexion->prepare("
 $stmtNoti->execute([':correo' => $correo_usuario]);
 $totalNoti = $stmtNoti->fetchColumn();
 
-/* Últimas 5 notificaciones */
-$stmtListado = $conexion->prepare("
-    SELECT *
-    FROM tm_notificacion
-    WHERE correo_usuario = :correo
-    ORDER BY fecha DESC
-    LIMIT 5
-");
-$stmtListado->execute([':correo' => $correo_usuario]);
-$notificaciones = $stmtListado->fetchAll(PDO::FETCH_ASSOC);
+
 
 /* OBTENER NOMBRE Y CEDIS */
 $stmt = $conexion->prepare("
@@ -232,22 +223,6 @@ if (isset($_POST['guardar'])) {
 
 
 
-
-<!-- ================= CAMPANA ================= -->
-
-
-<div class="lista-noti">
-    <?php if(!empty($notificaciones)): ?>
-        <?php foreach($notificaciones as $n): ?>
-            <div>
-                <?= htmlspecialchars($n['mensaje']) ?><br>
-                <small style="color:#999;"><?= $n['fecha'] ?></small>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <div>No hay notificaciones</div>
-    <?php endif; ?>
-</div>
 
 <!-- ================= NUEVO TICKET ================= -->
 <section id="seccionNuevo" class="ticket-container" style="display:none;">

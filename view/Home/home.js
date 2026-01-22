@@ -73,16 +73,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ===== CAMPANA ===== */
-    if (btnCampana && listaNoti) {
-        btnCampana.addEventListener("click", e => {
-            e.stopPropagation();
-            listaNoti.style.display =
-                listaNoti.style.display === "block" ? "none" : "block";
+ 
+if (btnCampana && listaNoti) {
+    btnCampana.addEventListener("click", e => {
+        e.stopPropagation();
 
-            // marcar notificaciones como leídas
-            fetch("noti_leidas.php");
+        listaNoti.style.display =
+            listaNoti.style.display === "block" ? "none" : "block";
+
+        // marcar notificaciones como leídas
+        fetch("noti_leidas.php").then(() => {
+            const badge = btnCampana.querySelector(".badge");
+            if (badge) badge.remove();
         });
-    }
+    });
+}
+
+
 
     /* ===== USUARIO ===== */
     if (userBtn && userDrop) {
