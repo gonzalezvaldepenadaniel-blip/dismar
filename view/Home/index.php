@@ -282,7 +282,7 @@ if (isset($_POST['guardar'])) {
     <div class="tickets-card">
         <h3 class="section-title">Mis Tickets</h3>
 
-        <?php if(!empty($tickets)): ?>
+        <?php if (!empty($tickets)): ?>
         <div class="table-responsive">
             <table class="tickets-table">
                 <thead>
@@ -299,54 +299,47 @@ if (isset($_POST['guardar'])) {
                     </tr>
                 </thead>
                 <tbody>
-                   
-<?php foreach($tickets as $t): ?>
-<tr class="ticket-row"
-    data-folio="<?= htmlspecialchars($t['folio']) ?>"
-    data-estado="<?php
-        switch($t['estado']) {
-            case 1: echo 'Abierto'; break;
-            case 2: echo 'En Proceso'; break;
-            case 3: echo 'Cerrado'; break;
-            default: echo '-';
-        }
-    ?>"
-    data-comentario="<?= htmlspecialchars($t['comentario_admin'] ?? 'Sin comentarios') ?>"
-    data-asignado="<?= htmlspecialchars($t['admin_asignado'] ?: 'Sin asignar') ?>"
->
 
-                        <td><?= htmlspecialchars($t['folio']) ?></td>
-                        <td><?= htmlspecialchars($t['fecha_solicitud']) ?></td>
-                        <td><?= htmlspecialchars($t['cedis']) ?></td>
-                        <td><?= htmlspecialchars($t['tipo_solicitud']) ?></td>
-                        <td><?= htmlspecialchars($t['descripcion']) ?></td>
-                        <td><?= htmlspecialchars($t['prioridad']) ?></td>
-                        <td>
-                            <?php
-                                switch($t['estado']) {
-                                    case 1: echo "<span class='estado abierto'>Abierto</span>"; break;
-                                    case 2: echo "<span class='estado proceso'>En Proceso</span>"; break;
-                                    case 3: echo "<span class='estado cerrado'>Cerrado</span>"; break;
-                                    default: echo "<span>-</span>";
-                                }
-                            ?>
-                        </td>
-                       <td><?= htmlspecialchars($t['comentario_admin'] ?? '-') ?></td>
-<td><?= htmlspecialchars($t['admin_asignado'] ?: 'Sin asignar') ?></td>
+                <?php foreach ($tickets as $t): ?>
+                <tr>
+                    <td><?= htmlspecialchars($t['folio']) ?></td>
+                    <td><?= htmlspecialchars($t['fecha_solicitud']) ?></td>
+                    <td><?= htmlspecialchars($t['cedis']) ?></td>
+                    <td><?= htmlspecialchars($t['tipo_solicitud']) ?></td>
 
+                    <td>
+                        <div class="texto-descripcion">
+                            <?= nl2br(htmlspecialchars($t['descripcion'])) ?>
+                        </div>
+                    </td>
 
-                    </tr>
-                    <?php endforeach; ?>
+                    <td><?= htmlspecialchars($t['prioridad']) ?></td>
+
+                    <td>
+                        <?php
+                            switch ($t['estado']) {
+                                case 1: echo "<span class='estado abierto'>Abierto</span>"; break;
+                                case 2: echo "<span class='estado proceso'>En Proceso</span>"; break;
+                                case 3: echo "<span class='estado cerrado'>Cerrado</span>"; break;
+                                default: echo "<span>-</span>";
+                            }
+                        ?>
+                    </td>
+
+                    <td><?= htmlspecialchars($t['comentario_admin'] ?? '-') ?></td>
+                    <td><?= htmlspecialchars($t['admin_asignado'] ?: 'Sin asignar') ?></td>
+                </tr>
+                <?php endforeach; ?>
+
                 </tbody>
             </table>
         </div>
         <?php else: ?>
-            <p style="text-align:center;color:#666;">
-                No tienes tickets registrados.
-            </p>
+            <p style="text-align:center;color:#666;">No tienes tickets registrados.</p>
         <?php endif; ?>
     </div>
 </section>
+
 <!-- ================= MODAL TICKET ================= -->
 <div id="modalTicket" class="modal-ticket">
   <div class="modal-content-ticket">

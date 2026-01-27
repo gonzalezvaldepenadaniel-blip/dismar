@@ -30,45 +30,39 @@ function cargarTelefonos() {
                         <td>${t.modelo}</td>
                         <td>${t.num_serie}</td>
                         <td>${t.num_telefono}</td>
+                        <td>${t.puesto}</td>
+                        <td>${t.area}</td>
+                        <td>${t.nombre_usuario}</td>
+                        <td>${t.cedis ?? ''}</td>
+                        <td>${t.front}</td>
+                        <td>${t.back}</td>
+                        <td>${t.folio}</td>
+                        <td>${t.comentarios}</td>
                         <td>
                             <span class="${t.estatus === 'ACTIVO' ? 'badge-activo' : 'badge-baja'}">
                                 ${t.estatus}
                             </span>
                         </td>
                         <td>
-                            ${t.estatus === 'ACTIVO'
-                                ? `<button class="btn btn-danger btn-sm" onclick="baja(${t.tel_id})">Baja</button>`
-                                : ''
-                            }
+                            <button class="btn btn-danger btn-sm" onclick="baja(${t.tel_id})">
+                                Baja
+                            </button>
                         </td>
                     </tr>
                 `;
             });
         });
 }
+document.addEventListener("click", function(e){
+    if(e.target.classList.contains("btnVer")){
+        let id = e.target.getAttribute("data-id");
 
-function guardarTelefono(e) {
-    e.preventDefault();
-
-    const datos = new FormData(e.target);
-
-    fetch("controller.php?op=guardar", {
-        method: "POST",
-        body: datos
-    }).then(() => {
-        cerrarModal();
-        cargarTelefonos();
-    });
-}
-
-function baja(id) {
-    if (!confirm("¿Dar de baja este equipo?")) return;
-
-    const datos = new FormData();
-    datos.append("tel_id", id);
-
-    fetch("controller.php?op=baja", {
-        method: "POST",
-        body: datos
-    }).then(() => cargarTelefonos());
-}
+        fetch("detalle.php?id=" + id)
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("detalleTelefono").innerHTML = data;
+            let modal = new bootstrap.Modal(document.getElementById("modalDetalle"));
+            modal.show();
+        });
+    }
+});

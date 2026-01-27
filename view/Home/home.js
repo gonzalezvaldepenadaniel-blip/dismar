@@ -1,120 +1,138 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ===== ELEMENTOS ===== */
-    const btnMenu   = document.getElementById("btnMenu");
-    const sidebar   = document.getElementById("sidebar");
-    const overlay   = document.getElementById("overlay");
+  /* ===== VER MÁS / VER MENOS ===== */
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".ver-mas");
+    if (!btn) return;
 
-    const home  = document.getElementById("seccionHome");
-    const nuevo = document.getElementById("seccionNuevo");
-    const mis   = document.getElementById("seccionMis");
+    e.stopPropagation(); // evita abrir modal
 
-    const btnInicio      = document.getElementById("btnInicio");
-    const btnMis         = document.getElementById("btnMis");
-    const btnCrearTicket = document.getElementById("btnCrearTicket");
+    const texto = btn.previousElementSibling;
+    if (!texto) return;
 
-    const btnCampana = document.getElementById("btnCampana");
-    const listaNoti  = document.getElementById("listaNoti");
+    texto.classList.toggle("expandido");
 
-    const userBtn  = document.getElementById("topUserBtn");
-    const userDrop = document.getElementById("topUserDropdown");
+    btn.textContent = texto.classList.contains("expandido")
+      ? "Ver menos"
+      : "Ver más";
+  });
 
-    /* ===== FUNCIONES ===== */
-    function cerrarMenu() {
-        sidebar.classList.remove("activo");
-        overlay.classList.remove("activo");
-        document.body.classList.remove("menu-abierto");
-    }
+  /* ===== ELEMENTOS ===== */
+  const btnMenu   = document.getElementById("btnMenu");
+  const sidebar   = document.getElementById("sidebar");
+  const overlay   = document.getElementById("overlay");
 
-    function ocultarTodo() {
-        home.style.display  = "none";
-        nuevo.style.display = "none";
-        mis.style.display   = "none";
-    }
+  const home  = document.getElementById("seccionHome");
+  const nuevo = document.getElementById("seccionNuevo");
+  const mis   = document.getElementById("seccionMis");
 
-    function mostrar(seccion) {
-        ocultarTodo();
-        seccion.style.display = "block";
-        cerrarMenu();
-    }
+  const btnInicio      = document.getElementById("btnInicio");
+  const btnMis         = document.getElementById("btnMis");
+  const btnCrearTicket = document.getElementById("btnCrearTicket");
 
-    /* ===== MENU ===== */
-    if (btnMenu) {
-        btnMenu.addEventListener("click", () => {
-            sidebar.classList.add("activo");
-            overlay.classList.add("activo");
-            document.body.classList.add("menu-abierto");
-        });
-    }
+  const btnCampana = document.getElementById("btnCampana");
+  const listaNoti  = document.getElementById("listaNoti");
 
-    if (overlay) {
-        overlay.addEventListener("click", cerrarMenu);
-    }
+  const userBtn  = document.getElementById("topUserBtn");
+  const userDrop = document.getElementById("topUserDropdown");
 
-    /* ===== NAVEGACIÓN ===== */
-    if (btnInicio) {
-        btnInicio.addEventListener("click", e => {
-            e.preventDefault();
-            mostrar(home);
-        });
-    }
+  /* ===== FUNCIONES ===== */
+  function cerrarMenu() {
+    sidebar.classList.remove("activo");
+    overlay.classList.remove("activo");
+    document.body.classList.remove("menu-abierto");
+  }
 
-    if (btnMis) {
-        btnMis.addEventListener("click", e => {
-            e.preventDefault();
-            mostrar(mis);
-        });
-    }
+  function ocultarTodo() {
+    home.style.display  = "none";
+    nuevo.style.display = "none";
+    mis.style.display   = "none";
+  }
 
-    if (btnCrearTicket) {
-        btnCrearTicket.addEventListener("click", () => {
-            mostrar(nuevo);
-        });
-    }
+  function mostrar(seccion) {
+    ocultarTodo();
+    seccion.style.display = "block";
+    cerrarMenu();
+  }
 
-    /* ===== CAMPANA ===== */
- 
-if (btnCampana && listaNoti) {
+  /* ===== MENU ===== */
+  if (btnMenu) {
+    btnMenu.addEventListener("click", () => {
+      sidebar.classList.add("activo");
+      overlay.classList.add("activo");
+      document.body.classList.add("menu-abierto");
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener("click", cerrarMenu);
+  }
+
+  /* ===== NAVEGACIÓN ===== */
+  if (btnInicio) {
+    btnInicio.addEventListener("click", e => {
+      e.preventDefault();
+      mostrar(home);
+    });
+  }
+
+  if (btnMis) {
+    btnMis.addEventListener("click", e => {
+      e.preventDefault();
+      mostrar(mis);
+    });
+  }
+
+  if (btnCrearTicket) {
+    btnCrearTicket.addEventListener("click", () => {
+      mostrar(nuevo);
+    });
+  }
+
+  /* ===== CAMPANA ===== */
+  if (btnCampana && listaNoti) {
     btnCampana.addEventListener("click", e => {
-        e.stopPropagation();
+      e.stopPropagation();
 
-        listaNoti.style.display =
-            listaNoti.style.display === "block" ? "none" : "block";
+      listaNoti.style.display =
+        listaNoti.style.display === "block" ? "none" : "block";
 
-        // marcar notificaciones como leídas
-        fetch("noti_leidas.php").then(() => {
-            const badge = btnCampana.querySelector(".badge");
-            if (badge) badge.remove();
-        });
+      fetch("noti_leidas.php").then(() => {
+        const badge = btnCampana.querySelector(".badge");
+        if (badge) badge.remove();
+      });
     });
-}
+  }
 
-
-
-    /* ===== USUARIO ===== */
-    if (userBtn && userDrop) {
-        userBtn.addEventListener("click", e => {
-            e.stopPropagation();
-            userDrop.style.display =
-                userDrop.style.display === "block" ? "none" : "block";
-        });
-    }
-
-    /* ===== CERRAR TODO AL HACER CLICK FUERA ===== */
-    document.addEventListener("click", () => {
-        if (listaNoti) listaNoti.style.display = "none";
-        if (userDrop)  userDrop.style.display = "none";
+  /* ===== USUARIO ===== */
+  if (userBtn && userDrop) {
+    userBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      userDrop.style.display =
+        userDrop.style.display === "block" ? "none" : "block";
     });
+  }
+
+  /* ===== CERRAR TODO AL HACER CLICK FUERA ===== */
+  document.addEventListener("click", () => {
+    if (listaNoti) listaNoti.style.display = "none";
+    if (userDrop)  userDrop.style.display = "none";
+  });
 
 });
 
 
-// ================= MODAL TICKET =================
+/* ================= MODAL TICKET ================= */
 
 // abrir modal desde FILA DE TICKET
 document.querySelectorAll(".ticket-row").forEach(row => {
-  row.addEventListener("click", function () {
-    
+  row.addEventListener("click", function (e) {
+
+    //  si haces click en "Ver más", NO abrir modal
+    if (e.target.closest(".ver-mas")) return;
+
+    let ticketId = this.dataset.folio;
+    abrirModalTicket(ticketId);
   });
 });
 
@@ -122,9 +140,7 @@ document.querySelectorAll(".ticket-row").forEach(row => {
 document.querySelectorAll(".noti-ticket").forEach(noti => {
   noti.addEventListener("click", function (e) {
     e.stopPropagation();
-
-    let ticketId = this.dataset.ticketId; // 👈 aquí está la clave
-
+    let ticketId = this.dataset.ticketId;
     abrirModalTicket(ticketId);
   });
 });
@@ -139,7 +155,6 @@ function abrirModalTicket(ticketId) {
         return;
       }
 
-      
       document.getElementById("modalEstado").innerText = data.estado;
       document.getElementById("modalAsignado").innerText = data.asignado;
       document.getElementById("modalComentario").innerText = data.comentario;
@@ -147,7 +162,6 @@ function abrirModalTicket(ticketId) {
       document.getElementById("modalTicket").style.display = "flex";
     });
 }
-
 
 // cerrar modal
 document.querySelector(".close-modal").addEventListener("click", function () {
