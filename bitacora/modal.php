@@ -49,9 +49,10 @@
                     <label>CEDIS</label>
                     <select name="cedis" class="form-control">
                         <option value="">Seleccione CEDIS</option>
-                        <option value="CEDIS Norte">Iztapalapa</option>
-                        <option value="CEDIS Sur">Chicoloapan</option>
-                        <option value="CEDIS Centro">Ecatepec</option>
+                        <option value="CEDIS Norte">IZTAPALAPA</option>
+                        <option value="CEDIS Sur">CHICOLOAPAN</option>
+                        <option value="CEDIS Centro">ECATEPEC</option>
+                        <option value="CEDIS Centro">QUERETARO</option>
                     </select>
                 </div>
 

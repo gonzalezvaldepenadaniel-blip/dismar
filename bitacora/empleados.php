@@ -56,8 +56,14 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
             data-cedis="<?= $row['cedis'] ?>"
             data-estado="<?= $row['estado'] ?>"
         >
-            ✏️ Editar
+             Editar
         </button>
+            <button class="btn btn-danger btn-sm btnEliminar"
+        data-id="<?= $row['usu_id'] ?>"
+    >
+         Eliminar
+    </button>
+
     </td>
 </tr>
 <?php
@@ -202,4 +208,42 @@ $("#formEditarEmpleado").submit(function(e){
         }
     });
 });
+
+
+
+
+
+
+
+$(document).on("click", ".btnEliminar", function(){
+
+    let id = $(this).data("id");
+
+    if(confirm("¿Seguro que quieres eliminar este empleado?")){
+
+        $.ajax({
+            url: "empleados_ajax.php",
+            type: "POST",
+            data: {
+                accion: "eliminar",
+                usu_id: id
+            },
+            success: function(res){
+                if(res.trim() == "OK"){
+                    alert("Empleado eliminado ");
+                    location.reload();
+                } else {
+                    alert("Error ");
+                    console.log(res);
+                }
+            }
+        });
+
+    }
+});
+
+
+
+
 </script>
+

@@ -2,6 +2,10 @@
 require_once("../config/conexion.php");
 $con = Conectar::conexion();
 
+foreach($_POST as $k => $v){
+    $_POST[$k] = mb_strtoupper($v);
+}
+
 $sql = "INSERT INTO empleados (nombre, apellidop, apellidom, area, puesto, cedis, estado)
 VALUES (?, ?, ?, ?, ?, ?, ?)";
 

@@ -4,6 +4,14 @@ $con = (new Conectar())->conexion();
 
 $op = $_GET["op"] ?? "";
 
+// ✅ Convertir a mayúsculas SOLO si hay POST
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    foreach($_POST as $k => $v){
+        $_POST[$k] = mb_strtoupper($v);
+    }
+}
+
+
 /* ============================
    LISTAR TELÉFONOS
 ============================ */
@@ -35,7 +43,7 @@ if ($op === "guardar") {
         $_POST["puesto"],
         $_POST["area"],
         $_POST["nombre_usuario"],
-        $_POST["cedis"], // 👈 IMPORTANTE
+        $_POST["cedis"], 
         $_POST["front"],
         $_POST["back"],
         $_POST["folio"],

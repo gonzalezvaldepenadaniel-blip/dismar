@@ -26,7 +26,7 @@ $con = (new Conectar())->conexion();
 <a href="telefonos.php">Teléfonos</a>
 <a href="asignaciones.php">Asignaciones</a>
 
-            <li><a href="/Dismar/Administrador/administrador.php" class="logout">⬅ Volver</a></li>
+            <li><a href="/Dismar/Administrador/administrador.php" class="logout">Volver</a></li>
         </ul>
     </aside>
 
