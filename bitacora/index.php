@@ -22,8 +22,10 @@ $con = (new Conectar())->conexion();
     <aside class="sidebar">
         <h4 class="logo">SIE</h4>
         <ul>
-            <li><a href="#" class="active">Teléfonos</a></li>
-            <li><a href="#">Computadoras</a></li>
+           <a href="empleados.php">Empleados</a>
+<a href="telefonos.php">Teléfonos</a>
+<a href="asignaciones.php">Asignaciones</a>
+
             <li><a href="/Dismar/Administrador/administrador.php" class="logout">⬅ Volver</a></li>
         </ul>
     </aside>

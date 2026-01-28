@@ -66,3 +66,19 @@ document.addEventListener("click", function(e){
         });
     }
 });
+
+
+
+$(document).on("click", ".btnEditar", function(){
+
+    $("#edit_id").val($(this).data("id"));
+    $("#edit_nombre").val($(this).data("nombre"));
+    $("#edit_apellidop").val($(this).data("apellidop"));
+    $("#edit_apellidom").val($(this).data("apellidom"));
+    $("#edit_area").val($(this).data("area"));
+    $("#edit_puesto").val($(this).data("puesto"));
+    $("#edit_cedis").val($(this).data("cedis"));
+    $("#edit_estado").val($(this).data("estado"));
+
+    $("#modalEditarEmpleado").modal("show");
+});
