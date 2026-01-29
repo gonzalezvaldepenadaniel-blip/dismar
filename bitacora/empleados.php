@@ -159,7 +159,7 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 
 <div class="modal-footer">
 <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-<button type="submit" class="btn btn-primary">Actualizar</button>
+<button type="submit" class="btn btn-primary">Guardar</button>
 </div>
 
 </form>

@@ -48,26 +48,29 @@ $stmt->execute([
 ]);
 
 /* ===== NOTIFICACIÓN AL USUARIO DEL TICKET ===== */
-$stmt = $conexion->prepare(
-    "SELECT correo, folio FROM tm_ticket WHERE ticket_id = ?"
-);
-$stmt->execute([$ticket_id]);
-$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($ticket) {
-
-    $mensaje = "Tu ticket {$ticket['folio']} fue actualizado";
+if ($_SESSION["rol"] === "admin") {
 
     $stmt = $conexion->prepare(
-        "INSERT INTO tm_notificacion 
-         (correo_usuario, ticket_id, mensaje)
-         VALUES (?, ?, ?)"
+        "SELECT correo, folio FROM tm_ticket WHERE ticket_id = ?"
     );
-    $stmt->execute([
-        $ticket['correo'],
-        $ticket_id,
-        $mensaje
-    ]);
+    $stmt->execute([$ticket_id]);
+    $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($ticket) {
+
+        $mensaje = "Tu ticket {$ticket['folio']} fue actualizado";
+
+        $stmt = $conexion->prepare(
+            "INSERT INTO tm_notificacion 
+             (correo_usuario, ticket_id, mensaje)
+             VALUES (?, ?, ?)"
+        );
+        $stmt->execute([
+            $ticket['correo'],
+            $ticket_id,
+            $mensaje
+        ]);
+    }
 }
 
 
