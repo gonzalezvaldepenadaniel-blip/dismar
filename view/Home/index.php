@@ -26,6 +26,7 @@ $stmtListado = $conexion->prepare("
     SELECT *
     FROM tm_notificacion
     WHERE correo_usuario = :correo
+    AND leido = 0
     ORDER BY fecha DESC
     LIMIT 5
 ");
@@ -161,11 +162,13 @@ if (isset($_POST['guardar'])) {
 
   while ($n = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-    echo "<div class='noti-item noti-ticket'
-            data-ticket-id='{$n['ticket_id']}'
-          >
-            ".htmlspecialchars($n['mensaje'])."
-          </div>";
+  echo "<div class='noti-item noti-ticket'
+        data-ticket-id='{$n['ticket_id']}'
+        data-noti-id='{$n['noti_id']}'
+      >
+        ".htmlspecialchars($n['mensaje'])."
+      </div>";
+
 }
 
 
@@ -286,7 +289,8 @@ if (isset($_POST['guardar'])) {
         <div class="table-responsive">
             <table class="tickets-table">
                 <thead>
-                    <tr>
+                    <tr class="ticket-row" data-ticket-id="<?= $t['ticket_id'] ?>">
+
                         <th>Folio</th>
                         <th>Fecha</th>
                         <th>Cedis</th>
@@ -343,17 +347,32 @@ if (isset($_POST['guardar'])) {
 <!-- ================= MODAL TICKET ================= -->
 <div id="modalTicket" class="modal-ticket">
   <div class="modal-content-ticket">
-    <span class="close-modal">&times;</span>
-    <h2>Detalles del Ticket</h2>
 
-    
-    <p><strong>Estado:</strong> <span id="modalEstado"></span></p>
-    <p><strong>Asignado a:</strong> <span id="modalAsignado"></span></p>
+    <div class="modal-header">
+      <h2>Detalles del Ticket</h2>
+      <span class="close-modal">&times;</span>
+    </div>
 
-    <p><strong>Comentarios:</strong></p>
-    <div id="modalComentario" class="comentario-box"></div>
+    <div class="modal-body">
+      <div class="modal-item">
+        <span>Estado:</span>
+        <span id="modalEstado" class="badge-estado"></span>
+      </div>
+
+      <div class="modal-item">
+        <span>Asignado a:</span>
+        <span id="modalAsignado"></span>
+      </div>
+
+      <div class="modal-item">
+        <span>Comentarios:</span>
+        <div id="modalComentario" class="comentario-box"></div>
+      </div>
+    </div>
+
   </div>
 </div>
+
 
 <script src="home.js"></script>
 

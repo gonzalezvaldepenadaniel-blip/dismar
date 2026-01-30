@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ===== CAMPANA ===== */
+  /* ===== CAMPANA 🔔 ===== */
   if (btnCampana && listaNoti) {
     btnCampana.addEventListener("click", e => {
       e.stopPropagation();
@@ -98,8 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
         listaNoti.style.display === "block" ? "none" : "block";
 
       fetch("noti_leidas.php").then(() => {
-        const badge = btnCampana.querySelector(".badge");
-        if (badge) badge.remove();
+        const badge = document.querySelector("#btnCampana .badge");
+        if (badge) {
+          badge.remove(); // quitar contador
+        }
       });
     });
   }
@@ -124,26 +126,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ================= MODAL TICKET ================= */
 
-// abrir modal desde FILA DE TICKET
-document.querySelectorAll(".ticket-row").forEach(row => {
-  row.addEventListener("click", function (e) {
+// abrir modal desde NOTIFICACIÓN (delegación de eventos)
+document.addEventListener("click", function(e) {
 
-    //  si haces click en "Ver más", NO abrir modal
-    if (e.target.closest(".ver-mas")) return;
+  const noti = e.target.closest(".noti-ticket");
+  if (!noti) return;
 
-    let ticketId = this.dataset.folio;
-    abrirModalTicket(ticketId);
+  e.stopPropagation();
+
+  let ticketId = noti.dataset.ticketId;
+  let notiId   = noti.dataset.notiId;
+
+  // marcar notificación como leída
+  fetch("noti_marcar.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "noti_id=" + notiId
+  })
+  .then(res => res.text())
+  .then(resp => {
+    if (resp.trim() === "ok") {
+      noti.remove(); // eliminar notificación
+    }
   });
+
+  // abrir modal del ticket
+  abrirModalTicket(ticketId);
 });
 
-// abrir modal desde NOTIFICACIÓN
-document.querySelectorAll(".noti-ticket").forEach(noti => {
-  noti.addEventListener("click", function (e) {
-    e.stopPropagation();
-    let ticketId = this.dataset.ticketId;
-    abrirModalTicket(ticketId);
-  });
-});
 
 // función AJAX para traer datos reales del ticket
 function abrirModalTicket(ticketId) {

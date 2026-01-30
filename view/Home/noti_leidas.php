@@ -7,7 +7,7 @@ $conexion = Conectar::conexion();
 $stmt = $conexion->prepare("
     SELECT noti_id, ticket_id, mensaje, leido, fecha 
     FROM tm_notificacion
-    WHERE correo_usuario = :correo
+    WHERE correo_usuario = :correo AND leido = 0
     ORDER BY fecha DESC
 ");
 
@@ -17,9 +17,9 @@ $stmt->execute([
 
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 ?>
-    <div class="notificacion-item"
-         data-ticket="<?= $row['ticket_id']; ?>"
-         data-noti="<?= $row['noti_id']; ?>">
+    <div class="noti-ticket"
+         data-ticket-id="<?= $row['ticket_id']; ?>"
+         data-noti-id="<?= $row['noti_id']; ?>">
         <?= $row['mensaje']; ?>
     </div>
 <?php } ?>
