@@ -139,18 +139,30 @@ document.addEventListener("click", function(e) {
 
   // marcar notificación como leída
   fetch("noti_marcar.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "noti_id=" + notiId
-  })
-  .then(res => res.text())
-  .then(resp => {
-    if (resp.trim() === "ok") {
-      noti.remove(); // eliminar notificación
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: "noti_id=" + notiId
+})
+.finally(() => {
+
+  // 🔥 quitar del DOM
+  noti.remove();
+
+  // 🔔 actualizar contador
+  const badge = document.querySelector("#btnCampana .badge");
+  if (badge) {
+    let n = parseInt(badge.textContent);
+    if (n > 1) {
+      badge.textContent = n - 1;
+    } else {
+      badge.remove();
     }
-  });
+  }
+
+});
+
 
   // abrir modal del ticket
   abrirModalTicket(ticketId);

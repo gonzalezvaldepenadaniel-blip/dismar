@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set('America/Mexico_City');
 
-/* 🔐 GUARD DE AUTENTICACIÓN */
+/*  GUARD DE AUTENTICACIÓN */
 require_once("../../config/auth_guard.php");
 
 /* 🔌 CONEXIÓN */
@@ -151,11 +151,14 @@ if (isset($_POST['guardar'])) {
 <div class="lista-noti" id="listaNoti">
     <?php
     $stmt = $conexion->prepare("
-        SELECT * FROM tm_notificacion
-        WHERE correo_usuario = :correo
-        ORDER BY fecha DESC
-        LIMIT 10
-    ");
+    SELECT *
+    FROM tm_notificacion
+    WHERE correo_usuario = :correo
+    AND leido = 0
+    ORDER BY fecha DESC
+    LIMIT 10
+");
+
     $stmt->execute([
         ":correo" => $_SESSION["correo_usuario"]
     ]);
@@ -289,7 +292,7 @@ if (isset($_POST['guardar'])) {
         <div class="table-responsive">
             <table class="tickets-table">
                 <thead>
-                    <tr class="ticket-row" data-ticket-id="<?= $t['ticket_id'] ?>">
+                    <tr>
 
                         <th>Folio</th>
                         <th>Fecha</th>

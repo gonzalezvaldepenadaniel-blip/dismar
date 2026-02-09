@@ -6,24 +6,47 @@ if (!isset($_SESSION["correo_usuario"])) {
     exit("no-session");
 }
 
-if (!isset($_POST["noti_id"])) {
-    exit("sin-id");
-}
-
 $conexion = Conectar::conexion();
 
-$noti_id = $_POST["noti_id"];
+/* =====================
+   MARCAR UNA NOTIFICACIÓN
+   ===================== */
+if (isset($_POST["noti_id"])) {
 
-$stmt = $conexion->prepare("
-    UPDATE tm_notificacion 
-    SET leido = 1 
-    WHERE noti_id = ? 
-    AND correo_usuario = ?
-");
+    $stmt = $conexion->prepare("
+        UPDATE tm_notificacion
+        SET leido = 1
+        WHERE noti_id = ?
+        AND correo_usuario = ?
+    ");
 
-$stmt->execute([
-    $noti_id,
-    $_SESSION["correo_usuario"]
-]);
+    $stmt->execute([
+        $_POST["noti_id"],
+        $_SESSION["correo_usuario"]
+    ]);
 
-echo "ok";
+    echo "ok-uno";
+    exit;
+}
+
+/* =====================
+   MARCAR TODAS
+   ===================== */
+if (isset($_POST["todas"])) {
+
+    $stmt = $conexion->prepare("
+        UPDATE tm_notificacion
+        SET leido = 1
+        WHERE correo_usuario = ?
+        AND leido = 0
+    ");
+
+    $stmt->execute([
+        $_SESSION["correo_usuario"]
+    ]);
+
+    echo "ok-todas";
+    exit;
+}
+
+echo "sin-accion";
