@@ -149,33 +149,17 @@ if (isset($_POST['guardar'])) {
     </div>
 
 <div class="lista-noti" id="listaNoti">
-    <?php
-    $stmt = $conexion->prepare("
-    SELECT *
-    FROM tm_notificacion
-    WHERE correo_usuario = :correo
-    AND leido = 0
-    ORDER BY fecha DESC
-    LIMIT 10
-");
-
-    $stmt->execute([
-        ":correo" => $_SESSION["correo_usuario"]
-    ]);
-
-  while ($n = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-  echo "<div class='noti-item noti-ticket'
-        data-ticket-id='{$n['ticket_id']}'
-        data-noti-id='{$n['noti_id']}'
-      >
-        ".htmlspecialchars($n['mensaje'])."
-      </div>";
-
-}
-
-
-    ?>
+    <?php if (empty($notificaciones)): ?>
+        <div class="noti-vacia">No hay notificaciones</div>
+    <?php else: ?>
+        <?php foreach ($notificaciones as $n): ?>
+            <div class="noti-item noti-ticket"
+                 data-ticket-id="<?= $n['ticket_id'] ?>"
+                 data-noti-id="<?= $n['noti_id'] ?>">
+                <?= htmlspecialchars($n['mensaje']) ?>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 

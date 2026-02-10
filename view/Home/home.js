@@ -1,17 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ===== VER MÁS / VER MENOS ===== */
-  document.addEventListener("click", function (e) {
+  document.addEventListener("click", e => {
     const btn = e.target.closest(".ver-mas");
     if (!btn) return;
 
-    e.stopPropagation(); // evita abrir modal
-
+    e.stopPropagation();
     const texto = btn.previousElementSibling;
     if (!texto) return;
 
     texto.classList.toggle("expandido");
-
     btn.textContent = texto.classList.contains("expandido")
       ? "Ver menos"
       : "Ver más";
@@ -56,144 +54,160 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ===== MENU ===== */
-  if (btnMenu) {
-    btnMenu.addEventListener("click", () => {
-      sidebar.classList.add("activo");
-      overlay.classList.add("activo");
-      document.body.classList.add("menu-abierto");
-    });
-  }
+  btnMenu?.addEventListener("click", () => {
+    sidebar.classList.add("activo");
+    overlay.classList.add("activo");
+    document.body.classList.add("menu-abierto");
+  });
 
-  if (overlay) {
-    overlay.addEventListener("click", cerrarMenu);
-  }
+  overlay?.addEventListener("click", cerrarMenu);
 
   /* ===== NAVEGACIÓN ===== */
-  if (btnInicio) {
-    btnInicio.addEventListener("click", e => {
-      e.preventDefault();
-      mostrar(home);
-    });
-  }
+  btnInicio?.addEventListener("click", e => {
+    e.preventDefault();
+    mostrar(home);
+  });
 
-  if (btnMis) {
-    btnMis.addEventListener("click", e => {
-      e.preventDefault();
-      mostrar(mis);
-    });
-  }
+  btnMis?.addEventListener("click", e => {
+    e.preventDefault();
+    mostrar(mis);
+  });
 
-  if (btnCrearTicket) {
-    btnCrearTicket.addEventListener("click", () => {
-      mostrar(nuevo);
-    });
-  }
+  btnCrearTicket?.addEventListener("click", () => {
+    mostrar(nuevo);
+  });
 
   /* ===== CAMPANA 🔔 ===== */
-  if (btnCampana && listaNoti) {
-    btnCampana.addEventListener("click", e => {
-      e.stopPropagation();
-
-      listaNoti.style.display =
-        listaNoti.style.display === "block" ? "none" : "block";
-
-      fetch("noti_leidas.php").then(() => {
-        const badge = document.querySelector("#btnCampana .badge");
-        if (badge) {
-          badge.remove(); // quitar contador
-        }
-      });
-    });
-  }
+  btnCampana?.addEventListener("click", e => {
+    e.stopPropagation();
+    listaNoti.style.display =
+      listaNoti.style.display === "block" ? "none" : "block";
+  });
 
   /* ===== USUARIO ===== */
-  if (userBtn && userDrop) {
-    userBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      userDrop.style.display =
-        userDrop.style.display === "block" ? "none" : "block";
-    });
-  }
+  userBtn?.addEventListener("click", e => {
+    e.stopPropagation();
+    userDrop.style.display =
+      userDrop.style.display === "block" ? "none" : "block";
+  });
 
   /* ===== CERRAR TODO AL HACER CLICK FUERA ===== */
   document.addEventListener("click", () => {
-    if (listaNoti) listaNoti.style.display = "none";
-    if (userDrop)  userDrop.style.display = "none";
+    listaNoti.style.display = "none";
+    userDrop.style.display  = "none";
   });
 
 });
 
 
-/* ================= MODAL TICKET ================= */
+/* ================= NOTIFICACIONES ================= */
 
-// abrir modal desde NOTIFICACIÓN (delegación de eventos)
-document.addEventListener("click", function(e) {
+// clic en notificación
+document.addEventListener("click", e => {
 
   const noti = e.target.closest(".noti-ticket");
   if (!noti) return;
 
   e.stopPropagation();
 
-  let ticketId = noti.dataset.ticketId;
-  let notiId   = noti.dataset.notiId;
+  const ticketId = noti.dataset.ticketId;
+  const notiId   = noti.dataset.notiId;
 
-  // marcar notificación como leída
   fetch("noti_marcar.php", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: "noti_id=" + notiId
-})
-.finally(() => {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "noti_id=" + notiId
+  }).finally(() => {
 
-  // 🔥 quitar del DOM
-  noti.remove();
+    // quitar del DOM
+    noti.remove();
 
-  // 🔔 actualizar contador
-  const badge = document.querySelector("#btnCampana .badge");
-  if (badge) {
-    let n = parseInt(badge.textContent);
-    if (n > 1) {
-      badge.textContent = n - 1;
-    } else {
-      badge.remove();
+    // actualizar badge
+    const badge = document.querySelector("#btnCampana .badge");
+    if (badge) {
+      const n = parseInt(badge.textContent);
+      n > 1 ? badge.textContent = n - 1 : badge.remove();
     }
-  }
 
-});
+  });
 
-
-  // abrir modal del ticket
   abrirModalTicket(ticketId);
 });
 
 
-// función AJAX para traer datos reales del ticket
+/* ================= MODAL TICKET ================= */
+
 function abrirModalTicket(ticketId) {
   fetch("ajax_ticket.php?ticket_id=" + ticketId)
     .then(res => res.json())
     .then(data => {
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
+      if (data.error) return alert(data.error);
 
-      document.getElementById("modalEstado").innerText = data.estado;
-      document.getElementById("modalAsignado").innerText = data.asignado;
-      document.getElementById("modalComentario").innerText = data.comentario;
+      document.getElementById("modalEstado").innerText     = data.estado;
+      document.getElementById("modalAsignado").innerText  = data.asignado;
+      document.getElementById("modalComentario").innerText= data.comentario;
 
       document.getElementById("modalTicket").style.display = "flex";
     });
 }
 
-// cerrar modal
-document.querySelector(".close-modal").addEventListener("click", function () {
+document.querySelector(".close-modal")?.addEventListener("click", () => {
   document.getElementById("modalTicket").style.display = "none";
 });
 
-window.addEventListener("click", function(e) {
-  if (e.target == document.getElementById("modalTicket")) {
+window.addEventListener("click", e => {
+  if (e.target === document.getElementById("modalTicket")) {
     document.getElementById("modalTicket").style.display = "none";
   }
 });
+
+
+/* ================= CARGA DE NOTIFICACIONES ================= */
+
+function cargarNotificaciones() {
+  fetch("noti_ajax.php")
+    .then(res => res.json())
+    .then(data => {
+
+      const lista   = document.getElementById("listaNoti");
+      const campana = document.getElementById("btnCampana");
+      if (!lista || !campana) return;
+
+      /* ===== BADGE ===== */
+      let badge = campana.querySelector(".badge");
+
+      if (data.length === 0) {
+        badge?.remove();
+      } else {
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = "badge";
+          campana.appendChild(badge);
+        }
+        badge.textContent = data.length;
+      }
+
+      /* ===== LISTA ===== */
+      lista.innerHTML = "";
+
+      if (data.length === 0) {
+        const vacia = document.createElement("div");
+        vacia.className = "noti-vacia";
+        vacia.textContent = "No hay notificaciones";
+        lista.appendChild(vacia);
+        return;
+      }
+
+      data.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "noti-item noti-ticket";
+        div.dataset.ticketId = n.ticket_id;
+        div.dataset.notiId   = n.noti_id;
+        div.textContent = n.mensaje;
+        lista.appendChild(div);
+      });
+
+    });
+}
+setInterval(cargarNotificaciones, 2000);
+cargarNotificaciones();
