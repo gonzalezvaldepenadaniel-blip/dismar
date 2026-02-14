@@ -40,7 +40,14 @@ if ($rol === "admin") {
             [$usu_id]
         ),
 
-        //ESTE ES EL CONTADOR QUE QUIERES
+        "cerrados" => total(
+            $con,
+            "SELECT COUNT(*) 
+             FROM tm_ticket 
+             WHERE estado = 3 AND usu_asignado = ?",
+            [$usu_id]
+        ),
+
         "asignados" => total(
             $con,
             "SELECT COUNT(*) 
@@ -49,8 +56,10 @@ if ($rol === "admin") {
             [$usu_id]
         )
     ]);
+
     exit;
 }
+
 
 
 /* ============================

@@ -195,7 +195,17 @@ function cargarDashboard() {
 
             if (data.proceso !== undefined) {
                 $("#ticketsProceso").text(data.proceso);
+            
             }
+
+
+
+
+
+            if (data.cerrados !== undefined) {
+    $("#ticketsCerrados").text(data.cerrados);
+}
+
 
             if (data.asignados !== undefined) {
                 $("#ticketsAsignados").text(data.asignados);
@@ -266,4 +276,57 @@ function cargarTickets() {
             `);
         }
     });
+}
+
+/* ==========================
+   BOTÓN BUSCAR
+========================== */
+$("#btnBuscar").on("click", function () {
+
+    if (!validarFechas()) return;
+
+    cargarTickets();
+});
+
+/* ==========================
+   BOTÓN LIMPIAR
+========================== */
+$("#btnLimpiar").on("click", function () {
+
+    $("#f_folio").val("");
+    $("#f_cedis").val("");
+    $("#f_inicio").val("");
+    $("#f_fin").val("");
+    $("#f_estado").val("");
+    $("#f_prioridad").val("");
+
+    cargarTickets(); // vuelve a cargar todos
+});
+
+
+/* ==========================
+   VALIDAR FECHAS
+========================== */
+function validarFechas() {
+
+    let inicio = $("#f_inicio").val();
+    let fin = $("#f_fin").val();
+
+    if (inicio && fin && fin < inicio) {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Rango de fechas inválido',
+            text: 'La fecha final debe ser mayor a la fecha inicial.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#343a40',
+            background: '#ffffff',
+            color: '#343a40',
+            width: '380px'
+        });
+
+        return false;
+    }
+
+    return true;
 }

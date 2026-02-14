@@ -81,7 +81,8 @@ $con = Conectar::conexion();
                     <h4>Estatus</h4>
                     <p>
                         Abiertos: <strong id="ticketsAbiertos">0</strong><br>
-                        En proceso: <strong id="ticketsProceso">0</strong>
+                        En proceso: <strong id="ticketsProceso">0</strong><br>
+                        Cerrados: <strong id="ticketsCerrados">0</strong>
                     </p>
                 </div>
 
@@ -256,6 +257,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </body>
 </html>

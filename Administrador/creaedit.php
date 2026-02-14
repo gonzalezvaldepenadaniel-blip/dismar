@@ -32,7 +32,7 @@ if ($_POST["op"] === "guardar") {
     /* ===== EDITAR USUARIO ===== */
     else {
 
-        // 🔐 Si escribieron contraseña
+        // Si escribieron contraseña
         if (!empty($_POST["usu_pass"])) {
 
             $sql = "UPDATE tm_usuario SET
@@ -56,7 +56,7 @@ if ($_POST["op"] === "guardar") {
             ]);
 
         } 
-        // 🔓 Sin cambiar contraseña
+        //  Sin cambiar contraseña
         else {
 
             $sql = "UPDATE tm_usuario SET

@@ -124,3 +124,4 @@ foreach ($data as $r) {
         </td>
     </tr>";
 }
+
