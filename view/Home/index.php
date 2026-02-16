@@ -87,16 +87,28 @@ if (isset($_POST['guardar'])) {
     $folio = "DIS{$anio}{$mes}{$dia}-{$sigla}{$numero}";
 
     /* ===== EVIDENCIA ===== */
-    $evidencia = null;
-    if (!empty($_FILES['evidencia']['name'])) {
-        $carpeta = "../../public/evidencias/";
-        if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
-        $nombreArchivo = time() . '_' . $_FILES['evidencia']['name'];
-        $ruta = $carpeta . $nombreArchivo;
-        if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $ruta)) $evidencia = $nombreArchivo;
+ /* ===== EVIDENCIA OBLIGATORIA ===== */
+if (empty($_FILES['evidencia']['name'])) {
+    $error = "Es obligatorio subir una imagen.";
+} else {
+    $carpeta = "../../public/evidencias/";
+    if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
+
+    $nombreArchivo = time() . '_' . $_FILES['evidencia']['name'];
+    $ruta = $carpeta . $nombreArchivo;
+
+    if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $ruta)) {
+        $evidencia = $nombreArchivo;
+    } else {
+        $error = "Error al subir la imagen.";
     }
+}
 
     /* ===== INSERT ===== */
+if (!empty($error)) {
+    // Hay error, no guardar
+} else {
+
     $sql = "
         INSERT INTO tm_ticket
         (folio, solicita, correo, cedis, tipo_solicitud, descripcion,
@@ -122,7 +134,7 @@ if (isset($_POST['guardar'])) {
 
     header("Location: index.php");
     exit;
-}
+}}
 ?>
 
 <!DOCTYPE html>
@@ -258,7 +270,8 @@ if (isset($_POST['guardar'])) {
     </div>
     <div class="form-group">
         <label>Evidencia</label>
-        <input type="file" name="evidencia">
+        <input type="file" name="evidencia" required>
+
     </div>
     <button type="submit" name="guardar" class="btn">
         Guardar Ticket
