@@ -209,5 +209,49 @@ function cargarNotificaciones() {
 
     });
 }
+
+/* ================= VALIDAR ARCHIVO ANTES DE ENVIAR ================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const form = document.querySelector("form");
+    const inputFile = document.getElementById("evidencia");
+    const errorText = document.getElementById("errorEvidencia");
+
+    const tiposPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    form.addEventListener("submit", function (e) {
+
+        if (inputFile.files.length === 0) return;
+
+        const archivo = inputFile.files[0];
+
+        if (!tiposPermitidos.includes(archivo.type)) {
+            e.preventDefault(); // 
+            errorText.style.display = "block";
+            inputFile.value = ""; // limpia el archivo
+        } else {
+            errorText.style.display = "none";
+        }
+
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
 setInterval(cargarNotificaciones, 2000);
 cargarNotificaciones();

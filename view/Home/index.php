@@ -63,6 +63,7 @@ $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
 
 
 /* ================= GUARDAR TICKET ================= */
+  $error = '';
 if (isset($_POST['guardar'])) {
     $descripcion = $_POST['descripcion'];
     $prioridad   = $_POST['prioridad'];
@@ -74,6 +75,8 @@ if (isset($_POST['guardar'])) {
     $correo   = $correo_usuario;
     $fecha    = date('Y-m-d H:i:s');
     $estado   = 1;
+  
+
 
     /* ===== FOLIO ===== */
     $anio = date('y'); $mes  = date('m'); $dia  = date('d');
@@ -87,22 +90,40 @@ if (isset($_POST['guardar'])) {
     $folio = "DIS{$anio}{$mes}{$dia}-{$sigla}{$numero}";
 
     /* ===== EVIDENCIA ===== */
- /* ===== EVIDENCIA OBLIGATORIA ===== */
+
 if (empty($_FILES['evidencia']['name'])) {
     $error = "Es obligatorio subir una imagen.";
 } else {
-    $carpeta = "../../public/evidencias/";
-    if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
 
-    $nombreArchivo = time() . '_' . $_FILES['evidencia']['name'];
-    $ruta = $carpeta . $nombreArchivo;
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $tipoReal = finfo_file($finfo, $_FILES['evidencia']['tmp_name']);
+    finfo_close($finfo);
 
-    if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $ruta)) {
-        $evidencia = $nombreArchivo;
+    $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!in_array($tipoReal, $permitidos)) {
+
+        $error = "Solo se permiten imágenes JPG, PNG o WEBP.";
+
     } else {
-        $error = "Error al subir la imagen.";
+
+        $carpeta = "../../public/evidencias/";
+        if (!is_dir($carpeta)) {
+            mkdir($carpeta, 0777, true);
+        }
+
+        $nombreArchivo = time() . '_' . basename($_FILES['evidencia']['name']);
+        $ruta = $carpeta . $nombreArchivo;
+
+        if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $ruta)) {
+            $evidencia = $nombreArchivo;
+        } else {
+            $error = "Error al subir la imagen.";
+        }
     }
 }
+
+
 
     /* ===== INSERT ===== */
 if (!empty($error)) {
@@ -220,7 +241,8 @@ if (!empty($error)) {
 
 
 <!-- ================= NUEVO TICKET ================= -->
-<section id="seccionNuevo" class="ticket-container" style="display:none;">
+<section id="seccionNuevo" class="ticket-container"
+    style="<?= !empty($error) ? 'display:block;' : 'display:none;' ?>">
 
 <form method="post" enctype="multipart/form-data">
     <div class="form-group">
@@ -270,7 +292,11 @@ if (!empty($error)) {
     </div>
     <div class="form-group">
         <label>Evidencia</label>
-        <input type="file" name="evidencia" required>
+<input type="file" id="evidencia" name="evidencia" accept=".jpg,.jpeg,.png,.webp" required>
+<small id="errorEvidencia" style="color:red; display:none;">
+    Solo se permiten imágenes.
+</small>
+
 
     </div>
     <button type="submit" name="guardar" class="btn">
