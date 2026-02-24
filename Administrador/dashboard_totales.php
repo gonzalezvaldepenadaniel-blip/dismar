@@ -66,27 +66,59 @@ if ($rol === "admin") {
    SUPERADMIN 
 ============================ */
 echo json_encode([
+
     "usuarios" => total(
         $con,
         "SELECT COUNT(*) FROM tm_usuario WHERE estado = 1"
     ),
+
     "tickets" => total(
         $con,
         "SELECT COUNT(*) FROM tm_ticket"
     ),
+
     "abiertos" => total(
         $con,
         "SELECT COUNT(*) FROM tm_ticket WHERE estado = 1"
     ),
+
     "proceso" => total(
         $con,
         "SELECT COUNT(*) FROM tm_ticket WHERE estado = 2"
     ),
-    "asignados" => total(
+
+    "cerrados" => total(
         $con,
-        "SELECT COUNT(*) 
-         FROM tm_ticket 
-         WHERE usu_asignador = ?",
-        [$usu_id]
-    )
+        "SELECT COUNT(*) FROM tm_ticket WHERE estado = 3"
+    ),
+
+    "cedis" => [
+
+        "Iztapalapa" => total(
+            $con,
+            "SELECT COUNT(*) FROM tm_ticket WHERE cedis='Iztapalapa'"
+        ),
+
+        "Ecatepec" => total(
+            $con,
+            "SELECT COUNT(*) FROM tm_ticket WHERE cedis='Ecatepec'"
+        ),
+
+        "Tultitlán" => total(
+            $con,
+            "SELECT COUNT(*) FROM tm_ticket WHERE cedis='Tultitlán'"
+        ),
+
+        "Corporativo" => total(
+            $con,
+            "SELECT COUNT(*) FROM tm_ticket WHERE cedis='Corporativo'"
+        ),
+
+        "Querétaro" => total(
+            $con,
+            "SELECT COUNT(*) FROM tm_ticket WHERE cedis='Querétaro'"
+        )
+
+    ]
+
 ]);

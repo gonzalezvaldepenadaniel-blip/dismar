@@ -11,41 +11,72 @@ function cargarUsuarios() {
    GUARDAR USUARIO
 ========================== */
 $(document).on("submit", "#formUsuario", function (e) {
+
     e.preventDefault();
 
     let pass = $("#usu_pass").val();
     let confirm = $("#usu_pass_confirm").val();
 
-    // Validaciones
+    /* VALIDACIONES */
+
     if (pass !== "" || confirm !== "") {
+
         if (pass !== confirm) {
-            alert("Las contraseñas no coinciden");
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Las contraseñas no coinciden"
+            });
+
             return;
         }
+
         if (pass.length < 6) {
-            alert("La contraseña debe tener al menos 6 caracteres");
+
+            Swal.fire({
+                icon: "warning",
+                title: "Contraseña débil",
+                text: "Debe tener al menos 6 caracteres"
+            });
+
             return;
         }
     }
 
+
+    /* GUARDAR */
+
     $.post(
         "creaedit.php",
         $(this).serialize() + "&op=guardar",
+
         function () {
 
-            // cerrar modal de formulario
             $("#modalUsuario").modal("hide");
 
-            // cuando termine de cerrarse
             $("#modalUsuario").one("hidden.bs.modal", function () {
 
-                // recargar tabla y volver a mostrar usuarios
+                Swal.fire({
+                    icon: "success",
+                    title: "Usuario guardado",
+                    text: "El usuario fue registrado correctamente",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
                 cargarUsuarios();
+
                 $("#modalUsuarios").modal("show");
+
             });
+
         }
+
     );
+
 });
+
 
 /* ==========================
    EDITAR USUARIO
@@ -68,8 +99,11 @@ $(document).on("click", ".editar", function () {
         $("#rol").val(data.rol);
 
         $("#modalUsuario").modal("show");
+
     });
+
 });
+
 
 /* ==========================
    NUEVO USUARIO
@@ -81,11 +115,15 @@ function nuevoUsuario() {
     $("#modalUsuarios").one("hidden.bs.modal", function () {
 
         $("#formUsuario")[0].reset();
+
         $("#usu_id").val("");
+
         $("#modalUsuario").modal("show");
-        
+
     });
+
 }
+
 
 /* ==========================
    ELIMINAR USUARIO
@@ -94,25 +132,60 @@ $(document).on("click", ".eliminar", function () {
 
     let id = $(this).data("id");
 
-    if (!confirm("¿Eliminar usuario?")) return;
+    Swal.fire({
 
-    $.post(
-        "creaedit.php",
-        { op: "eliminar", usu_id: id },
-        function () {
-            cargarUsuarios();
+        title: "¿Eliminar usuario?",
+        text: "Esta acción no se puede deshacer",
+        icon: "warning",
+
+        showCancelButton: true,
+
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            $.post(
+                "creaedit.php",
+                { op: "eliminar", usu_id: id },
+
+                function () {
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Eliminado",
+                        text: "Usuario eliminado correctamente",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    cargarUsuarios();
+
+                }
+
+            );
+
         }
-    );
-});
 
+    });
+
+});
 
 
 /* ==========================
    AL ABRIR USUARIOS
 ========================== */
 $('#modalUsuarios').on('show.bs.modal', function () {
+
     $("#seccionReportes").hide();
-    cargarUsuarios(); // siempre refresca
+
+    cargarUsuarios();
+
 });
 
 
@@ -126,46 +199,59 @@ $(document).on("click", ".atender", function () {
     $("#ticket_id").val(data.id);
     $("#estadoTicket").val(data.estado);
     $("#comentarioTicket").val(data.comentario || "");
-
-    // ESTA LÍNEA ES LA CLAVE DE TODO
     $("#usuarioAsignado").val(data.asignado || "");
 
     $("#modalAtenderTicket").modal("show");
+
 });
+
 
 /* ==========================
    GUARDAR CAMBIOS TICKET
 ========================== */
-$("#btnGuardarTicket").on("click", function () {
+$("#btnGuardarTicket").click(function () {
+
+    let data = {
+
+        ticket_id: $("#ticket_id").val(),
+        estado: $("#estadoTicket").val(),
+        comentario: $("#comentarioTicket").val(),
+        asignado: $("#usuarioAsignado").val()
+
+    };
+
+    if ($("#prioridadTicket").length) {
+
+        data.prioridad = $("#prioridadTicket").val();
+
+    }
 
     $.ajax({
+
         url: "ticket_update.php",
+
         type: "POST",
-        data: {
-            ticket_id: $("#ticket_id").val(),
-            estado: $("#estadoTicket").val(),
-            comentario_admin: $("#comentarioTicket").val(),
-            asignado: $("#usuarioAsignado").val()
 
-            
-        },
-        success: function (resp) {
+        data: data,
 
-            if (resp.trim() === "ok") {
-                $("#modalAtenderTicket").modal("hide");
-                cargarTickets();
-                cargarDashboard();
-            } else {
-                alert(resp);
-            }
+        success: function () {
 
-        },
-        error: function () {
-            alert("Error de conexión");
+            Swal.fire({
+                icon: "success",
+                title: "Ticket actualizado",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            $("#modalAtenderTicket").modal("hide");
+
+            cargarTickets();
+
         }
-    });
-});
 
+    });
+
+});
 /* ==========================
    CARGA TOTALES
 ========================== */
@@ -210,6 +296,19 @@ function cargarDashboard() {
             if (data.asignados !== undefined) {
                 $("#ticketsAsignados").text(data.asignados);
             }
+            /* ==========================
+   TICKETS POR CEDIS
+========================== */
+
+if (data.cedis !== undefined) {
+
+    $("#cedisIztapalapa").text(data.cedis.Iztapalapa || 0);
+    $("#cedisEcatepec").text(data.cedis.Ecatepec || 0);
+    $("#cedisTultitlan").text(data.cedis.Tultitlán || 0);
+    $("#cedisCorporativo").text(data.cedis.Corporativo || 0);
+    $("#cedisQueretaro").text(data.cedis.Querétaro || 0);
+
+}
         },
         error: function () {
             console.error("Error al cargar dashboard");
@@ -329,4 +428,26 @@ function validarFechas() {
     }
 
     return true;
+}
+/* ==========================
+   VER / OCULTAR PASSWORD
+========================== */
+function verPassword(id, icono) {
+
+    let input = document.getElementById(id);
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        icono.innerHTML = '<i class="fa fa-eye-slash"></i>';
+
+    } else {
+
+        input.type = "password";
+
+        icono.innerHTML = '<i class="fa fa-eye"></i>';
+
+    }
+
 }

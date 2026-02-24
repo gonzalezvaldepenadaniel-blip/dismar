@@ -16,13 +16,14 @@ $conexion = $conectar->conexion();
 $ticket_id  = $_POST['ticket_id'] ?? null;
 $estado     = $_POST['estado'] ?? null;
 $asignado   = $_POST['asignado'] ?? null;
-$comentario = $_POST['comentario_admin'] ?? '';
+$comentario = $_POST['comentario'] ?? '';
+$prioridad  = $_POST['prioridad'] ?? null;
 
 if (!$ticket_id || !$estado) {
     exit("datos-incompletos");
 }
 
-/* aparece ticket que solo fuiste asignado*/
+/* aparece ticket que solo fuiste asignado */
 if ($asignado === "" || $asignado === "0") {
     $asignado = null;
 }
@@ -32,20 +33,50 @@ if ($_SESSION["rol"] === "admin") {
     $asignado = $_SESSION["usu_id"];
 }
 
-/* ===== UPDATE ===== */
-$sql = "UPDATE tm_ticket 
-        SET estado = ?, 
-            comentario_admin = ?, 
-            usu_asignado = ?
-        WHERE ticket_id = ?";
+$esSuperAdmin = ($_SESSION["rol"] === "superadmin");
 
-$stmt = $conexion->prepare($sql);
-$stmt->execute([
-    $estado,
-    $comentario,
-    $asignado,
-    $ticket_id
-]);
+/* ===== UPDATE ===== */
+if ($esSuperAdmin && $prioridad !== null) {
+
+    $prioridadesValidas = ['Alta', 'Media', 'Baja'];
+    if (!in_array($prioridad, $prioridadesValidas)) {
+        $prioridad = 'Media';
+    }
+
+    $sql = "UPDATE tm_ticket 
+            SET estado = ?, 
+                comentario_admin = ?, 
+                usu_asignado = ?, 
+                prioridad = ?
+            WHERE ticket_id = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([
+        $estado,
+        $comentario,
+        $asignado,
+        $prioridad,
+        $ticket_id
+    ]);
+
+} else {
+
+    $sql = "UPDATE tm_ticket 
+            SET estado = ?, 
+                comentario_admin = ?, 
+                usu_asignado = ?
+            WHERE ticket_id = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([
+        $estado,
+        $comentario,
+        $asignado,
+        $ticket_id
+    ]);
+}
+
+
 
 /* ===== NOTIFICACIÓN AL USUARIO DEL TICKET ===== */
 if ($_SESSION["rol"] === "admin") {
@@ -74,5 +105,7 @@ if ($_SESSION["rol"] === "admin") {
 }
 
 
-
 echo "ok";
+
+
+

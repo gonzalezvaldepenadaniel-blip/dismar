@@ -86,11 +86,29 @@ $con = Conectar::conexion();
                     </p>
                 </div>
 
-                <div class="card">
-                    <h4>Asignados</h4>
-                    <p>Mis tickets: <strong id="ticketsAsignados">0</strong></p>
-                </div>
+                <?php if ($_SESSION["rol"] === "admin") : ?>
 
+    <div class="card">
+        <h4>Asignados</h4>
+        <p>
+            Mis tickets: <strong id="ticketsAsignados">0</strong>
+        </p>
+    </div>
+
+<?php else: ?>
+
+    <div class="card">
+        <h4>Tickets por CEDIS</h4>
+        <p>
+            Iztapalapa: <strong id="cedisIztapalapa">0</strong><br>
+            Ecatepec: <strong id="cedisEcatepec">0</strong><br>
+            Tultitlán: <strong id="cedisTultitlan">0</strong><br>
+            Corporativo: <strong id="cedisCorporativo">0</strong><br>
+            Querétaro: <strong id="cedisQueretaro">0</strong>
+        </p>
+    </div>
+
+<?php endif; ?>
             </div>
         </section>
 
@@ -180,6 +198,8 @@ $con = Conectar::conexion();
 </div>
 
 <!-- MODAL ATENDER -->
+
+
 <div class="modal fade" id="modalAtenderTicket">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -191,6 +211,19 @@ $con = Conectar::conexion();
 
             <div class="modal-body">
                 <input type="hidden" id="ticket_id">
+
+                <!-- PRIORIDAD SUPER ADMIN -->
+                  <label>Prioridad</label>
+                <?php if ($esSuperAdmin): ?>
+                <div class="form-group">
+                    
+                    <select id="prioridadTicket" class="form-control">
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                </div>
+                <?php endif; ?>
 
                 <div class="form-group">
                     <label>Estatus</label>
@@ -235,6 +268,7 @@ $con = Conectar::conexion();
         </div>
     </div>
 </div>
+
 
 <script src="../public/js/lib/jquery/jquery.min.js"></script>
 <script src="../public/js/lib/bootstrap/bootstrap.min.js"></script>
