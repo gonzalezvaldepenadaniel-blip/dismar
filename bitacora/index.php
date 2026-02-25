@@ -112,6 +112,7 @@ $(document).ready(function() {
     });
 });
 </script>
-
+<script src="bitacora.js"></script>
+<?php include("modal.php"); ?>
 </body>
 </html>

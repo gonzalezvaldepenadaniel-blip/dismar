@@ -17,7 +17,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 ============================ */
 if ($op === "listar") {
 
-    $sql = "SELECT * FROM equipos_telefonos ORDER BY tel_id DESC";
+    $sql = "SELECT 
+t.*,
+e.nombre,
+e.apellidop,
+e.apellidom,
+e.area,
+e.puesto,
+e.cedis
+
+FROM equipos_telefonos t
+LEFT JOIN empleados e ON e.usu_id = t.usu_id
+
+ORDER BY t.tel_id DESC";
     $stmt = $con->prepare($sql);
     $stmt->execute();
 
@@ -31,19 +43,28 @@ if ($op === "listar") {
 if ($op === "guardar") {
 
     $sql = "INSERT INTO equipos_telefonos
-    (marca, modelo, num_serie, num_telefono, puesto, area, nombre_usuario, cedis, front, back, folio, comentarios, estatus)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVO')";
+    (
+        marca,
+        modelo,
+        num_serie,
+        num_telefono,
+        usu_id,
+        front,
+        back,
+        folio,
+        comentarios,
+        estatus
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVO')";
 
     $stmt = $con->prepare($sql);
+
     $stmt->execute([
         $_POST["marca"],
         $_POST["modelo"],
         $_POST["num_serie"],
         $_POST["num_telefono"],
-        $_POST["puesto"],
-        $_POST["area"],
-        $_POST["nombre_usuario"],
-        $_POST["cedis"], 
+        $_POST["usu_id"],
         $_POST["front"],
         $_POST["back"],
         $_POST["folio"],
