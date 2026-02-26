@@ -69,10 +69,13 @@ tbody.innerHTML+=`
 <td>${t.nombre ?? ''} ${t.apellidop ?? ''} ${t.apellidom ?? ''}</td>
 
 <td>${t.cedis ?? ''}</td>
+<td>
+<img src="/Dismar/public/telefonos/${t.front}" width="80">
+</td>
 
-<td>${t.front}</td>
-
-<td>${t.back}</td>
+<td>
+<img src="/Dismar/public/telefonos/${t.back}" width="80">
+</td>
 
 <td>${t.folio}</td>
 
@@ -80,9 +83,19 @@ tbody.innerHTML+=`
 
 <td>
 
-<span class="${t.estatus === 'ACTIVO' ? 'badge-activo' : 'badge-baja'}">
+<span class="
+${
+t.estatus === 'ACTIVO'
+? 'badge-activo'
+: t.estatus === 'BAJA'
+? 'badge-baja'
+: 'badge-reparacion'
+}
+">
 
 ${t.estatus}
+
+
 
 </span>
 
@@ -90,10 +103,21 @@ ${t.estatus}
 
 <td>
 
-<button class="btn btn-danger btn-sm" onclick="baja(${t.tel_id})">
+${
+t.estatus === 'ACTIVO'
 
-Baja
+? `<button class="btn btn-danger btn-sm" onclick="baja(${t.tel_id})">
+Dar Baja
+</button>`
 
+: `<button class="btn btn-success btn-sm" onclick="alta(${t.tel_id})">
+Dar Alta
+</button>`
+
+}
+
+<button class="btn btn-warning btn-sm" onclick="reparacion(${t.tel_id})">
+Reparación
 </button>
 
 </td>
@@ -133,3 +157,232 @@ document.getElementById("empleado").innerHTML=
 }
 
 });
+
+
+function guardarTelefono(e){
+
+e.preventDefault();
+
+let formData = new FormData(document.getElementById("formTelefono"));
+
+fetch("controller.php?op=guardar",{
+
+method:"POST",
+
+body:formData
+
+})
+.then(res=>res.text())
+.then(res=>{
+
+if(res=="OK"){
+
+// cerrar modal
+cerrarModal();
+
+// recargar tabla
+cargarTelefonos();
+
+
+// mostrar alerta
+Swal.fire({
+
+icon:"success",
+
+title:"Teléfono guardado correctamente",
+
+showConfirmButton:false,
+
+timer:1500
+
+});
+
+}
+
+else{
+
+Swal.fire({
+
+icon:"error",
+
+title:"Error al guardar"
+
+});
+
+}
+
+});
+
+}
+
+// DAR DE BAJA
+function baja(id){
+
+Swal.fire({
+
+title: '¿Dar de baja el teléfono?',
+
+icon: 'warning',
+
+showCancelButton: true,
+
+confirmButtonText: 'Sí, dar baja',
+
+cancelButtonText: 'Cancelar'
+
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+fetch("controller.php?op=baja",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+
+body:"tel_id="+id
+
+})
+.then(res=>res.text())
+.then(res=>{
+
+if(res=="OK"){
+
+Swal.fire({
+
+icon:"success",
+
+title:"Teléfono dado de baja",
+
+timer:1500,
+
+showConfirmButton:false
+
+});
+
+cargarTelefonos();
+
+}
+
+});
+
+}
+
+});
+
+}
+
+
+
+
+// DAR DE ALTA
+function alta(id){
+
+Swal.fire({
+
+title: '¿Dar de alta el teléfono?',
+
+icon: 'question',
+
+showCancelButton: true,
+
+confirmButtonText: 'Sí, dar alta',
+
+cancelButtonText: 'Cancelar'
+
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+fetch("controller.php?op=alta",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+
+body:"tel_id="+id
+
+})
+.then(res=>res.text())
+.then(res=>{
+
+if(res=="OK"){
+
+Swal.fire({
+
+icon:"success",
+
+title:"Teléfono activado",
+
+timer:1500,
+
+showConfirmButton:false
+
+});
+
+cargarTelefonos();
+
+}
+
+});
+
+}
+
+});
+
+}
+
+function reparacion(id){
+
+Swal.fire({
+
+title: '¿Enviar a reparación?',
+icon: 'warning',
+showCancelButton: true,
+confirmButtonText: 'Sí, enviar',
+cancelButtonText: 'Cancelar'
+
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+fetch("controller.php?op=reparacion",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+
+body:"tel_id="+id
+
+})
+.then(res=>res.text())
+.then(res=>{
+
+if(res=="OK"){
+
+Swal.fire({
+
+icon:"success",
+title:"Enviado a reparación",
+timer:1500,
+showConfirmButton:false
+
+});
+
+cargarTelefonos();
+
+}
+
+});
+
+}
+
+});
+
+}

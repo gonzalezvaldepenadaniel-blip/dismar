@@ -7,7 +7,7 @@ $con = Conectar::conexion();
     <div class="modal-box">
         <h5 class="mb-3">Agregar Teléfono</h5>
 
-        <form id="formTelefono">
+       <form id="formTelefono" enctype="multipart/form-data">
 
             <!-- FILA 1 -->
             <div class="row mt-2">
@@ -69,7 +69,7 @@ $con = Conectar::conexion();
 
                 <div class="col-md-6">
                     <label>Front</label>
-                    <input type="text" name="front" class="form-control">
+                    <input type="file" name="front" class="form-control" accept="image/*" required>
                 </div>
 
             </div>
@@ -81,7 +81,7 @@ $con = Conectar::conexion();
 
                 <div class="col-md-6">
                     <label>Back</label>
-                    <input type="text" name="back" class="form-control">
+                    <input type="file" name="back" class="form-control" accept="image/*" required>
                 </div>
 
             </div>

@@ -76,11 +76,37 @@ if ($op === "guardar") {
 }
 
 /* ============================
-   BAJA TELÉFONO
+   alta y baja
 ============================ */
+// DAR DE BAJA
 if ($op === "baja") {
 
     $sql = "UPDATE equipos_telefonos SET estatus='BAJA' WHERE tel_id=?";
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$_POST["tel_id"]]);
+
+    echo "OK";
+    exit;
+}
+
+
+// DAR DE ALTA
+if ($op === "alta") {
+
+    $sql = "UPDATE equipos_telefonos SET estatus='ACTIVO' WHERE tel_id=?";
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$_POST["tel_id"]]);
+
+    echo "OK";
+    exit;
+}
+
+/* ============================
+   EN REPARACION
+============================ */
+if ($op === "reparacion") {
+
+    $sql = "UPDATE equipos_telefonos SET estatus='REPARACION' WHERE tel_id=?";
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 

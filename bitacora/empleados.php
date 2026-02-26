@@ -149,7 +149,7 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
     <option value="Chicoloapan">CHICOLOAPAN</option>
     <option value="Tultitlán">TULTITLAN</option>
     <option value="Querétaro">QUERETARO</option>
-    <option value="Querétaro">NEXTLALPAN</option>
+    <option value="NEXTLALPAN">NEXTLALPAN</option>
 </select>
 
 <select name="estado" id="edit_estado" class="form-control mb-2">
