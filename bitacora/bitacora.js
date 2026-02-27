@@ -56,6 +56,8 @@ tbody.innerHTML+=`
 
 <td>${t.marca}</td>
 
+<td>${t.imei}</td>
+
 <td>${t.modelo}</td>
 
 <td>${t.num_serie}</td>
@@ -175,7 +177,9 @@ body:formData
 .then(res=>res.text())
 .then(res=>{
 
-if(res=="OK"){
+console.log("RESPUESTA DEL SERVIDOR:", res);
+
+if(res.trim() === "OK"){
 
 // cerrar modal
 cerrarModal();

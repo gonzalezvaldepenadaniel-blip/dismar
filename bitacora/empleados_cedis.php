@@ -7,10 +7,13 @@ $con = Conectar::conexion();
 $cedis = $_GET["cedis"];
 
 $sql = "SELECT usu_id, nombre, apellidop, apellidom
-FROM empleados
-WHERE cedis = ?
-AND estado='ACTIVO'
-ORDER BY nombre";
+        FROM empleados
+        WHERE cedis = ?
+        AND estado='ACTIVO'
+        AND usu_id NOT IN (
+            SELECT usu_id FROM equipos_telefonos WHERE estatus='ACTIVO'
+        )
+        ORDER BY nombre";
 
 $stmt = $con->prepare($sql);
 

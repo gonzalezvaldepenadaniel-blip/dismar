@@ -84,6 +84,7 @@ Nuevo Teléfono
 
 <th>Marca</th>
 
+<th>Imei</th>
 <th>Modelo</th>
 
 <th>Serie</th>

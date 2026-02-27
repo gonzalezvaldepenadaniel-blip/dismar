@@ -8,6 +8,7 @@ $con = Conectar::conexion();
         <h5 class="mb-3">Agregar Teléfono</h5>
 
        <form id="formTelefono" enctype="multipart/form-data">
+        
 
             <!-- FILA 1 -->
             <div class="row mt-2">
@@ -34,9 +35,14 @@ $con = Conectar::conexion();
                     <input type="text" name="num_telefono" class="form-control">
                 </div>
             </div>
+
+            <div class="mb-3">
+<label class="form-label">IMEI</label>
+<input type="text" name="imei" class="form-control" required>
+</div>
 <label>CEDIS</label>
 
-<select id="cedis" class="form-control" required>
+<select name="cedis" id="cedis" class="form-control" required>
 
 <option value="">Seleccione CEDIS</option>
 

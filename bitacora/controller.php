@@ -4,7 +4,7 @@ $con = (new Conectar())->conexion();
 
 $op = $_GET["op"] ?? "";
 
-// ✅ Convertir a mayúsculas SOLO si hay POST
+// Convertir a mayúsculas SOLO si hay POST
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     foreach($_POST as $k => $v){
         $_POST[$k] = mb_strtoupper($v);
@@ -42,39 +42,69 @@ ORDER BY t.tel_id DESC";
 ============================ */
 if ($op === "guardar") {
 
-    $sql = "INSERT INTO equipos_telefonos
-    (
-        marca,
-        modelo,
-        num_serie,
-        num_telefono,
-        usu_id,
-        front,
-        back,
-        folio,
-        comentarios,
-        estatus
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVO')";
+    try {
 
-    $stmt = $con->prepare($sql);
+        // 1️⃣ Obtener datos del empleado
+        $sqlEmp = "SELECT nombre, apellidop, apellidom, area, puesto 
+                   FROM empleados 
+                   WHERE usu_id = ?";
+        $stmtEmp = $con->prepare($sqlEmp);
+        $stmtEmp->execute([$_POST["usu_id"]]);
+        $emp = $stmtEmp->fetch(PDO::FETCH_ASSOC);
 
-    $stmt->execute([
-        $_POST["marca"],
-        $_POST["modelo"],
-        $_POST["num_serie"],
-        $_POST["num_telefono"],
-        $_POST["usu_id"],
-        $_POST["front"],
-        $_POST["back"],
-        $_POST["folio"],
-        $_POST["comentarios"]
-    ]);
+        if(!$emp){
+            echo "ERROR: Empleado no encontrado";
+            exit;
+        }
 
-    echo "OK";
+        $nombreCompleto = $emp["nombre"] . " " . $emp["apellidop"] . " " . $emp["apellidom"];
+
+        // 2️⃣ Manejar imágenes
+        $frontNombre = "";
+        $backNombre = "";
+
+        if(isset($_FILES["front"]) && $_FILES["front"]["error"] == 0){
+            $frontNombre = time()."_front_".$_FILES["front"]["name"];
+            move_uploaded_file($_FILES["front"]["tmp_name"], "../public/telefonos/".$frontNombre);
+        }
+
+        if(isset($_FILES["back"]) && $_FILES["back"]["error"] == 0){
+            $backNombre = time()."_back_".$_FILES["back"]["name"];
+            move_uploaded_file($_FILES["back"]["tmp_name"], "../public/telefonos/".$backNombre);
+        }
+
+        // 3️⃣ Insertar teléfono
+        $sql = "INSERT INTO equipos_telefonos
+        (marca, modelo, num_serie, num_telefono, imei, puesto, area, nombre_usuario, front, back, comentarios, folio, estatus, usu_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $con->prepare($sql);
+
+        $stmt->execute([
+            $_POST["marca"],
+            $_POST["modelo"],
+            $_POST["num_serie"],
+            $_POST["num_telefono"],
+            $_POST["imei"],
+            $emp["puesto"],
+            $emp["area"],
+            $nombreCompleto,
+            $frontNombre,
+            $backNombre,
+            $_POST["comentarios"],
+            $_POST["folio"],
+            'ACTIVO',
+            $_POST["usu_id"]
+        ]);
+
+        echo "OK";
+
+    } catch (Exception $e) {
+        echo "ERROR: " . $e->getMessage();
+    }
+
     exit;
 }
-
 /* ============================
    alta y baja
 ============================ */
@@ -85,7 +115,7 @@ if ($op === "baja") {
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-    echo "OK";
+    echo json_encode(["status"=>"success"]);
     exit;
 }
 
@@ -97,7 +127,7 @@ if ($op === "alta") {
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-    echo "OK";
+    echo json_encode(["status"=>"success"]);
     exit;
 }
 
@@ -110,6 +140,6 @@ if ($op === "reparacion") {
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-    echo "OK";
+   echo json_encode(["status"=>"success"]);
     exit;
 }
