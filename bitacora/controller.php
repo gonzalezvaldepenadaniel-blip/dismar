@@ -17,8 +17,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 ============================ */
 if ($op === "listar") {
 
-    $sql = "SELECT 
-t.*,
+    $sql =
+     
+"SELECT   t.*,
 e.nombre,
 e.apellidop,
 e.apellidom,
@@ -59,7 +60,7 @@ if ($op === "guardar") {
 
         $nombreCompleto = $emp["nombre"] . " " . $emp["apellidop"] . " " . $emp["apellidom"];
 
-        // 2️⃣ Manejar imágenes
+        // 2️ Manejar imágenes
         $frontNombre = "";
         $backNombre = "";
 
@@ -73,11 +74,10 @@ if ($op === "guardar") {
             move_uploaded_file($_FILES["back"]["tmp_name"], "../public/telefonos/".$backNombre);
         }
 
-        // 3️⃣ Insertar teléfono
+        // Insertar teléfono
         $sql = "INSERT INTO equipos_telefonos
-        (marca, modelo, num_serie, num_telefono, imei, puesto, area, nombre_usuario, front, back, comentarios, folio, estatus, usu_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+(marca, modelo, num_serie, num_telefono, imei, puesto, area, nombre_usuario, front, back, comentarios, folio, estatus, usu_id)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $con->prepare($sql);
 
         $stmt->execute([
@@ -111,14 +111,16 @@ if ($op === "guardar") {
 // DAR DE BAJA
 if ($op === "baja") {
 
-    $sql = "UPDATE equipos_telefonos SET estatus='BAJA' WHERE tel_id=?";
+    $sql = "UPDATE equipos_telefonos 
+            SET estatus='BAJA'
+            WHERE tel_id=?";
+
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-    echo json_encode(["status"=>"success"]);
+    echo "OK";
     exit;
 }
-
 
 // DAR DE ALTA
 if ($op === "alta") {
@@ -127,7 +129,7 @@ if ($op === "alta") {
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-    echo json_encode(["status"=>"success"]);
+   echo "OK";
     exit;
 }
 
@@ -140,6 +142,6 @@ if ($op === "reparacion") {
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
 
-   echo json_encode(["status"=>"success"]);
+  echo "OK";
     exit;
 }

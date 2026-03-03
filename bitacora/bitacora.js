@@ -52,7 +52,6 @@ tbody.innerHTML+=`
 
 <tr>
 
-<td>${t.tel_id}</td>
 
 <td>${t.marca}</td>
 
@@ -103,26 +102,57 @@ ${t.estatus}
 
 </td>
 
-<td>
+<td class="text-center">
+<div class="dropdown">
+  <button class="btn btn-light btn-sm border-0 shadow-none" 
+          type="button" 
+          data-bs-toggle="dropdown">
+    <i class="bi bi-three-dots-vertical"></i>
+  </button>
 
-${
-t.estatus === 'ACTIVO'
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm">
 
-? `<button class="btn btn-danger btn-sm" onclick="baja(${t.tel_id})">
-Dar Baja
-</button>`
+    <li>
+      <a class="dropdown-item" href="#" onclick="editar(${t.tel_id})">
+        ✏ Editar
+      </a>
+    </li>
 
-: `<button class="btn btn-success btn-sm" onclick="alta(${t.tel_id})">
-Dar Alta
-</button>`
+    <li><hr class="dropdown-divider"></li>
 
-}
+    ${
+      t.estatus === 'ACTIVO'
+      ? `
+      <li>
+        <a class="dropdown-item text-danger" href="#" onclick="baja(${t.tel_id})">
+          ⛔ Dar de Baja
+        </a>
+      </li>
+      `
+      : `
+      <li>
+        <a class="dropdown-item text-success" href="#" onclick="alta(${t.tel_id})">
+          ✔ Dar de Alta
+        </a>
+      </li>
+      `
+    }
 
-<button class="btn btn-warning btn-sm" onclick="reparacion(${t.tel_id})">
-Reparación
-</button>
+    <li>
+      <a class="dropdown-item text-warning" href="#" onclick="reparacion(${t.tel_id})">
+        🔧 Reparación
+      </a>
+    </li>
 
+  </ul>
+</div>
 </td>
+
+
+
+
+
+
 
 </tr>
 
@@ -160,8 +190,7 @@ document.getElementById("empleado").innerHTML=
 
 });
 
-let empleadoSelect = document.getElementById("empleado");
-empleadoSelect.remove(empleadoSelect.selectedIndex);
+
 
 function guardarTelefono(e){
 
@@ -180,21 +209,19 @@ console.log("RESPUESTA DEL SERVIDOR:", res);
 
 if(res.trim() === "OK"){
 
-    // volver a cargar empleados del mismo cedis
-    let cedisSeleccionado = document.getElementById("cedis").value;
-
-    if(cedisSeleccionado){
-        fetch("empleados_cedis.php?cedis="+cedisSeleccionado)
-        .then(res=>res.text())
-        .then(data=>{
-            document.getElementById("empleado").innerHTML =
-            "<option value=''>Seleccione empleado</option>"+data;
-        });
-    }
-
     cerrarModal();
-    cargarTelefonos();
+cargarTelefonos();
 
+let cedisSeleccionado = document.getElementById("cedis").value;
+
+if(cedisSeleccionado){
+    fetch("empleados_cedis.php?cedis="+cedisSeleccionado)
+    .then(res=>res.text())
+    .then(data=>{
+        document.getElementById("empleado").innerHTML =
+        "<option value=''>Seleccione empleado</option>"+data;
+    });
+}
     Swal.fire({
         icon:"success",
         title:"Teléfono guardado correctamente",
@@ -248,7 +275,7 @@ body:"tel_id="+id
 .then(res=>res.text())
 .then(res=>{
 
-if(res=="OK"){
+if(res.trim() === "OK"){
 
 Swal.fire({
 
@@ -320,8 +347,7 @@ body:"tel_id="+id
 })
 .then(res=>res.text())
 .then(res=>{
-
-if(res=="OK"){
+if(res.trim() === "OK"){
 
 Swal.fire({
 
@@ -375,7 +401,7 @@ body:"tel_id="+id
 .then(res=>res.text())
 .then(res=>{
 
-if(res=="OK"){
+if(res.trim() === "OK"){
 
 Swal.fire({
 
