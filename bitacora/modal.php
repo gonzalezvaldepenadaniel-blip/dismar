@@ -7,8 +7,11 @@ $con = Conectar::conexion();
     <div class="modal-box">
         <h5 class="mb-3">Agregar Teléfono</h5>
 
+
        <form id="formTelefono" enctype="multipart/form-data">
         
+       <input type="hidden" name="tel_id" id="tel_id">
+
 
             <!-- FILA 1 -->
             <div class="row mt-2">

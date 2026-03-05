@@ -38,6 +38,20 @@ ORDER BY t.tel_id DESC";
     exit;
 }
 
+
+/* ============================
+   OBTENER TELEFONO
+============================ */
+if ($op === "obtener") {
+
+    $sql = "SELECT * FROM equipos_telefonos WHERE tel_id=?";
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$_GET["tel_id"]]);
+
+    echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+    exit;
+}
+
 /* ============================
    GUARDAR TELÉFONO
 ============================ */
@@ -103,6 +117,38 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         echo "ERROR: " . $e->getMessage();
     }
 
+    exit;
+}
+
+/* ============================
+   EDITAR TELEFONO
+============================ */
+if ($op === "editar") {
+
+    $sql = "UPDATE equipos_telefonos SET
+    marca=?,
+    modelo=?,
+    num_serie=?,
+    num_telefono=?,
+    imei=?,
+    comentarios=?,
+    folio=?
+    WHERE tel_id=?";
+
+    $stmt = $con->prepare($sql);
+
+    $stmt->execute([
+        $_POST["marca"],
+        $_POST["modelo"],
+        $_POST["num_serie"],
+        $_POST["num_telefono"],
+        $_POST["imei"],
+        $_POST["comentarios"],
+        $_POST["folio"],
+        $_POST["tel_id"]
+    ]);
+
+    echo "OK";
     exit;
 }
 /* ============================

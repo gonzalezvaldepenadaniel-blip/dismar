@@ -248,3 +248,22 @@ input,textarea,select{
 .overlay.active{
     display:block;
 }
+
+
+/* ===== FIX DROPDOWN EN TABLA ===== */
+
+.table-responsive{
+overflow-x:auto;
+overflow-y:visible !important;
+position:static;
+}
+
+.dropdown{
+position:relative;
+}
+
+.dropdown-menu{
+position:absolute;
+z-index:9999;
+min-width:160px;
+}

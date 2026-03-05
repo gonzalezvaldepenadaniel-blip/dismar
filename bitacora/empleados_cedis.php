@@ -9,7 +9,7 @@ $cedis = $_GET["cedis"];
 $sql = "SELECT e.usu_id, e.nombre, e.apellidop, e.apellidom
         FROM empleados e
         WHERE e.cedis = ?
-        AND e.estado = 'ACTIVO','REPARACION,','BAJA'
+        AND e.estado IN ('ACTIVO','REPARACION','BAJA')
         AND NOT EXISTS (
             SELECT 1
             FROM equipos_telefonos t
