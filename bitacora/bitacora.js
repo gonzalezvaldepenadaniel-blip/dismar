@@ -73,11 +73,11 @@ tbody.innerHTML+=`
 <td>${t.cedis ?? ''}</td>
 
 <td>
-<img src="/Dismar/public/telefonos/${t.front}" width="80">
+<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">
 </td>
 
 <td>
-<img src="/Dismar/public/telefonos/${t.back}" width="80">
+<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">
 </td>
 
 <td>${t.folio}</td>
@@ -468,3 +468,29 @@ document.getElementById("modalAcciones").addEventListener("click",function(e){
         cerrarAcciones();
     }
 });
+
+// ===== VISOR DE IMAGEN =====
+
+document.addEventListener("click", function(e){
+
+if(e.target.classList.contains("img-preview")){
+
+let visor = document.getElementById("visorImagen");
+let imgGrande = document.getElementById("imgGrande");
+
+imgGrande.src = e.target.src;
+visor.style.display = "flex";
+
+}
+
+});
+
+document.querySelector(".cerrar-img").onclick = () => {
+document.getElementById("visorImagen").style.display="none";
+};
+
+document.getElementById("visorImagen").onclick = function(e){
+if(e.target === this){
+this.style.display="none";
+}
+};

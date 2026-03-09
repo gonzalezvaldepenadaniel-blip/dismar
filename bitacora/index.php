@@ -135,12 +135,20 @@ Cancelar
 </div>
 </div>
 
+<div id="visorImagen" class="visor-img">
+
+<span class="cerrar-img">&times;</span>
+
+<img id="imgGrande">
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="bitacora.js"></script>
+
 </body>
 
 <script>
