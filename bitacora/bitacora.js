@@ -99,51 +99,14 @@ ${t.estatus}
 </td>
 
 
+<td class="text-center acciones-col">
 
-<td class="text-center">
-
-<div class="dropdown">
-
-<button class="btn btn-light btn-sm border-0 shadow-none dropdown-toggle"
-type="button"
-data-bs-toggle="dropdown"
-aria-expanded="false">
+<button class="btn btn-acciones"
+onclick="abrirAcciones(${t.tel_id})">
 
 <i class="bi bi-three-dots-vertical"></i>
 
 </button>
-
-<ul class="dropdown-menu dropdown-menu-end shadow-sm">
-
-<li>
-<a class="dropdown-item" href="javascript:void(0)" onclick="editar(${t.tel_id})">
-✏ Editar
-</a>
-</li>
-
-<li><hr class="dropdown-divider"></li>
-
-<li>
-<a class="dropdown-item text-success" href="javascript:void(0)" onclick="alta(${t.tel_id})">
-✔ Alta
-</a>
-</li>
-
-<li>
-<a class="dropdown-item text-danger" href="javascript:void(0)" onclick="baja(${t.tel_id})">
-⛔ Baja
-</a>
-</li>
-
-<li>
-<a class="dropdown-item text-warning" href="javascript:void(0)" onclick="reparacion(${t.tel_id})">
-🔧 Reparación
-</a>
-</li>
-
-</ul>
-
-</div>
 
 </td>
 
@@ -154,10 +117,7 @@ aria-expanded="false">
 });
 
 
-/* 🔥 ACTIVAR DROPDOWNS DE BOOTSTRAP */
-document.querySelectorAll('.dropdown-toggle').forEach(function (dropdownToggleEl) {
-    new bootstrap.Dropdown(dropdownToggleEl);
-});
+
 
 });
 
@@ -459,3 +419,52 @@ document.querySelector("[name='comentarios']").value = data.comentarios;
 
 });
 }
+
+
+let telefonoSeleccionado = null;
+
+function abrirAcciones(id){
+
+telefonoSeleccionado = id;
+
+document.getElementById("modalAcciones").style.display = "flex";
+
+}
+
+document.getElementById("cerrarAcciones").onclick = () => {
+
+document.getElementById("modalAcciones").style.display = "none";
+
+};
+
+// BOTONES DEL MODAL EMPRESARIAL
+
+document.querySelector(".accion-btn.editar").onclick = () => {
+    editar(telefonoSeleccionado);
+    cerrarAcciones();
+};
+
+document.querySelector(".accion-btn.alta").onclick = () => {
+    alta(telefonoSeleccionado);
+    cerrarAcciones();
+};
+
+document.querySelector(".accion-btn.baja").onclick = () => {
+    baja(telefonoSeleccionado);
+    cerrarAcciones();
+};
+
+document.querySelector(".accion-btn.reparacion").onclick = () => {
+    reparacion(telefonoSeleccionado);
+    cerrarAcciones();
+};
+
+function cerrarAcciones(){
+    document.getElementById("modalAcciones").style.display="none";
+}
+
+document.getElementById("modalAcciones").addEventListener("click",function(e){
+    if(e.target === this){
+        cerrarAcciones();
+    }
+});

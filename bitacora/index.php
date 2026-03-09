@@ -43,26 +43,28 @@ $con = (new Conectar())->conexion();
         <div id="btnMenu" class="hamburger">☰</div>
         <div id="overlay" class="overlay"></div>
 
+
+
         <div class="topbar">
-            Inventario de Teléfonos
-        </div>
-
-        <!-- aquí dejas tu card tal cual -->
-
-
-<div class="card">
-
-    <div class="card-header">
-        <button class="btn btn-primary" id="btnNuevo">
-            Nuevo Teléfono
-        </button>
+    
+    <div class="topbar-left">
+        <h5>Inventario de Teléfonos</h5>
     </div>
+
+    <div class="topbar-right">
+
+        <button class="btn btn-primary btn-sm" id="btnNuevo">
+            <i class="bi bi-plus-lg"></i> Nuevo
+        </button>
+
+    </div>
+
+</div>
 
     <div class="card-body">
 
         <div class="table-responsive">
-            <table class="table table-sm table-hover align-middle" id="tablaTelefonos">
-
+            <table class="table table-sm table-hover" id="tablaTelefonos">
                 <thead>
                     <tr>
                         
@@ -93,6 +95,45 @@ $con = (new Conectar())->conexion();
 
 </div>
 <?php include("modal.php"); ?>
+
+<div class="modal-custom" id="modalAcciones">
+
+<div class="modal-box modal-acciones">
+
+<h5 class="mb-3">Acciones del teléfono</h5>
+
+<div class="acciones-grid">
+
+<button class="accion-btn editar">
+<i class="bi bi-pencil-square"></i>
+<span>Editar</span>
+</button>
+
+<button class="accion-btn reparacion">
+<i class="bi bi-tools"></i>
+<span>Reparación</span>
+</button>
+
+<button class="accion-btn alta">
+<i class="bi bi-arrow-up-circle"></i>
+<span>Dar de alta</span>
+</button>
+
+<button class="accion-btn baja">
+<i class="bi bi-arrow-down-circle"></i>
+<span>Dar de baja</span>
+</button>
+
+</div>
+
+<div class="text-end mt-3">
+<button class="btn btn-secondary btn-sm" id="cerrarAcciones">
+Cancelar
+</button>
+</div>
+
+</div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

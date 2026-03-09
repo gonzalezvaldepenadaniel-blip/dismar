@@ -80,7 +80,7 @@ body{
 
 .table td,
 .table th{
-    vertical-align:middle;
+    vertical-align:top;
 }
 
 .table td{
@@ -266,4 +266,192 @@ position:relative;
 position:absolute;
 z-index:9999;
 min-width:160px;
+}
+
+#tablaTelefonos td:last-child{
+    vertical-align: top;
+}
+
+.dropdown-toggle::after{
+    display:none;
+}
+
+
+
+
+/* ===== BOTON ACCIONES PROFESIONAL ===== */
+
+.btn-acciones{
+    background:#f3f4f6;
+    border:none;
+    border-radius:6px;
+    padding:6px 8px;
+    transition:.2s;
+}
+
+.btn-acciones:hover{
+    background:#e5e7eb;
+}
+
+/* columna acciones */
+
+.acciones-col{
+    min-width:90px;
+}
+
+/* menu */
+
+.acciones-menu{
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+
+.acciones-menu .dropdown-item{
+    font-size:13px;
+    display:flex;
+    align-items:center;
+}
+
+.acciones-menu i{
+    font-size:14px;
+}
+
+/* columnas de imagen más grandes */
+
+#tablaTelefonos td:nth-child(10),
+#tablaTelefonos td:nth-child(11){
+    max-width:120px;
+}
+
+/* imágenes más grandes */
+
+#tablaTelefonos img{
+    width:90px;
+    height:auto;
+}
+
+.img-preview{
+    width:70px;
+    border-radius:6px;
+    cursor:zoom-in;
+    transition:transform .2s;
+}
+
+.img-preview:hover{
+    transform:scale(2.2);
+    z-index:10;
+    position:relative;
+}
+
+.topbar{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    padding:10px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.topbar h5{
+    margin:0;
+    font-weight:600;
+    color:#374151;
+}
+
+.topbar-right{
+    display:flex;
+    gap:10px;
+}
+
+.table{
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+.table thead th{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.table tbody td{
+    font-size:13px;
+}
+
+.table-hover tbody tr:hover{
+    background:#f9fafb;
+}
+
+.img-preview{
+    width:65px;
+    border-radius:6px;
+    cursor:zoom-in;
+    transition:.2s;
+    border:1px solid #e5e7eb;
+}
+
+.img-preview:hover{
+    transform:scale(1.8);
+}
+
+/* ===== MODAL ACCIONES ===== */
+
+.modal-acciones{
+width:420px;
+}
+
+/* grid de botones */
+
+.acciones-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+/* botones */
+
+.accion-btn{
+border:1px solid #e5e7eb;
+background:white;
+border-radius:8px;
+padding:14px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+font-size:13px;
+cursor:pointer;
+transition:.2s;
+}
+
+.accion-btn i{
+font-size:20px;
+}
+
+/* hover */
+
+.accion-btn:hover{
+background:#f3f4f6;
+transform:scale(1.03);
+}
+
+/* colores */
+
+.accion-btn.editar i{
+color:#2563eb;
+}
+
+.accion-btn.reparacion i{
+color:#d97706;
+}
+
+.accion-btn.alta i{
+color:#16a34a;
+}
+
+.accion-btn.baja i{
+color:#dc2626;
 }
