@@ -1,48 +1,74 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    cargarTelefonos();
+cargarTelefonos();
 
-    let btnNuevo = document.getElementById("btnNuevo");
-    if(btnNuevo){
-        btnNuevo.addEventListener("click", abrirModal);
-    }
+let btnNuevo = document.getElementById("btnNuevo");
+if(btnNuevo){
+btnNuevo.addEventListener("click", abrirModal);
+}
 
-    let btnCerrar = document.getElementById("btnCerrar");
-    if(btnCerrar){
-        btnCerrar.addEventListener("click", cerrarModal);
-    }
+let btnCerrar = document.getElementById("btnCerrar");
+if(btnCerrar){
+btnCerrar.addEventListener("click", cerrarModal);
+}
 
-    let form = document.getElementById("formTelefono");
-    if(form){
-        form.addEventListener("submit", guardarTelefono);
-    }
+let form = document.getElementById("formTelefono");
+if(form){
+form.addEventListener("submit", guardarTelefono);
+}
+
+/* PREVIEW AUTOMATICA DE IMAGEN */
+
+let front = document.querySelector("input[name='front']");
+let back = document.querySelector("input[name='back']");
+
+if(front){
+front.addEventListener("change", function(){
+let file = this.files[0];
+if(file){
+document.getElementById("previewFront").src = URL.createObjectURL(file);
+}
+});
+}
+
+if(back){
+back.addEventListener("change", function(){
+let file = this.files[0];
+if(file){
+document.getElementById("previewBack").src = URL.createObjectURL(file);
+}
+});
+}
 
 });
 
-
-
 function abrirModal(){
-    document.getElementById("modalTelefono").style.display="flex";
+
+document.getElementById("modalTelefono").style.display="flex";
+
+/* LIMPIAR PREVIEWS */
+
+let pf = document.getElementById("previewFront");
+let pb = document.getElementById("previewBack");
+
+if(pf) pf.src="";
+if(pb) pb.src="";
+
 }
-
-
 
 function cerrarModal(){
 
-    document.getElementById("modalTelefono").style.display="none";
+document.getElementById("modalTelefono").style.display="none";
 
-    let form = document.getElementById("formTelefono");
-    if(form) form.reset();
+let form = document.getElementById("formTelefono");
+if(form) form.reset();
 
-    let empleado = document.getElementById("empleado");
-    if(empleado){
-        empleado.innerHTML="<option value=''>Seleccione empleado</option>";
-    }
-
+let empleado = document.getElementById("empleado");
+if(empleado){
+empleado.innerHTML="<option value=''>Seleccione empleado</option>";
 }
 
-
-
+}
 
 function cargarTelefonos(){
 
@@ -73,11 +99,11 @@ tbody.innerHTML+=`
 <td>${t.cedis ?? ''}</td>
 
 <td>
-<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">
+${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">` : ''}
 </td>
 
 <td>
-<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">
+${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` : ''}
 </td>
 
 <td>${t.folio}</td>
@@ -93,11 +119,9 @@ t.estatus === 'ACTIVO'
 : 'badge-reparacion'
 }">
 ${t.estatus}
-
 </span>
 
 </td>
-
 
 <td class="text-center acciones-col">
 
@@ -116,15 +140,12 @@ onclick="abrirAcciones(${t.tel_id})">
 
 });
 
-
-
-
 });
 
 }
 
+/* FILTRAR EMPLEADOS POR CEDIS */
 
-// FILTRAR EMPLEADOS POR CEDIS
 document.addEventListener("change",function(e){
 
 if(e.target.id==="cedis"){
@@ -150,7 +171,6 @@ empleado.innerHTML=
 
 });
 
-
 function guardarTelefono(e){
 
 e.preventDefault();
@@ -169,6 +189,7 @@ fetch(url,{
 method:"POST",
 body:formData
 })
+
 .then(res=>res.text())
 
 .then(res=>{
@@ -229,10 +250,8 @@ title:"Error al guardar"
 
 }
 
+/* DAR DE BAJA */
 
-
-
-// DAR DE BAJA
 function baja(id){
 
 Swal.fire({
@@ -284,10 +303,8 @@ cargarTelefonos();
 
 }
 
+/* DAR DE ALTA */
 
-
-
-// DAR DE ALTA
 function alta(id){
 
 Swal.fire({
@@ -341,59 +358,7 @@ cargarTelefonos();
 
 
 
-
-// ENVIAR A REPARACION
-function reparacion(id){
-
-Swal.fire({
-
-title: '¿Enviar a reparación?',
-icon: 'warning',
-showCancelButton: true,
-confirmButtonText: 'Sí, enviar',
-cancelButtonText: 'Cancelar'
-
-}).then((result)=>{
-
-if(result.isConfirmed){
-
-fetch("controller.php?op=reparacion",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
-},
-
-body:"tel_id="+id
-
-})
-
-.then(res=>res.text())
-
-.then(res=>{
-
-if(res.trim() === "OK"){
-
-Swal.fire({
-icon:"success",
-title:"Enviado a reparación",
-timer:1500,
-showConfirmButton:false
-});
-
-cargarTelefonos();
-
-}
-
-});
-
-}
-
-});
-
-}
-
+/* EDITAR */
 
 function editar(id){
 
@@ -405,8 +370,6 @@ fetch("controller.php?op=obtener&tel_id="+id)
 
 abrirModal();
 
-/* llenar formulario */
-
 document.getElementById("tel_id").value = data.tel_id;
 
 document.querySelector("[name='marca']").value = data.marca;
@@ -417,9 +380,39 @@ document.querySelector("[name='imei']").value = data.imei;
 document.querySelector("[name='folio']").value = data.folio;
 document.querySelector("[name='comentarios']").value = data.comentarios;
 
+let cedis = document.getElementById("cedis");
+cedis.value = data.cedis;
+
+fetch("empleados_cedis.php?cedis="+data.cedis+"&tel_id="+data.tel_id)
+
+.then(res=>res.text())
+
+.then(html=>{
+
+let empleado = document.getElementById("empleado");
+
+empleado.innerHTML =
+"<option value=''>Seleccione empleado</option>"+html;
+
+empleado.value = data.usu_id;
+
 });
+
+/* MOSTRAR IMAGENES */
+
+if(data.front){
+document.getElementById("previewFront").src =
+"/Dismar/public/telefonos/"+data.front;
 }
 
+if(data.back){
+document.getElementById("previewBack").src =
+"/Dismar/public/telefonos/"+data.back;
+}
+
+});
+
+}
 
 let telefonoSeleccionado = null;
 
@@ -437,39 +430,37 @@ document.getElementById("modalAcciones").style.display = "none";
 
 };
 
-// BOTONES DEL MODAL EMPRESARIAL
-
 document.querySelector(".accion-btn.editar").onclick = () => {
-    editar(telefonoSeleccionado);
-    cerrarAcciones();
+editar(telefonoSeleccionado);
+cerrarAcciones();
 };
 
 document.querySelector(".accion-btn.alta").onclick = () => {
-    alta(telefonoSeleccionado);
-    cerrarAcciones();
+alta(telefonoSeleccionado);
+cerrarAcciones();
 };
 
 document.querySelector(".accion-btn.baja").onclick = () => {
-    baja(telefonoSeleccionado);
-    cerrarAcciones();
+baja(telefonoSeleccionado);
+cerrarAcciones();
 };
 
 document.querySelector(".accion-btn.reparacion").onclick = () => {
-    reparacion(telefonoSeleccionado);
-    cerrarAcciones();
+reparacion(telefonoSeleccionado);
+cerrarAcciones();
 };
 
 function cerrarAcciones(){
-    document.getElementById("modalAcciones").style.display="none";
+document.getElementById("modalAcciones").style.display="none";
 }
 
 document.getElementById("modalAcciones").addEventListener("click",function(e){
-    if(e.target === this){
-        cerrarAcciones();
-    }
+if(e.target === this){
+cerrarAcciones();
+}
 });
 
-// ===== VISOR DE IMAGEN =====
+/* VISOR DE IMAGEN */
 
 document.addEventListener("click", function(e){
 
@@ -494,3 +485,15 @@ if(e.target === this){
 this.style.display="none";
 }
 };
+
+
+// ENVIAR A REPARACION 
+function reparacion(id){ Swal.fire({ title: '¿Enviar a reparación?',
+     icon: 'warning', showCancelButton: true, confirmButtonText: 
+     'Sí, enviar', cancelButtonText: 'Cancelar' }).then((result)=>{ if(result.isConfirmed)
+        { fetch("controller.php?op=reparacion",{ method:"POST", headers:
+            { "Content-Type":"application/x-www-form-urlencoded" }, body:"tel_id="+id }) 
+            .then(res=>res.text()) .then(res=>{ if(res.trim() === "OK"){ Swal.fire(
+                { icon:"success", title:"Enviado a reparación", timer:1500, showConfirmButton:false
+                    
+                 }); cargarTelefonos(); } }); } }); }

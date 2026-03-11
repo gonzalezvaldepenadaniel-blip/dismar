@@ -44,12 +44,20 @@ ORDER BY t.tel_id DESC";
 ============================ */
 if ($op === "obtener") {
 
-    $sql = "SELECT * FROM equipos_telefonos WHERE tel_id=?";
-    $stmt = $con->prepare($sql);
-    $stmt->execute([$_GET["tel_id"]]);
+$sql = "SELECT 
+t.*,
+e.cedis
+FROM equipos_telefonos t
+LEFT JOIN empleados e 
+ON e.usu_id = t.usu_id
+WHERE t.tel_id=?";
 
-    echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
-    exit;
+$stmt = $con->prepare($sql);
+$stmt->execute([$_GET["tel_id"]]);
+
+echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+exit;
+
 }
 
 /* ============================

@@ -68,34 +68,59 @@ $con = Conectar::conexion();
 
 </select>
 
-            <!-- FILA 3 -->
-            <div class="row mt-2">
+           <!-- FILA 3 -->
+<div class="row mt-2">
 
-                <div class="col-md-6">
-                    <label>Folio</label>
-                    <input type="text" name="folio" class="form-control">
-                </div>
+    <div class="col-md-6">
+        <label>Folio</label>
+        <input type="text" name="folio" class="form-control">
+    </div>
 
-                <div class="col-md-6">
-                    <label>Front</label>
-                    <input type="file" name="front" class="form-control" accept="image/*" required>
-                </div>
-
-            </div>
+</div>
 
 
-            <!-- FILA 4 -->
+<!-- IMAGENES -->
+<div class="img-grid">
 
-            <div class="row mt-2">
+    <!-- FRONT -->
+    <div class="img-upload-box">
 
-                <div class="col-md-6">
-                    <label>Back</label>
-                    <input type="file" name="back" class="form-control" accept="image/*" required>
-                </div>
+        <label>Front</label>
 
-            </div>
+        <img id="previewFront" class="img-form-preview">
 
+        <input type="file" 
+               name="front" 
+               id="front" 
+               class="form-control" 
+               accept="image/*">
 
+        <input type="hidden" 
+               name="front_actual" 
+               id="front_actual">
+
+    </div>
+
+    <!-- BACK -->
+    <div class="img-upload-box">
+
+        <label>Back</label>
+
+        <img id="previewBack" class="img-form-preview">
+
+        <input type="file" 
+               name="back" 
+               id="back" 
+               class="form-control" 
+               accept="image/*">
+
+        <input type="hidden" 
+               name="back_actual" 
+               id="back_actual">
+
+    </div>
+
+</div>
 
             <!-- COMENTARIOS -->
 
