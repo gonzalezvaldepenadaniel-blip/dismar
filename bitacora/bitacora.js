@@ -110,7 +110,6 @@ ${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` 
 <td>${t.comentarios}</td>
 
 <td>
-
 <span class="${
 t.estatus === 'ACTIVO'
 ? 'badge-activo'
@@ -120,18 +119,13 @@ t.estatus === 'ACTIVO'
 }">
 ${t.estatus}
 </span>
-
 </td>
 
 <td class="text-center acciones-col">
-
 <button class="btn btn-acciones"
 onclick="abrirAcciones(${t.tel_id})">
-
 <i class="bi bi-three-dots-vertical"></i>
-
 </button>
-
 </td>
 
 </tr>
@@ -140,10 +134,12 @@ onclick="abrirAcciones(${t.tel_id})">
 
 });
 
+// ✅ AQUÍ VA (UNA SOLA VEZ)
+ocultarColumnasExtra();
+
 });
 
 }
-
 /* FILTRAR EMPLEADOS POR CEDIS */
 
 document.addEventListener("change",function(e){
@@ -497,3 +493,99 @@ function reparacion(id){ Swal.fire({ title: '¿Enviar a reparación?',
                 { icon:"success", title:"Enviado a reparación", timer:1500, showConfirmButton:false
                     
                  }); cargarTelefonos(); } }); } }); }
+
+
+
+                 function verDetalles(id){
+
+fetch("controller.php?op=obtener&tel_id="+id)
+
+.then(res=>res.json())
+
+.then(t=>{
+
+let html = `
+
+<p><b>Folio:</b> ${t.folio}</p>
+<p><b>Comentarios:</b> ${t.comentarios}</p>
+
+<p><b>Estatus:</b> ${t.estatus}</p>
+
+<div style="display:flex;gap:10px;margin-top:10px;">
+
+${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" width="120">` : ''}
+
+${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" width="120">` : ''}
+
+</div>
+
+`;
+
+document.getElementById("contenidoDetalles").innerHTML = html;
+
+document.getElementById("modalDetalles").style.display = "flex";
+
+});
+
+}
+
+function cerrarDetalles(){
+document.getElementById("modalDetalles").style.display="none";
+}
+
+// CONTROL DE COLUMNAS
+let mostrando = false;
+
+function ocultarColumnasExtra(){
+
+    if(mostrando) return;
+
+    // ocultar headers
+    document.querySelectorAll("#tablaTelefonos thead th").forEach((th, i) => {
+        if(i >= 9 && i <= 14){
+            th.classList.add("oculta");
+        }
+    });
+
+    // ocultar celdas
+    document.querySelectorAll("#tablaTelefonos tbody tr").forEach(row => {
+        for(let i = 9; i <= 14; i++){
+            if(row.children[i]){
+                row.children[i].classList.add("oculta");
+            }
+        }
+    });
+
+}
+
+// BOTON MOSTRAR MÁS
+document.addEventListener("click", function(e){
+
+if(e.target.closest("#btnMostrarMas")){
+
+    mostrando = !mostrando;
+
+    // headers
+    document.querySelectorAll("#tablaTelefonos thead th").forEach((th, i) => {
+        if(i >= 9 && i <= 14){
+            th.classList.toggle("oculta");
+        }
+    });
+
+    // filas
+    document.querySelectorAll("#tablaTelefonos tbody tr").forEach(row => {
+        for(let i = 9; i <= 14; i++){
+            if(row.children[i]){
+                row.children[i].classList.toggle("oculta");
+            }
+        }
+    });
+
+    document.getElementById("btnMostrarMas").innerHTML =
+        mostrando
+        ? '<i class="bi bi-eye-slash"></i> Mostrar menos'
+        : '<i class="bi bi-eye"></i> Mostrar más';
+
+}
+
+});

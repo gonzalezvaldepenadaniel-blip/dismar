@@ -271,9 +271,6 @@ min-width:160px;
     display:none;
 }
 
-
-
-
 /* ===== BOTON ACCIONES PROFESIONAL ===== */
 
 .btn-acciones{
@@ -326,19 +323,6 @@ min-width:160px;
     height:auto;
 }
 
-.img-preview{
-    width:70px;
-    border-radius:6px;
-    cursor:zoom-in;
-    transition:transform .2s;
-}
-
-.img-preview:hover{
-    transform:scale(2.2);
-    z-index:10;
-    position:relative;
-}
-
 .topbar{
     background:white;
     border:1px solid #e5e7eb;
@@ -380,17 +364,6 @@ min-width:160px;
     background:#f9fafb;
 }
 
-.img-preview{
-    width:65px;
-    border-radius:6px;
-    cursor:zoom-in;
-    transition:.2s;
-    border:1px solid #e5e7eb;
-}
-
-.img-preview:hover{
-    transform:scale(1.8);
-}
 
 /* ===== MODAL ACCIONES ===== */
 
@@ -454,8 +427,17 @@ color:#dc2626;
 /* ===== CONTROL DE COLUMNAS TABLA ===== */
 
 #tablaTelefonos{
-    table-layout: fixed;
+    table-layout: auto;
     width:100%;
+}
+
+/* columnas cortas */
+#tablaTelefonos td:nth-child(1),
+#tablaTelefonos td:nth-child(2),
+#tablaTelefonos td:nth-child(3),
+#tablaTelefonos td:nth-child(4),
+#tablaTelefonos td:nth-child(5){
+    white-space: nowrap;
 }
 
 /* tamaños de columnas */
@@ -535,17 +517,6 @@ gap:8px;
 align-items:center;
 }
 
-/* preview imagen */
-
-.img-form-preview{
-width:120px;
-height:150px;
-object-fit:cover;
-border-radius:6px;
-border:1px solid #e5e7eb;
-background:white;
-}
-
 /* input file */
 
 .img-upload-box input[type="file"]{
@@ -573,3 +544,83 @@ margin-bottom:15px;
 grid-column:1 / 3;
 }
 
+#tablaTelefonos thead th{
+background:#f1f5f9;
+color:#475569;
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.5px;
+padding:12px 10px;
+border-bottom:1px solid #e5e7eb;
+}
+#tablaTelefonos tbody tr{
+border-bottom:1px solid #f1f5f9;
+}
+
+#tablaTelefonos tbody tr:hover{
+background:#f8fafc;
+}
+
+#tablaTelefonos td{
+padding:10px;
+vertical-align:middle;
+}
+
+.table{
+background:white;
+border:1px solid #e5e7eb;
+border-radius:8px;
+overflow:hidden;
+}
+.badge-activo{
+background:#dcfce7;
+color:#166534;
+font-size:11px;
+padding:4px 8px;
+border-radius:20px;
+font-weight:600;
+}
+
+.badge-baja{
+background:#fee2e2;
+color:#991b1b;
+font-size:11px;
+padding:4px 8px;
+border-radius:20px;
+font-weight:600;
+}
+
+.badge-reparacion{
+background:#fef3c7;
+color:#92400e;
+font-size:11px;
+padding:4px 8px;
+border-radius:20px;
+font-weight:600;
+}
+
+.img-preview{
+width:55px;
+height:75px;
+object-fit:cover;
+border-radius:6px;
+border:1px solid #e5e7eb;
+cursor:pointer;
+transition:.2s;
+}
+
+.img-preview:hover{
+transform:scale(1.6);
+z-index:5;
+position:relative;
+}
+
+#tablaTelefonos td:nth-child(13){
+white-space: normal;
+line-height:1.4;
+max-width:300px;
+}
+
+.oculta{
+    display: none !important;
+}

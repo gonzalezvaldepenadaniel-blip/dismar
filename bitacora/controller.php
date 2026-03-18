@@ -133,15 +133,31 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 ============================ */
 if ($op === "editar") {
 
+    $front = $_POST["front_actual"];
+    $back  = $_POST["back_actual"];
+
+    if(isset($_FILES["front"]) && $_FILES["front"]["error"] == 0){
+        $front = time()."_front_".$_FILES["front"]["name"];
+        move_uploaded_file($_FILES["front"]["tmp_name"], "../public/telefonos/".$front);
+    }
+
+    if(isset($_FILES["back"]) && $_FILES["back"]["error"] == 0){
+        $back = time()."_back_".$_FILES["back"]["name"];
+        move_uploaded_file($_FILES["back"]["tmp_name"], "../public/telefonos/".$back);
+    }
+
     $sql = "UPDATE equipos_telefonos SET
-    marca=?,
-    modelo=?,
-    num_serie=?,
-    num_telefono=?,
-    imei=?,
-    comentarios=?,
-    folio=?
-    WHERE tel_id=?";
+        marca=?,
+        modelo=?,
+        num_serie=?,
+        num_telefono=?,
+        imei=?,
+        comentarios=?,
+        folio=?,
+        front=?,
+        back=?,
+        usu_id=?
+        WHERE tel_id=?";
 
     $stmt = $con->prepare($sql);
 
@@ -153,11 +169,13 @@ if ($op === "editar") {
         $_POST["imei"],
         $_POST["comentarios"],
         $_POST["folio"],
+        $front,
+        $back,
+        $_POST["usu_id"],
         $_POST["tel_id"]
     ]);
 
     echo "OK";
-    exit;
 }
 /* ============================
    alta y baja

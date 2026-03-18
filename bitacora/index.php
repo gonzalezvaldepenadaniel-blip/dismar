@@ -53,11 +53,15 @@ $con = (new Conectar())->conexion();
 
     <div class="topbar-right">
 
-        <button class="btn btn-primary btn-sm" id="btnNuevo">
-            <i class="bi bi-plus-lg"></i> Nuevo
-        </button>
+    <button class="btn btn-secondary btn-sm" id="btnMostrarMas">
+        <i class="bi bi-eye"></i> Mostrar más
+    </button>
 
-    </div>
+    <button class="btn btn-primary btn-sm" id="btnNuevo">
+        <i class="bi bi-plus-lg"></i> Nuevo
+    </button>
+
+</div>
 
 </div>
 
