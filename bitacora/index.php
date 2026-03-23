@@ -28,8 +28,7 @@ $con = (new Conectar())->conexion();
 
         <nav>
             <a href="empleados.php">Empleados</a>
-            <a href="telefonos.php">Teléfonos</a>
-            <a href="asignaciones.php">Asignaciones</a>
+            <a href="computadoras.php">Computadoras</a>
             <a href="/Dismar/Administrador/administrador.php" class="logout">
                 Volver
             </a>
@@ -50,6 +49,8 @@ $con = (new Conectar())->conexion();
     <div class="topbar-left">
         <h5>Inventario de Teléfonos</h5>
     </div>
+
+    
 
     <div class="topbar-right">
 
@@ -104,7 +105,7 @@ $con = (new Conectar())->conexion();
 
 <div class="modal-box modal-acciones">
 
-<h5 class="mb-3">Acciones del teléfono</h5>
+<h5 class="mb-3">Acciones</h5>
 
 <div class="acciones-grid">
 

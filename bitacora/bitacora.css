@@ -600,13 +600,12 @@ font-weight:600;
 }
 
 .img-preview{
-width:55px;
-height:75px;
+width:50px;
+height:50px;
 object-fit:cover;
 border-radius:6px;
-border:1px solid #e5e7eb;
 cursor:pointer;
-transition:.2s;
+
 }
 
 .img-preview:hover{
@@ -623,4 +622,39 @@ max-width:300px;
 
 .oculta{
     display: none !important;
+}
+
+
+.img-form-preview{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #eee;
+    margin: 10px auto;
+}
+
+.img-upload-box{
+    text-align: center;
+}
+
+.grupo-cedis{
+    background: #2c3e50;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.grupo-cedis:hover{
+    background: #34495e;
+}
+
+.contador{
+    font-size: 12px;
+    opacity: 0.8;
+    margin-left: 10px;
+}
+
+.fila-cedis.oculta{
+    display: none;
 }

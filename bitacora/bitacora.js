@@ -12,11 +12,8 @@ if(btnCerrar){
 btnCerrar.addEventListener("click", cerrarModal);
 }
 
-let form = document.getElementById("formTelefono");
-if(form){
-form.addEventListener("submit", guardarTelefono);
-}
-
+let form = document.getElementById("formComputadora");
+form.addEventListener("submit", guardarComputadora);
 /* PREVIEW AUTOMATICA DE IMAGEN */
 
 let front = document.querySelector("input[name='front']");
@@ -82,57 +79,92 @@ const tbody=document.querySelector("#tablaTelefonos tbody");
 
 tbody.innerHTML="";
 
-data.forEach(t=>{
 
-tbody.innerHTML+=`
 
-<tr>
+let grupos = {};
 
-<td>${t.marca}</td>
-<td>${t.imei}</td>
-<td>${t.modelo}</td>
-<td>${t.num_serie}</td>
-<td>${t.num_telefono}</td>
-<td>${t.puesto ?? ''}</td>
-<td>${t.area ?? ''}</td>
-<td>${t.nombre ?? ''} ${t.apellidop ?? ''} ${t.apellidom ?? ''}</td>
-<td>${t.cedis ?? ''}</td>
+// AGRUPAR POR CEDIS
+data.forEach(t => {
+    let cedis = t.cedis || "SIN CEDIS";
 
-<td>
-${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">` : ''}
-</td>
+    if(!grupos[cedis]){
+        grupos[cedis] = [];
+    }
 
-<td>
-${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` : ''}
-</td>
-
-<td>${t.folio}</td>
-<td>${t.comentarios}</td>
-
-<td>
-<span class="${
-t.estatus === 'ACTIVO'
-? 'badge-activo'
-: t.estatus === 'BAJA'
-? 'badge-baja'
-: 'badge-reparacion'
-}">
-${t.estatus}
-</span>
-</td>
-
-<td class="text-center acciones-col">
-<button class="btn btn-acciones"
-onclick="abrirAcciones(${t.tel_id})">
-<i class="bi bi-three-dots-vertical"></i>
-</button>
-</td>
-
-</tr>
-
-`;
-
+    grupos[cedis].push(t);
 });
+
+
+// LIMPIAR TABLA
+tbody.innerHTML = "";
+
+// RECORRER GRUPOS
+for(let cedis in grupos){
+
+    let total = grupos[cedis].length;
+
+    // HEADER DEL GRUPO
+    tbody.innerHTML += `
+    <tr class="grupo-cedis">
+        <td colspan="15">
+            <i class="bi bi-building"></i> ${cedis} 
+            <span class="contador">(${total} equipos)</span>
+        </td>
+    </tr>
+    `;
+
+    // 👇 SOLO LOS DE ESTE CEDIS
+   grupos[cedis].forEach(t => {
+
+    tbody.innerHTML += `
+    <tr class="fila-cedis oculta">
+
+
+
+
+            <td>${t.marca}</td>
+            <td>${t.imei}</td>
+            <td>${t.modelo}</td>
+            <td>${t.num_serie}</td>
+            <td>${t.num_telefono}</td>
+            <td>${t.puesto ?? ''}</td>
+            <td>${t.area ?? ''}</td>
+            <td>${t.nombre ?? ''} ${t.apellidop ?? ''} ${t.apellidom ?? ''}</td>
+            <td>${t.cedis ?? ''}</td>
+
+            <td>
+            ${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">` : ''}
+            </td>
+
+            <td>
+            ${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` : ''}
+            </td>
+
+            <td>${t.folio}</td>
+            <td>${t.comentarios}</td>
+
+            <td>
+            <span class="${
+            t.estatus === 'ACTIVO'
+            ? 'badge-activo'
+            : t.estatus === 'BAJA'
+            ? 'badge-baja'
+            : 'badge-reparacion'
+            }">
+            ${t.estatus}
+            </span>
+            </td>
+
+            <td class="text-center acciones-col">
+            <button class="btn btn-acciones"
+            onclick="abrirAcciones(${t.tel_id})">
+            <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            </td>
+        </tr>
+        `;
+    });
+}
 
 // ✅ AQUÍ VA (UNA SOLA VEZ)
 ocultarColumnasExtra();
@@ -375,6 +407,8 @@ document.querySelector("[name='num_telefono']").value = data.num_telefono;
 document.querySelector("[name='imei']").value = data.imei;
 document.querySelector("[name='folio']").value = data.folio;
 document.querySelector("[name='comentarios']").value = data.comentarios;
+document.getElementById("front_actual").value = data.front ?? "";
+document.getElementById("back_actual").value  = data.back ?? "";
 
 let cedis = document.getElementById("cedis");
 cedis.value = data.cedis;
@@ -405,6 +439,8 @@ if(data.back){
 document.getElementById("previewBack").src =
 "/Dismar/public/telefonos/"+data.back;
 }
+document.getElementById("front_actual").value = data.front ?? "";
+document.getElementById("back_actual").value  = data.back ?? "";
 
 });
 
@@ -589,3 +625,26 @@ if(e.target.closest("#btnMostrarMas")){
 }
 
 });
+
+
+document.addEventListener("click", function(e){
+
+if(e.target.closest(".grupo-cedis")){
+
+    let fila = e.target.closest("tr");
+    let siguiente = fila.nextElementSibling;
+
+    while(siguiente && !siguiente.classList.contains("grupo-cedis")){
+
+        siguiente.classList.toggle("oculta");
+        siguiente = siguiente.nextElementSibling;
+    }
+
+}
+
+});
+
+function hayFilasVisibles(){
+    return document.querySelectorAll(".fila-cedis:not(.oculta)").length > 0;
+}
+
