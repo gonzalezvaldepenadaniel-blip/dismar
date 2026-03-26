@@ -64,6 +64,7 @@ exit;
    GUARDAR TELÉFONO
 ============================ */
 if ($op === "guardar") {
+    echo "ENTRO_GUARDAR";
 
     try {
 
@@ -85,6 +86,22 @@ if ($op === "guardar") {
         // 2️ Manejar imágenes
         $frontNombre = "";
         $backNombre = "";
+        $responsiva = "";
+
+if(isset($_FILES["responsiva"]) && $_FILES["responsiva"]["error"] == 0){
+
+    $responsiva = time()."_".$_FILES["responsiva"]["name"];
+
+    move_uploaded_file(
+        $_FILES["responsiva"]["tmp_name"],
+        "../public/responsivas/".$responsiva
+    );
+
+}
+
+
+
+
 
         if(isset($_FILES["front"]) && $_FILES["front"]["error"] == 0){
             $frontNombre = time()."_front_".$_FILES["front"]["name"];
@@ -97,27 +114,28 @@ if ($op === "guardar") {
         }
 
         // Insertar teléfono
-        $sql = "INSERT INTO equipos_telefonos
-(marca, modelo, num_serie, num_telefono, imei, puesto, area, nombre_usuario, front, back, comentarios, folio, estatus, usu_id)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+     $sql = "INSERT INTO equipos_telefonos
+(marca, modelo, num_serie, num_telefono, imei, puesto, area, nombre_usuario, front, back, responsiva, comentarios, folio, estatus, usu_id)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $con->prepare($sql);
 
         $stmt->execute([
-            $_POST["marca"],
-            $_POST["modelo"],
-            $_POST["num_serie"],
-            $_POST["num_telefono"],
-            $_POST["imei"],
-            $emp["puesto"],
-            $emp["area"],
-            $nombreCompleto,
-            $frontNombre,
-            $backNombre,
-            $_POST["comentarios"],
-            $_POST["folio"],
-            'ACTIVO',
-            $_POST["usu_id"]
-        ]);
+    $_POST["marca"],
+    $_POST["modelo"],
+    $_POST["num_serie"],
+    $_POST["num_telefono"],
+    $_POST["imei"],
+    $emp["puesto"],
+    $emp["area"],
+    $nombreCompleto,
+    $frontNombre,
+    $backNombre,
+    $responsiva,
+    $_POST["comentarios"],
+    $_POST["folio"],
+    'ACTIVO',
+    $_POST["usu_id"]
+]);
 
         echo "OK";
 
@@ -218,110 +236,3 @@ if ($op === "reparacion") {
     exit;
 }
 
-/* ============================
-    COMPUTADORAS
-============================ */
-
-if($op=="listar"){
-    $stmt = $con->prepare("SELECT * FROM computadoras ORDER BY cpu_id DESC");
-    $stmt->execute();
-    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
-}
-
-/*======================
-
-GUARDAS COMPUTADORAS
-================*/
-
-if($op=="guardar"){
-
-    $sql = "INSERT INTO computadoras
-    (puesto,marca,procesador,ram,so,disco_duro,tipo,monitor,teclado,mouse,camara,modelo_cpu,num_serie_cpu,num_serie_monitor,folio,comentarios)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-    $stmt = $con->prepare($sql);
-    $stmt->execute([
-        $_POST["puesto"],
-        $_POST["marca"],
-        $_POST["procesador"],
-        $_POST["ram"],
-        $_POST["so"],
-        $_POST["disco_duro"],
-        $_POST["tipo"],
-        $_POST["monitor"],
-        $_POST["teclado"],
-        $_POST["mouse"],
-        $_POST["camara"],
-        $_POST["modelo_cpu"],
-        $_POST["num_serie_cpu"],
-        $_POST["num_serie_monitor"],
-        $_POST["folio"],
-        $_POST["comentarios"]
-    ]);
-
-    echo "OK";
-}
-
-/*======================
-
-EDITAR COMPUTADORAS
-================*/
-
-if($op=="editar"){
-
-    $sql = "UPDATE computadoras SET
-    puesto=?,marca=?,procesador=?,ram=?,so=?,disco_duro=?,tipo=?,monitor=?,teclado=?,mouse=?,camara=?,modelo_cpu=?,num_serie_cpu=?,num_serie_monitor=?,folio=?,comentarios=?
-    WHERE cpu_id=?";
-
-    $stmt = $con->prepare($sql);
-    $stmt->execute([
-        $_POST["puesto"],
-        $_POST["marca"],
-        $_POST["procesador"],
-        $_POST["ram"],
-        $_POST["so"],
-        $_POST["disco_duro"],
-        $_POST["tipo"],
-        $_POST["monitor"],
-        $_POST["teclado"],
-        $_POST["mouse"],
-        $_POST["camara"],
-        $_POST["modelo_cpu"],
-        $_POST["num_serie_cpu"],
-        $_POST["num_serie_monitor"],
-        $_POST["folio"],
-        $_POST["comentarios"],
-        $_POST["cpu_id"]
-    ]);
-
-    echo "OK";
-}
-
-/*======================
-
-OBTENER COMPUTADORAS
-================*/
-
-if($op=="obtener"){
-    $stmt = $con->prepare("SELECT * FROM computadoras WHERE cpu_id=?");
-    $stmt->execute([$_GET["cpu_id"]]);
-    echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
-}
-
-
-/*======================
-
-BAJA/ALTA COMPUTADORAS
-================*/
-
-if($op=="baja"){
-    $stmt = $con->prepare("UPDATE computadoras SET estatus='BAJA' WHERE cpu_id=?");
-    $stmt->execute([$_POST["cpu_id"]]);
-    echo "OK";
-}
-
-if($op=="alta"){
-    $stmt = $con->prepare("UPDATE computadoras SET estatus='ACTIVO' WHERE cpu_id=?");
-    $stmt->execute([$_POST["cpu_id"]]);
-    echo "OK";
-}

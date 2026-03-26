@@ -12,8 +12,8 @@ if(btnCerrar){
 btnCerrar.addEventListener("click", cerrarModal);
 }
 
-let form = document.getElementById("formComputadora");
-form.addEventListener("submit", guardarComputadora);
+let form = document.getElementById("formTelefono");
+form.addEventListener("submit", guardarTelefono);
 /* PREVIEW AUTOMATICA DE IMAGEN */
 
 let front = document.querySelector("input[name='front']");
@@ -132,16 +132,25 @@ for(let cedis in grupos){
             <td>${t.nombre ?? ''} ${t.apellidop ?? ''} ${t.apellidom ?? ''}</td>
             <td>${t.cedis ?? ''}</td>
 
-            <td>
-            ${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">` : ''}
-            </td>
+          <td>
+${t.front ? `<img src="/Dismar/public/telefonos/${t.front}" class="img-preview">` : ''}
+</td>
 
-            <td>
-            ${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` : ''}
-            </td>
+<td>
+${t.back ? `<img src="/Dismar/public/telefonos/${t.back}" class="img-preview">` : ''}
+</td>
 
-            <td>${t.folio}</td>
-            <td>${t.comentarios}</td>
+<td>${t.folio}</td>
+
+<td>${t.comentarios}</td>
+
+<td>
+${t.responsiva 
+? `<a href="/Dismar/public/responsivas/${t.responsiva}" target="_blank" class="btn btn-sm btn-danger">
+<i class="bi bi-file-earmark-pdf"></i>
+</a>` 
+: ''}
+</td>
 
             <td>
             <span class="${

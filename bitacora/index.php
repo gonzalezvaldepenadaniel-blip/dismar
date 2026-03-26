@@ -29,6 +29,8 @@ $con = (new Conectar())->conexion();
         <nav>
             <a href="empleados.php">Empleados</a>
             <a href="computadoras.php">Computadoras</a>
+            <a href="index.php">Teléfonos</a>
+   
             <a href="/Dismar/Administrador/administrador.php" class="logout">
                 Volver
             </a>
@@ -86,6 +88,7 @@ $con = (new Conectar())->conexion();
                         <th>Back</th>
                         <th>Folio</th>
                         <th>Comentarios</th>
+                        <th>Responsiva</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>

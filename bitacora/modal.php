@@ -121,7 +121,10 @@ $con = Conectar::conexion();
     </div>
 
 </div>
-
+<div class="mb-2">
+<label>Responsiva (PDF)</label>
+<input type="file" name="responsiva" accept="application/pdf" class="form-control">
+</div>
             <!-- COMENTARIOS -->
 
             <div class="mt-2">
