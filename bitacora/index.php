@@ -134,6 +134,11 @@ $con = (new Conectar())->conexion();
 
 </div>
 
+<button class="accion-btn historial">
+<i class="bi bi-clock-history"></i>
+<span>Historial</span>
+</button>
+
 <div class="text-end mt-3">
 <button class="btn btn-secondary btn-sm" id="cerrarAcciones">
 Cancelar

@@ -491,6 +491,11 @@ reparacion(telefonoSeleccionado);
 cerrarAcciones();
 };
 
+document.querySelector(".accion-btn.historial").onclick = () => {
+verHistorial(telefonoSeleccionado);
+cerrarAcciones();
+};
+
 function cerrarAcciones(){
 document.getElementById("modalAcciones").style.display="none";
 }
@@ -657,3 +662,48 @@ function hayFilasVisibles(){
     return document.querySelectorAll(".fila-cedis:not(.oculta)").length > 0;
 }
 
+function verHistorial(id){
+
+fetch("controller.php?op=historial&tel_id="+id)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let html = "";
+
+if(data.length === 0){
+html += "<p>No hay movimientos registrados</p>";
+}else{
+
+html += "<ul style='text-align:left'>";
+
+data.forEach(h=>{
+
+let usuario = (h.nombre ?? "")+" "+(h.apellidop ?? "")+" "+(h.apellidom ?? "");
+
+let retiro = h.fecha_retiro ? "Cambio: "+h.fecha_retiro : "ACTUAL";
+
+html += `
+<li>
+<b>Fecha de asignación:</b> ${h.fecha_asignacion}<br>
+<b>Usuario:</b> ${usuario}<br>
+<b>${retiro}</b>
+</li><br>
+`;
+
+});
+
+html += "</ul>";
+
+}
+
+Swal.fire({
+title:"Historial",
+html:html,
+width:600
+});
+
+});
+
+}

@@ -64,7 +64,7 @@ exit;
    GUARDAR TELÉFONO
 ============================ */
 if ($op === "guardar") {
-    echo "ENTRO_GUARDAR";
+
 
     try {
 
@@ -120,6 +120,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $con->prepare($sql);
 
         $stmt->execute([
+            
+
+
     $_POST["marca"],
     $_POST["modelo"],
     $_POST["num_serie"],
@@ -136,6 +139,19 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     'ACTIVO',
     $_POST["usu_id"]
 ]);
+
+$tel_id = $con->lastInsertId();
+
+$sqlHist = "INSERT INTO historial_telefonos
+(tel_id, usu_id, fecha_asignacion)
+VALUES (?, ?, NOW())";
+
+$stmtHist = $con->prepare($sqlHist);
+$stmtHist->execute([
+    $tel_id,
+    $_POST["usu_id"]
+]);
+
 
         echo "OK";
 
@@ -154,6 +170,28 @@ if ($op === "editar") {
     $front = $_POST["front_actual"];
     $back  = $_POST["back_actual"];
 
+     {
+
+        // cerrar historial anterior
+        $sqlCerrar = "UPDATE historial_telefonos
+        SET fecha_retiro = NOW()
+        WHERE tel_id=? AND fecha_retiro IS NULL";
+
+        $stmtCerrar = $con->prepare($sqlCerrar);
+        $stmtCerrar->execute([$_POST["tel_id"]]);
+
+        // nuevo historial
+        $sqlNuevo = "INSERT INTO historial_telefonos
+        (tel_id, usu_id, fecha_asignacion)
+        VALUES (?, ?, NOW())";
+
+        $stmtNuevo = $con->prepare($sqlNuevo);
+        $stmtNuevo->execute([
+            $_POST["tel_id"],
+            $_POST["usu_id"]
+        ]);
+
+    }
     if(isset($_FILES["front"]) && $_FILES["front"]["error"] == 0){
         $front = time()."_front_".$_FILES["front"]["name"];
         move_uploaded_file($_FILES["front"]["tmp_name"], "../public/telefonos/".$front);
@@ -231,8 +269,31 @@ if ($op === "reparacion") {
     $sql = "UPDATE equipos_telefonos SET estatus='REPARACION' WHERE tel_id=?";
     $stmt = $con->prepare($sql);
     $stmt->execute([$_POST["tel_id"]]);
-
-  echo "OK";
-    exit;
+    echo "OK";
+exit;
 }
 
+/* ============================
+   VER HISTORIAL
+============================ */
+if ($op === "historial") {
+
+$sql = "SELECT 
+h.fecha_asignacion,
+h.fecha_retiro,
+e.nombre,
+e.apellidop,
+e.apellidom
+FROM historial_telefonos h
+LEFT JOIN empleados e 
+ON e.usu_id = h.usu_id
+WHERE h.tel_id = ?
+ORDER BY h.fecha_asignacion DESC";
+
+$stmt = $con->prepare($sql);
+$stmt->execute([$_GET["tel_id"]]);
+
+echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+
+exit;
+}
