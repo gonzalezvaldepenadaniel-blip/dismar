@@ -280,7 +280,7 @@ if ($op === "historial") {
 
 $sql = "SELECT 
 h.fecha_asignacion,
-h.fecha_retiro,
+h.fecha_retiro AS fecha_cambio,
 e.nombre,
 e.apellidop,
 e.apellidom

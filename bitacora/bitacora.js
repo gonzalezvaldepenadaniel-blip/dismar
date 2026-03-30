@@ -736,3 +736,62 @@ if(e.target === this){
 this.style.display="none";
 }
 };
+
+
+
+
+
+
+
+function verHistorial(tel_id){
+
+fetch("controller.php?op=historial&tel_id="+tel_id)
+.then(res=>res.json())
+.then(data=>{
+
+let html = `<div class="timeline">`;
+
+data.forEach(item=>{
+
+let usuario = item.nombre+" "+item.apellidop+" "+item.apellidom;
+
+html += `
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+
+<div class="timeline-fecha">
+Asignado: ${item.fecha_asignacion}
+</div>
+
+<div class="timeline-text">
+Usuario: ${usuario}
+</div>
+`;
+
+if(item.fecha_cambio){
+html += `
+<div class="timeline-fecha">
+Cambio: ${item.fecha_cambio}
+</div>
+`;
+}
+
+html += `
+</div>
+</div>
+`;
+
+});
+
+html += `</div>`;
+
+document.getElementById("contenidoHistorial").innerHTML = html;
+
+document.getElementById("modalHistorial").style.display="flex";
+
+});
+
+}

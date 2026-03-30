@@ -158,6 +158,24 @@ Cancelar
 <img id="imgGrande">
 
 </div>
+
+<div class="modal-custom" id="modalHistorial">
+
+<div class="modal-box">
+
+<h5 class="mb-3">Historial del teléfono</h5>
+
+<div id="contenidoHistorial"></div>
+
+<div class="text-end mt-3">
+<button class="btn btn-secondary btn-sm" id="cerrarHistorial">
+Cerrar
+</button>
+</div>
+
+</div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
