@@ -707,3 +707,32 @@ width:600
 });
 
 }
+
+/* VISOR DE PDF */
+
+document.addEventListener("click", function(e){
+
+if(e.target.closest(".ver-pdf")){
+
+let pdf = e.target.closest(".ver-pdf").dataset.pdf;
+
+let visor = document.getElementById("visorPDF");
+let frame = document.getElementById("pdfGrande");
+
+frame.src = "/Dismar/public/responsivas/" + pdf;
+
+visor.style.display = "flex";
+
+}
+
+});
+
+document.querySelector(".cerrar-pdf").onclick = () => {
+document.getElementById("visorPDF").style.display="none";
+};
+
+document.getElementById("visorPDF").onclick = function(e){
+if(e.target === this){
+this.style.display="none";
+}
+};

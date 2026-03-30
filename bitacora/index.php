@@ -15,6 +15,7 @@ $con = (new Conectar())->conexion();
 <link rel="stylesheet" href="bitacora.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 </head>
 
@@ -132,12 +133,14 @@ $con = (new Conectar())->conexion();
 <span>Dar de baja</span>
 </button>
 
-</div>
-
 <button class="accion-btn historial">
 <i class="bi bi-clock-history"></i>
 <span>Historial</span>
 </button>
+
+</div>
+
+
 
 <div class="text-end mt-3">
 <button class="btn btn-secondary btn-sm" id="cerrarAcciones">
