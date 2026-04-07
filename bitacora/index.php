@@ -163,7 +163,7 @@ Cancelar
 
 <div class="modal-box">
 
-<h5 class="mb-3">Historial del teléfono</h5>
+<h5 class="mb-3">Historial</h5>
 
 <div id="contenidoHistorial"></div>
 

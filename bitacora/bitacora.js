@@ -1,5 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+// 👇 AGREGA ESTO AQUÍ
+    let btnCerrarHistorial = document.getElementById("cerrarHistorial");
+    let modalHistorial = document.getElementById("modalHistorial");
+
+    if(btnCerrarHistorial){
+        btnCerrarHistorial.onclick = () => {
+            modalHistorial.style.display = "none";
+        };
+    }
+
+    if(modalHistorial){
+        modalHistorial.addEventListener("click", function(e){
+            if(e.target === this){
+                this.style.display = "none";
+            }
+        });
+    }
+
 cargarTelefonos();
 
 let btnNuevo = document.getElementById("btnNuevo");
@@ -662,52 +680,6 @@ function hayFilasVisibles(){
     return document.querySelectorAll(".fila-cedis:not(.oculta)").length > 0;
 }
 
-function verHistorial(id){
-
-fetch("controller.php?op=historial&tel_id="+id)
-
-.then(res=>res.json())
-
-.then(data=>{
-
-let html = "";
-
-if(data.length === 0){
-html += "<p>No hay movimientos registrados</p>";
-}else{
-
-html += "<ul style='text-align:left'>";
-
-data.forEach(h=>{
-
-let usuario = (h.nombre ?? "")+" "+(h.apellidop ?? "")+" "+(h.apellidom ?? "");
-
-let retiro = h.fecha_retiro ? "Cambio: "+h.fecha_retiro : "ACTUAL";
-
-html += `
-<li>
-<b>Fecha de asignación:</b> ${h.fecha_asignacion}<br>
-<b>Usuario:</b> ${usuario}<br>
-<b>${retiro}</b>
-</li><br>
-`;
-
-});
-
-html += "</ul>";
-
-}
-
-Swal.fire({
-title:"Historial",
-html:html,
-width:600
-});
-
-});
-
-}
-
 /* VISOR DE PDF */
 
 document.addEventListener("click", function(e){
@@ -795,3 +767,15 @@ document.getElementById("modalHistorial").style.display="flex";
 });
 
 }
+
+// CERRAR MODAL HISTORIAL (BOTÓN)
+document.getElementById("cerrarHistorial").onclick = () => {
+    document.getElementById("modalHistorial").style.display = "none";
+};
+
+// CERRAR AL HACER CLICK FUERA
+document.getElementById("modalHistorial").addEventListener("click", function(e){
+    if(e.target === this){
+        this.style.display = "none";
+    }
+});
