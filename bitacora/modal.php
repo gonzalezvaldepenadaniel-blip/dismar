@@ -181,3 +181,29 @@ $con = Conectar::conexion();
     </div>
   </div>
 </div>
+
+
+<div class="modal-custom" id="modalComentario">
+    <div class="modal-box">
+        <h5 class="mb-3">Agregar comentario</h5>
+
+        <div class="mb-2">
+            <label>Empleado</label>
+            <select id="empleadoComentario" class="form-control">
+                <option value="">Seleccione empleado</option>
+            </select>
+        </div>
+
+        <textarea id="txtComentario" class="form-control mb-3" placeholder="Escribe un comentario..."></textarea>
+
+        <div class="text-end">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modalComentario').style.display='none'">
+                Cancelar
+            </button>
+
+            <button class="btn btn-primary btn-sm" id="guardarComentario">
+                Guardar
+            </button>
+        </div>
+    </div>
+</div>

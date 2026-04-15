@@ -143,13 +143,14 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $tel_id = $con->lastInsertId();
 
 $sqlHist = "INSERT INTO historial_telefonos
-(tel_id, usu_id, fecha_asignacion)
-VALUES (?, ?, NOW())";
+(tel_id, usu_id, fecha_asignacion, comentario)
+VALUES (?, ?, NOW(),?)";
 
 $stmtHist = $con->prepare($sqlHist);
 $stmtHist->execute([
     $tel_id,
-    $_POST["usu_id"]
+    $_POST["usu_id"],
+      $_POST["comentarios"]
 ]);
 
 
@@ -278,22 +279,62 @@ exit;
 ============================ */
 if ($op === "historial") {
 
-$sql = "SELECT 
-h.fecha_asignacion,
-h.fecha_retiro AS fecha_cambio,
-e.nombre,
-e.apellidop,
-e.apellidom
-FROM historial_telefonos h
-LEFT JOIN empleados e 
-ON e.usu_id = h.usu_id
-WHERE h.tel_id = ?
-ORDER BY h.fecha_asignacion DESC";
+    $sql = "SELECT 
+            h.fecha_asignacion,
+            h.fecha_retiro AS fecha_cambio,
+            h.comentario,
+            e.nombre,
+            e.apellidop,
+            e.apellidom
+            FROM historial_telefonos h
+            LEFT JOIN empleados e ON e.usu_id = h.usu_id
+            WHERE h.tel_id = ?
+            ORDER BY h.fecha_asignacion DESC";
 
-$stmt = $con->prepare($sql);
-$stmt->execute([$_GET["tel_id"]]);
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$_GET["tel_id"]]);
 
-echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    exit;
+}
+/* ============================
+   GUARDAR COMENTARIO HISTORIAL
+============================ */
+if ($op === "comentario") {
 
-exit;
+    $sql = "INSERT INTO historial_telefonos
+            (tel_id, usu_id, comentario, fecha_asignacion)
+            VALUES (?, ?, ?, NOW())";
+
+    $stmt = $con->prepare($sql);
+    $stmt->execute([
+        $_POST["tel_id"],
+        $_POST["usu_id"],
+        $_POST["comentario"]
+    ]);
+
+    echo "OK";
+    exit;
+}
+
+/* ============================
+   EMPLEADOS DEL HISTORIAL DEL TELÉFONO
+============================ */
+if ($op === "empleados_historial") {
+
+    $sql = "SELECT DISTINCT 
+                e.usu_id,
+                e.nombre,
+                e.apellidop,
+                e.apellidom
+            FROM historial_telefonos h
+            INNER JOIN empleados e ON e.usu_id = h.usu_id
+            WHERE h.tel_id = ?
+            ORDER BY e.nombre, e.apellidop, e.apellidom";
+
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$_GET["tel_id"]]);
+
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    exit;
 }

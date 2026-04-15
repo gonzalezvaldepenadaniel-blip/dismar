@@ -711,19 +711,23 @@ this.style.display="none";
 
 
 
-
-
-
-
 function verHistorial(tel_id){
 
 fetch("controller.php?op=historial&tel_id="+tel_id)
 .then(res=>res.json())
 .then(data=>{
 
-let html = `<div class="timeline">`;
+let html = `
+<div class="d-flex justify-content-between mb-2">
+    <button class="btn btn-primary btn-sm" onclick="abrirAgregarComentario(${tel_id})">
+        <i class="bi bi-plus"></i> Agregar comentario
+    </button>
+</div>
 
-data.forEach(item=>{
+<div class="timeline">
+`;
+
+data.forEach(item => {
 
 let usuario = item.nombre+" "+item.apellidop+" "+item.apellidom;
 
@@ -741,6 +745,10 @@ Asignado: ${item.fecha_asignacion}
 <div class="timeline-text">
 Usuario: ${usuario}
 </div>
+
+<div class="timeline-text">
+📝 ${item.comentario ? item.comentario : 'Sin comentario'}
+</div>
 `;
 
 if(item.fecha_cambio){
@@ -755,18 +763,20 @@ html += `
 </div>
 </div>
 `;
-
 });
 
 html += `</div>`;
 
 document.getElementById("contenidoHistorial").innerHTML = html;
-
 document.getElementById("modalHistorial").style.display="flex";
 
 });
 
 }
+
+
+
+
 
 // CERRAR MODAL HISTORIAL (BOTÓN)
 document.getElementById("cerrarHistorial").onclick = () => {
@@ -779,3 +789,67 @@ document.getElementById("modalHistorial").addEventListener("click", function(e){
         this.style.display = "none";
     }
 });
+
+// COMENTARIO HISTORIAL
+function abrirAgregarComentario(tel_id){
+
+    telefonoPendiente = tel_id;
+
+    document.getElementById("modalComentario").style.display = "flex";
+    document.getElementById("txtComentario").value = "";
+
+    fetch("controller.php?op=empleados_historial&tel_id=" + tel_id)
+    .then(res => res.json())
+    .then(data => {
+
+        let select = document.getElementById("empleadoComentario");
+        select.innerHTML = "<option value=''>Seleccione empleado</option>";
+
+        data.forEach(emp => {
+            select.innerHTML += `
+                <option value="${emp.usu_id}">
+                    ${emp.nombre} ${emp.apellidop} ${emp.apellidom}
+                </option>
+            `;
+        });
+    });
+
+    document.getElementById("guardarComentario").onclick = () => {
+
+        let comentario = document.getElementById("txtComentario").value.trim();
+        let usu_id = document.getElementById("empleadoComentario").value;
+
+        if(!usu_id){
+            alert("Selecciona un empleado");
+            return;
+        }
+
+        if(!comentario){
+            alert("Escribe un comentario");
+            return;
+        }
+
+        fetch("controller.php?op=comentario", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `tel_id=${telefonoPendiente}&comentario=${encodeURIComponent(comentario)}&usu_id=${encodeURIComponent(usu_id)}`
+        })
+        .then(res => res.text())
+        .then(res => {
+
+            console.log("RESPUESTA:", res);
+
+            if(res.trim() === "OK"){
+                document.getElementById("modalComentario").style.display = "none";
+                document.getElementById("txtComentario").value = "";
+                document.getElementById("empleadoComentario").value = "";
+
+                verHistorial(telefonoPendiente);
+            } else {
+                alert("Error: " + res);
+            }
+        });
+    };
+}
