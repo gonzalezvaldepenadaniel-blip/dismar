@@ -280,6 +280,7 @@ exit;
 if ($op === "historial") {
 
     $sql = "SELECT 
+            h.hist_id,
             h.fecha_asignacion,
             h.fecha_retiro AS fecha_cambio,
             h.comentario,
@@ -336,5 +337,21 @@ if ($op === "empleados_historial") {
     $stmt->execute([$_GET["tel_id"]]);
 
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    exit;
+}
+
+if ($op === "editar_comentario") {
+
+    $sql = "UPDATE historial_telefonos
+            SET comentario = ?
+            WHERE hist_id = ?";
+
+    $stmt = $con->prepare($sql);
+    $stmt->execute([
+        $_POST["comentario"],
+        $_POST["hist_id"]
+    ]);
+
+    echo "OK";
     exit;
 }

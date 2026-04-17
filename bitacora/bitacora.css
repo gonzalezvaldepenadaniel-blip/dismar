@@ -709,3 +709,7 @@ color:#374151;
 #modalComentario {
     z-index: 2000; /* MÁS ALTO */
 }
+
+.oculta{
+    display: none !important;
+}

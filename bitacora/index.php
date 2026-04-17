@@ -69,38 +69,37 @@ $con = (new Conectar())->conexion();
 
 </div>
 
-    <div class="card-body">
+   <div class="card-body">
 
-        <div class="table-responsive">
-            <table class="table table-sm table-hover" id="tablaTelefonos">
-                <thead>
-                    <tr>
-                        
-                        <th>Marca</th>
-                        <th>Imei</th>
-                        <th>Modelo</th>
-                        <th>Serie</th>
-                        <th>Teléfono</th>
-                        <th>Puesto</th>
-                        <th>Área</th>
-                        <th>Usuario</th>
-                        <th>Cedis</th>
-                        <th>Front</th>
-                        <th>Back</th>
-                        <th>Folio</th>
-                        <th>Comentarios</th>
-                        <th>Responsiva</th>
-                        <th>Estatus</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover" id="tablaTelefonos">
+            <thead id="encabezadoTabla" class="oculta">
+                <tr>
+                    <th>Marca</th>
+                    <th>Imei</th>
+                    <th>Modelo</th>
+                    <th>Serie</th>
+                    <th>Teléfono</th>
+                    <th>Puesto</th>
+                    <th>Área</th>
+                    <th>Usuario</th>
+                    <th>Cedis</th>
+                    <th>Front</th>
+                    <th>Back</th>
+                    <th>Folio</th>
+                    <th>Comentarios</th>
+                    <th>Responsiva</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
 
-                <tbody></tbody>
+            <tbody></tbody>
 
-            </table>
-        </div>
-
+        </table>
     </div>
+
+</div>
 
 </div>
 <?php include("modal.php"); ?>

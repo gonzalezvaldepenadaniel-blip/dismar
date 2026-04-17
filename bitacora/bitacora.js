@@ -124,7 +124,7 @@ for(let cedis in grupos){
     // HEADER DEL GRUPO
     tbody.innerHTML += `
     <tr class="grupo-cedis">
-        <td colspan="15">
+        <td colspan="16">
             <i class="bi bi-building"></i> ${cedis} 
             <span class="contador">(${total} equipos)</span>
         </td>
@@ -195,7 +195,7 @@ ${t.responsiva
 
 // ✅ AQUÍ VA (UNA SOLA VEZ)
 ocultarColumnasExtra();
-
+actualizarEncabezadoTabla();
 });
 
 }
@@ -661,25 +661,35 @@ if(e.target.closest("#btnMostrarMas")){
 
 document.addEventListener("click", function(e){
 
-if(e.target.closest(".grupo-cedis")){
+    if(e.target.closest(".grupo-cedis")){
 
-    let fila = e.target.closest("tr");
-    let siguiente = fila.nextElementSibling;
+        let fila = e.target.closest("tr");
+        let siguiente = fila.nextElementSibling;
 
-    while(siguiente && !siguiente.classList.contains("grupo-cedis")){
+        while(siguiente && !siguiente.classList.contains("grupo-cedis")){
+            siguiente.classList.toggle("oculta");
+            siguiente = siguiente.nextElementSibling;
+        }
 
-        siguiente.classList.toggle("oculta");
-        siguiente = siguiente.nextElementSibling;
+        actualizarEncabezadoTabla(); // 👈 ESTA ES LA CLAVE
     }
-
-}
 
 });
 
 function hayFilasVisibles(){
     return document.querySelectorAll(".fila-cedis:not(.oculta)").length > 0;
 }
+function actualizarEncabezadoTabla(){
+    let thead = document.getElementById("encabezadoTabla");
 
+    if(!thead) return;
+
+    if(hayFilasVisibles()){
+        thead.classList.remove("oculta");
+    }else{
+        thead.classList.add("oculta");
+    }
+}
 /* VISOR DE PDF */
 
 document.addEventListener("click", function(e){
@@ -798,17 +808,18 @@ function abrirAgregarComentario(tel_id){
     document.getElementById("modalComentario").style.display = "flex";
     document.getElementById("txtComentario").value = "";
 
-    fetch("controller.php?op=empleados_historial&tel_id=" + tel_id)
+    fetch("controller.php?op=historial&tel_id=" + tel_id)
     .then(res => res.json())
     .then(data => {
 
-        let select = document.getElementById("empleadoComentario");
-        select.innerHTML = "<option value=''>Seleccione empleado</option>";
+        let select = document.getElementById("historialComentario");
+        select.innerHTML = "<option value=''>Seleccione movimiento</option>";
 
-        data.forEach(emp => {
+        data.forEach(item => {
+            let nombre = `${item.nombre ?? ''} ${item.apellidop ?? ''} ${item.apellidom ?? ''}`.trim();
             select.innerHTML += `
-                <option value="${emp.usu_id}">
-                    ${emp.nombre} ${emp.apellidop} ${emp.apellidom}
+                <option value="${item.hist_id}">
+                    ${nombre} - ${item.fecha_asignacion}
                 </option>
             `;
         });
@@ -817,10 +828,10 @@ function abrirAgregarComentario(tel_id){
     document.getElementById("guardarComentario").onclick = () => {
 
         let comentario = document.getElementById("txtComentario").value.trim();
-        let usu_id = document.getElementById("empleadoComentario").value;
+        let hist_id = document.getElementById("historialComentario").value;
 
-        if(!usu_id){
-            alert("Selecciona un empleado");
+        if(!hist_id){
+            alert("Selecciona un movimiento");
             return;
         }
 
@@ -829,27 +840,34 @@ function abrirAgregarComentario(tel_id){
             return;
         }
 
-        fetch("controller.php?op=comentario", {
+        fetch("controller.php?op=editar_comentario", {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type":"application/x-www-form-urlencoded"
             },
-            body: `tel_id=${telefonoPendiente}&comentario=${encodeURIComponent(comentario)}&usu_id=${encodeURIComponent(usu_id)}`
+            body: `hist_id=${encodeURIComponent(hist_id)}&comentario=${encodeURIComponent(comentario)}`
         })
         .then(res => res.text())
         .then(res => {
-
-            console.log("RESPUESTA:", res);
-
             if(res.trim() === "OK"){
                 document.getElementById("modalComentario").style.display = "none";
                 document.getElementById("txtComentario").value = "";
-                document.getElementById("empleadoComentario").value = "";
-
+                document.getElementById("historialComentario").value = "";
                 verHistorial(telefonoPendiente);
-            } else {
+            }else{
                 alert("Error: " + res);
             }
         });
     };
+}
+function actualizarEncabezadoTabla(){
+    let thead = document.getElementById("encabezadoTabla");
+
+    if(!thead) return;
+
+    if(hayFilasVisibles()){
+        thead.classList.remove("oculta");
+    }else{
+        thead.classList.add("oculta");
+    }
 }

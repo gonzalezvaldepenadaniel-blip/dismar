@@ -182,15 +182,14 @@ $con = Conectar::conexion();
   </div>
 </div>
 
-
 <div class="modal-custom" id="modalComentario">
     <div class="modal-box">
         <h5 class="mb-3">Agregar comentario</h5>
 
         <div class="mb-2">
-            <label>Empleado</label>
-            <select id="empleadoComentario" class="form-control">
-                <option value="">Seleccione empleado</option>
+            <label>Selecciona movimiento</label>
+            <select id="historialComentario" class="form-control">
+                <option value="">Seleccione movimiento</option>
             </select>
         </div>
 
