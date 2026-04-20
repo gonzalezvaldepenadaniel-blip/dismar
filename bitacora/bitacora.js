@@ -650,9 +650,9 @@ if(e.target.closest("#btnMostrarMas")){
     });
 
     document.getElementById("btnMostrarMas").innerHTML =
-        mostrando
-        ? '<i class="bi bi-eye-slash"></i> Mostrar menos'
-        : '<i class="bi bi-eye"></i> Mostrar más';
+    mostrando
+    ? '<i class="bi bi-eye-slash"></i> Ocultar detalles'
+    : '<i class="bi bi-eye"></i> Ver detalles';
 
 }
 

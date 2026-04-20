@@ -248,9 +248,10 @@ input,textarea,select{
 /* ===== FIX DROPDOWN EN TABLA ===== */
 
 .table-responsive{
-overflow-x:auto;
-overflow-y:visible !important;
-position:static;
+    overflow-x:auto;
+    overflow-y:visible !important;
+    position:relative;
+    width:100%;
 }
 
 .dropdown{
@@ -331,6 +332,8 @@ min-width:160px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
     margin-bottom:20px;
 }
 
@@ -431,32 +434,17 @@ color:#dc2626;
     width:100%;
 }
 
-/* columnas cortas */
-#tablaTelefonos td:nth-child(1),
-#tablaTelefonos td:nth-child(2),
-#tablaTelefonos td:nth-child(3),
-#tablaTelefonos td:nth-child(4),
-#tablaTelefonos td:nth-child(5){
-    white-space: nowrap;
+#tablaTelefonos{
+    width: 100%;
+    min-width: 1200px;
+    table-layout: auto;
 }
 
-/* tamaños de columnas */
-
-#tablaTelefonos th:nth-child(1){width:90px;}
-#tablaTelefonos th:nth-child(2){width:150px;}
-#tablaTelefonos th:nth-child(3){width:120px;}
-#tablaTelefonos th:nth-child(4){width:130px;}
-#tablaTelefonos th:nth-child(5){width:120px;}
-#tablaTelefonos th:nth-child(6){width:160px;}
-#tablaTelefonos th:nth-child(7){width:120px;}
-#tablaTelefonos th:nth-child(8){width:200px;}
-#tablaTelefonos th:nth-child(9){width:130px;}
-#tablaTelefonos th:nth-child(10){width:110px;}
-#tablaTelefonos th:nth-child(11){width:110px;}
-#tablaTelefonos th:nth-child(12){width:160px;}
-#tablaTelefonos th:nth-child(13){width:200px;}
-#tablaTelefonos th:nth-child(14){width:100px;}
-#tablaTelefonos th:nth-child(15){width:70px;}
+#tablaTelefonos th,
+#tablaTelefonos td{
+    white-space: nowrap;
+    vertical-align: middle;
+}
 
 
 /* ===== VISOR DE IMAGEN PROFESIONAL ===== */
@@ -708,6 +696,34 @@ color:#374151;
 
 #modalComentario {
     z-index: 2000; /* MÁS ALTO */
+}
+
+.oculta{
+    display: none !important;
+}
+
+.img-form-preview{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+.img-placeholder{
+    width: 120px;
+    height: 120px;
+    border: 1px dashed #bbb;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px auto;
+    color: #777;
+    font-size: 14px;
+    background: #f8f9fa;
 }
 
 .oculta{

@@ -87,7 +87,8 @@ $con = Conectar::conexion();
 
         <label>Front</label>
 
-        <img id="previewFront" class="img-form-preview">
+       <img id="previewFront" class="img-form-preview oculta" alt="Vista previa Front">
+<div id="placeholderFront" class="img-placeholder">Sin imagen</div>
 
         <input type="file" 
                name="front" 
@@ -105,9 +106,8 @@ $con = Conectar::conexion();
     <div class="img-upload-box">
 
         <label>Back</label>
-
-        <img id="previewBack" class="img-form-preview">
-
+<img id="previewBack" class="img-form-preview oculta" alt="Vista previa Back">
+<div id="placeholderBack" class="img-placeholder">Sin imagen</div>
         <input type="file" 
                name="back" 
                id="back" 
